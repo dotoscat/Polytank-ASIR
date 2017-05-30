@@ -12,8 +12,8 @@ class Client(DatagramProtocol):
         self.transport.connect(host, port)
         self.transport.write(b'hello server! :D')
         
-    def datagramReceived(self):
-        pass
+    def datagramReceived(self, data, addr):
+        print(data)
         
     def connectionRefused(self):
         print("With hope some server will be listening")
