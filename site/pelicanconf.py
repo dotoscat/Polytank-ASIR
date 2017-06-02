@@ -7,6 +7,7 @@ SITENAME = 'Polytank'
 SITEURL = ''
 
 PATH = 'content'
+OUTPUT_PATH = '../docs'
 
 TIMEZONE = 'Europe/Paris'
 
