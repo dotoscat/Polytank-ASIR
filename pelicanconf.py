@@ -6,8 +6,8 @@ AUTHOR = "Oscar Triano 'dotoscat'"
 SITENAME = 'Polytank'
 SITEURL = ''
 
-PATH = 'content'
-OUTPUT_PATH = '../docs'
+PATH = 'site_content'
+OUTPUT_PATH = 'docs'
 
 TIMEZONE = 'Europe/Paris'
 
