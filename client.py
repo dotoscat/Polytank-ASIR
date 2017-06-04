@@ -27,6 +27,10 @@ class View(pyglet.window.Window):
     def on_draw(self):
         self.clear()
 
+    def on_key_press(self, symbol, modifiers):
+        from pyglet.window import key
+        print(symbol, modifiers)
+
 class Client(DatagramProtocol):
     
     def startProtocol(self):
