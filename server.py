@@ -18,16 +18,22 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 
-class Engine(object):
-    def __init__(self):
-        self.entities = []
+from engine import Engine
 
 class Server(DatagramProtocol):
+    """
+    Esta clase sirve como puente o traductor para la clase Engine.
+    Enviar y recibe los datos a través de la red a todos los clientes
+    a partir de la interfaz de Engine.
+    """
     def __init__(self):
         super(Server, self).__init__()
         self.engine = Engine()
     
     def datagramReceived(self, data, addr):
+        """Aquí el servidor recibe datos de los clientes y debe transformarlos
+        para que lo pueda manejar el motor.
+        """
         print("{} from {}".format(str(data, "utf8"), addr))
         self.transport.write(bytes("Server: Hello client {} :D".format(addr), "utf8"), addr)
 
