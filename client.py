@@ -17,12 +17,15 @@
 
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
-
 import pyglet
 
 class View(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
-        super(View, self).__init__(*args, **kwargs)
+        #super(View, self).__init__(*args, **kwargs)
+        client = Client()
+        self.client = client
+        reactor.listenUDP(0, client)
+        reactor.run()
         
     def on_draw(self):
         self.clear()
@@ -32,7 +35,7 @@ class View(pyglet.window.Window):
         print(symbol, modifiers)
 
 class Client(DatagramProtocol):
-    
+        
     def startProtocol(self):
         host = "127.0.0.1"
         port = 7777
@@ -46,10 +49,9 @@ class Client(DatagramProtocol):
     def connectionRefused(self):
         print("With hope some server will be listening")
         reactor.stop()
+        pyglet.app.exit()
         
 if __name__ == "__main__":
-    #reactor.listenUDP(0, Client())
-    #reactor.run()
     view = View(640, 480)
-    pyglet.app.run()
+    #pyglet.app.run()
         
