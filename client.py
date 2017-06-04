@@ -18,6 +18,15 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 
+import pyglet
+
+class View(pyglet.window.Window):
+    def __init__(self, *args, **kwargs):
+        super(View, self).__init__(*args, **kwargs)
+        
+    def on_draw(self):
+        self.clear()
+
 class Client(DatagramProtocol):
     
     def startProtocol(self):
@@ -35,6 +44,8 @@ class Client(DatagramProtocol):
         reactor.stop()
         
 if __name__ == "__main__":
-    reactor.listenUDP(0, Client())
-    reactor.run()
+    #reactor.listenUDP(0, Client())
+    #reactor.run()
+    view = View(640, 480)
+    pyglet.app.run()
         
