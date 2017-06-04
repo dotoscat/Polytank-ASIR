@@ -11,10 +11,36 @@ Objetivo
 Crear un juego multijugador en línea gestionado desde una web.
 Los jugadores compiten entre sí manejando un tanque.
 
+Entidades para el juego
+=======================
+
+Estos son los objetos que será usados en el juego. Para la base de datos
+las entidades son distintas.
+
+El juego usará un sistemas de entidad-componentes. 
+
+- Base_tanque
+- Canyon_tanque
+- Plataforma
+- Bala
+- Powerup
+
+Componentes
+===========
+
+- Cuerpo
+- Colision_suelo
+- Grafico
+
+Sistemas
+========
+
+**Para hacer**
+
 Instalación
 ===========
 
-Para hacer
+**Para hacer**
 
 Licencia
 ========
