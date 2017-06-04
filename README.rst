@@ -11,6 +11,13 @@ Objetivo
 Crear un juego multijugador en línea gestionado desde una web.
 Los jugadores compiten entre sí manejando un tanque.
 
+Paquetes, módulos usados de Python
+==================================
+
+- twisted, para conexión asíncrona.
+- pyglet, para implementar aplicaciones multimedia.
+- toyblock, para el sistema de entidad-componentes.
+
 Entidades para el juego
 =======================
 
