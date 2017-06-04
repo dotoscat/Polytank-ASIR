@@ -2,7 +2,8 @@
 POLYTANKS
 =========
 
-Polytanks es un Proyecto Integrado para la FP de ASIR.
+Polytanks es un Proyecto Integrado para la FP de ASIR de IES Romero Vargas
+de Jerez.
 
 Objetivo
 ========
@@ -13,7 +14,7 @@ Los jugadores compiten entre sí manejando un tanque.
 Instalación
 ===========
 
-
+Para hacer
 
 Licencia
 ========
