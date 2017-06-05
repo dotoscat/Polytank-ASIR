@@ -5,6 +5,8 @@ POLYTANKS
 Polytanks es un Proyecto Integrado para la FP de ASIR de IES Romero Vargas
 de Jerez.
 
+Puedes seguir `su blog de desarrollo <docs/devlog.rst>`_.
+
 Objetivo
 ========
 
