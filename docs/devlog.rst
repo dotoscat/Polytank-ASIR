@@ -2,6 +2,35 @@
 devlog de *juego multijugador en línea*: Polytanks
 ==================================================
 
+2017-06-05
+==========
+
+Cuando conseguí implementar twisted y pyglet al lado del cliente daba
+un problema: Al menos de los métodos de run de twisted y pyglet no se llegaba
+a ejecutar para iterar los eventos; Cuando afectaba a pyglet dejaba la ventana
+bloqueada y cuando afectaba a twisted no recibía ni enviaba mensajes. 
+Una solución era ejecutar los eventos del otro framework desde una función
+que se llamaba temporalmente desde el principal framework.
+
+Haciendo investigación `encontré una solución y era llamar manualmente <https://www.gamedev.net/topic/509570-python--twisted-for-game-networking/>`_
+los métodos necesarios para los eventos de red y las funciones que se llamaban periódica
+mente desde twisted, desde el reactor principal. Aquí lo haría desde pyglet
+
+::
+
+    def iterate_reactor(dt):
+        reactor.runUntilCurrent()
+        reactor.doSelect(0)
+        
+    pyglet.clock.schedule(iterate_reactor)
+
+También mirando un poco la documentación de pyglet encontré que podría hacerlo de la forma
+contraria, haciendo una subclase desde la clase *EventLoop* de pyglet y sobrecargar su método *idle*,
+para después pasar dicho método al reactor de twisted para ser llamado periódicamente.
+Incluso lo podría hacer de las dos formas, pero eso ya es complicarse demasiado. La primera solución
+basta, y de hecho me funciona. La segunda solución también funcionaría. Teóricamente
+el problema ya está resuelto.
+
 2017-06-04
 ==========
 
