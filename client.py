@@ -21,11 +21,17 @@ import pyglet
 
 class View(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
-        #super(View, self).__init__(*args, **kwargs)
+        super(View, self).__init__(*args, **kwargs)
         client = Client()
         self.client = client
+        
+        def iterate_reactor(dt):
+            reactor.runUntilCurrent()
+            reactor.doSelect(0)
+        
+        pyglet.clock.schedule(iterate_reactor)
         reactor.listenUDP(0, client)
-        reactor.run()
+        #reactor.run()
         
     def on_draw(self):
         self.clear()
@@ -53,5 +59,5 @@ class Client(DatagramProtocol):
         
 if __name__ == "__main__":
     view = View(640, 480)
-    #pyglet.app.run()
+    pyglet.app.run()
         
