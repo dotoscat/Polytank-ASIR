@@ -33,14 +33,14 @@ El juego usará un sistemas de entidad-componentes.
 - Powerup
 
 Componentes
-===========
+-----------
 
 - Cuerpo
 - Colision_suelo
 - Grafico
 
 Sistemas
-========
+--------
 
 **Para hacer**
 
