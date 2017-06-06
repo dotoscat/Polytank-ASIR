@@ -18,12 +18,15 @@ import struct
 class Client:
     CONNECT = 0
     MOVE = 1
-    
+        
     def __init__(self):
-        self._connect = struct.Struct("!c")
+        self._command = struct.Struct("!i")
         
     def connect(self):
-        return self._connect.pack(Client.CONNECT)
+        return self._command.pack(Client.CONNECT)
+
+    def get_command(self, data):
+        return self._command.unpack_from(data)[0]
 
 class Server:
     CREATE_TANK = 0

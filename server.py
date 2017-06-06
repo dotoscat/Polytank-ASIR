@@ -33,7 +33,11 @@ class Server(DatagramProtocol):
         """Aquí el servidor recibe datos de los clientes y debe transformarlos
         para que lo pueda manejar el motor.
         """
-        print("{} from {}".format(str(data, "utf8"), addr))
+        import protocol
+        command = protocol.client.get_command(data)
+        print(command)
+        action = "CONNECT" if command == protocol.client.CONNECT else "some action"
+        print("{} from {}".format(action, addr))
         self.transport.write(bytes("Server: Hello client {} :D".format(addr), "utf8"), addr)
 
 if __name__ == "__main__":

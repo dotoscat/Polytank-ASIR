@@ -18,6 +18,7 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 import pyglet
+import protocol
 
 class View(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
@@ -46,7 +47,7 @@ class Client(DatagramProtocol):
         port = 7777
         
         self.transport.connect(host, port)
-        self.transport.write(b'hello server! :D')
+        self.transport.write(protocol.client.connect())
         
     def datagramReceived(self, data, addr):
         print(data)
