@@ -15,12 +15,16 @@
 
 import struct
 
-class Client:
+class _Protocol(object):
+    def __init__(self):
+        self._command = struct.Struct("!i")
+
+class Client(_Protocol):
     CONNECT = 0
     MOVE = 1
         
     def __init__(self):
-        self._command = struct.Struct("!i")
+        super(Client, self).__init__()
         
     def connect(self):
         return self._command.pack(Client.CONNECT)
