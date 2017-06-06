@@ -31,7 +31,6 @@ class View(pyglet.window.Window):
         
         pyglet.clock.schedule(iterate_reactor)
         reactor.listenUDP(0, client)
-        #reactor.run()
         
     def on_draw(self):
         self.clear()
@@ -54,7 +53,6 @@ class Client(DatagramProtocol):
         
     def connectionRefused(self):
         print("With hope some server will be listening")
-        reactor.stop()
         pyglet.app.exit()
         
 if __name__ == "__main__":
