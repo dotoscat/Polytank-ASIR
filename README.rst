@@ -16,17 +16,17 @@ Los jugadores compiten entre sí manejando un tanque.
 Paquetes, módulos usados de Python
 ==================================
 
-- twisted, para conexión asíncrona.
+- twisted, para conexión de red asíncrona.
 - pyglet, para implementar aplicaciones multimedia.
 - toyblock, para el sistema de entidad-componentes.
 
 Entidades para el juego
 =======================
 
-Estos son los objetos que será usados en el juego. Para la base de datos
+Estos son los objetos que serán usados en el juego. Para la base de datos
 las entidades son distintas.
 
-El juego usará un sistemas de entidad-componentes. 
+El juego usará un sistema de entidad-componentes. 
 
 - Base_tanque
 - Canyon_tanque
