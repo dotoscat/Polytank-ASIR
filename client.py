@@ -46,8 +46,16 @@ class View(pyglet.window.Window):
 
     def on_key_press(self, symbol, modifiers):
         from pyglet.window import key
-        print(symbol, modifiers)
-
+        if symbol in (key.LEFT, key.A):
+            self.client.send(protocol.client.move_tank(1, 1.))
+        elif symbol in (key.RIGHT, key.D):
+            self.client.send(protocol.client.move_tank(1, -1.))
+    
+    def on_key_release(self, symbol, modifiers):
+        from pyglet.window import key
+        if symbol in (key.LEFT, key.A, key.RIGHT, key.D):
+            self.client.send(protocol.client.move_tank(1, 0.))
+    
 class Client(DatagramProtocol):
     """
     Esta clase se encarga de gestionar la red entre el servidor y el cliente.
@@ -72,7 +80,10 @@ class Client(DatagramProtocol):
     def connectionRefused(self):
         print("With hope some server will be listening")
         pyglet.app.exit()
-        
+    
+    def send(self, data):
+        self.transport.write(data)
+    
 if __name__ == "__main__":
     view = View(640, 480)
     pyglet.app.run()

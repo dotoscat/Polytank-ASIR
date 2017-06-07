@@ -37,8 +37,14 @@ class Server(DatagramProtocol):
         command = protocol.client.get_command(data)
         if command == protocol.client.CONNECT:
             create_tank = protocol.server.create_tank(1, 32.0, 32.0)
+            action = "CONNECT"
             self.transport.write(create_tank, addr)
-        action = "CONNECT" if command == protocol.client.CONNECT else "some action"
+        elif command == protocol.client.MOVE:
+            action = "MOVE"
+            command, id_, direction = protocol.client.get_move_tank(data)
+            print(command, id_, direction)
+        else:
+            action = "NOT DEFINED ACTION"
         print("{} from {}".format(action, addr))
 
 if __name__ == "__main__":

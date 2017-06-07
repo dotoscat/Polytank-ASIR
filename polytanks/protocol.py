@@ -28,9 +28,16 @@ class _Client(_Protocol):
         
     def __init__(self):
         super(_Client, self).__init__()
+        self._move_tank = struct.Struct("!iif")
         
     def connect(self):
         return self._command.pack(_Client.CONNECT)
+
+    def move_tank(self, id_, direction):
+        return self._move_tank.pack(_Client.MOVE, id_, direction)
+
+    def get_move_tank(self, data):
+        return self._move_tank.unpack(data)
 
 class _Server(_Protocol):
     CREATE_TANK = 0
