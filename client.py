@@ -21,6 +21,14 @@ import pyglet
 import protocol
 
 class View(pyglet.window.Window):
+    """
+    Esta clase sería la 'vista', de lo que pasa en el servidor.
+    Al contrario que el servidor aquí se le da control a pyglet para controlar
+    la ventana. La funcionalidad de twisted es llamada periódicamente desde
+    pyglet para atender las conexiones de red.
+    
+    Cada evento de la ventana es pasado al cliente.
+    """
     def __init__(self, *args, **kwargs):
         super(View, self).__init__(*args, **kwargs)
         client = Client()
@@ -41,7 +49,9 @@ class View(pyglet.window.Window):
         print(symbol, modifiers)
 
 class Client(DatagramProtocol):
-        
+    """
+    Esta clase se encarga de gestionar la red entre el servidor y el cliente.
+    """
     def startProtocol(self):
         host = "127.0.0.1"
         port = 7777
@@ -50,6 +60,10 @@ class Client(DatagramProtocol):
         self.transport.write(protocol.client.connect())
         
     def datagramReceived(self, data, addr):
+        """
+        Con la ayuda del módulo protocol el cliente puede saber qué
+        es lo que pasa en el servidor.
+        """
         server_command = protocol.server.get_command(data)
         if server_command == protocol.server.CREATE_TANK:
             command, id_, x, y = protocol.server.get_create_tank(data)
