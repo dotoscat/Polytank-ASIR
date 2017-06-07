@@ -18,21 +18,32 @@ import struct
 class _Protocol(object):
     def __init__(self):
         self._command = struct.Struct("!i")
+        
+    def get_command(self, data):
+        return self._command.unpack_from(data)[0]
 
-class Client(_Protocol):
+class _Client(_Protocol):
     CONNECT = 0
     MOVE = 1
         
     def __init__(self):
-        super(Client, self).__init__()
+        super(_Client, self).__init__()
         
     def connect(self):
-        return self._command.pack(Client.CONNECT)
+        return self._command.pack(_Client.CONNECT)
 
-    def get_command(self, data):
-        return self._command.unpack_from(data)[0]
-
-class Server:
+class _Server(_Protocol):
     CREATE_TANK = 0
+    
+    def __init__(self):
+        super(_Server, self).__init__()
+        self._create_tank = struct.Struct("!iiff")
+        
+    def create_tank(self, id_, x, y):
+        return self._create_tank.pack(_Server.CREATE_TANK, id_, x, y)
+    
+    def get_create_tank(self, data):
+        return self._create_tank.unpack(data)
 
-client = Client()
+client = _Client()
+server = _Server()

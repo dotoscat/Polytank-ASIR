@@ -35,10 +35,11 @@ class Server(DatagramProtocol):
         """
         import protocol
         command = protocol.client.get_command(data)
-        print(command)
+        if command == protocol.client.CONNECT:
+            create_tank = protocol.server.create_tank(1, 32.0, 32.0)
+            self.transport.write(create_tank, addr)
         action = "CONNECT" if command == protocol.client.CONNECT else "some action"
         print("{} from {}".format(action, addr))
-        self.transport.write(bytes("Server: Hello client {} :D".format(addr), "utf8"), addr)
 
 if __name__ == "__main__":
     reactor.listenUDP(7777, Server())

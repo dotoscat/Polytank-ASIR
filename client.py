@@ -50,7 +50,10 @@ class Client(DatagramProtocol):
         self.transport.write(protocol.client.connect())
         
     def datagramReceived(self, data, addr):
-        print(data)
+        server_command = protocol.server.get_command(data)
+        if server_command == protocol.server.CREATE_TANK:
+            command, id_, x, y = protocol.server.get_create_tank(data)
+            print("Create tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):
         print("With hope some server will be listening")
