@@ -18,7 +18,7 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 import pyglet
-import protocol
+import polytanks.protocol as protocol
 
 class View(pyglet.window.Window):
     """

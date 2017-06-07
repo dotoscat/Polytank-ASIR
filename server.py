@@ -17,7 +17,7 @@
 
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
-from engine import Engine
+from polytanks.engine import Engine
 
 class Server(DatagramProtocol):
     """
@@ -33,7 +33,7 @@ class Server(DatagramProtocol):
         """Aquí el servidor recibe datos de los clientes y debe transformarlos
         para que lo pueda manejar el motor.
         """
-        import protocol
+        import polytanks.protocol as protocol
         command = protocol.client.get_command(data)
         if command == protocol.client.CONNECT:
             create_tank = protocol.server.create_tank(1, 32.0, 32.0)
