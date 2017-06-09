@@ -27,7 +27,7 @@ class Server(DatagramProtocol):
     """
     def __init__(self):
         super(Server, self).__init__()
-        self.engine = Engine()
+        self._engine = Engine()
     
     def datagramReceived(self, data, addr):
         """Aquí el servidor recibe datos de los clientes y debe transformarlos
@@ -35,13 +35,13 @@ class Server(DatagramProtocol):
         """
         import polytanks.protocol as protocol
         command = protocol.client.get_command(data)
-        if command == protocol.client.CONNECT:
-            create_tank = protocol.server.create_tank(1, 32.0, 32.0)
+        if command == protocol.CONNECT:
+            create_tank = protocol.create_tank(1, 32.0, 32.0)
             action = "CONNECT"
             self.transport.write(create_tank, addr)
-        elif command == protocol.client.MOVE:
+        elif command == protocol.MOVE:
             action = "MOVE"
-            command, id_, direction = protocol.client.get_move_tank(data)
+            command, id_, direction = protocol.get_move_tank(data)
             print(command, id_, direction)
         else:
             action = "NOT DEFINED ACTION"

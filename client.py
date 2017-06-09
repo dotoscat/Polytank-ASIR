@@ -47,14 +47,14 @@ class View(pyglet.window.Window):
     def on_key_press(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A):
-            self.client.send(protocol.client.move_tank(1, 1.))
+            self.client.send(protocol.move_tank(1, 1.))
         elif symbol in (key.RIGHT, key.D):
-            self.client.send(protocol.client.move_tank(1, -1.))
+            self.client.send(protocol.move_tank(1, -1.))
     
     def on_key_release(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A, key.RIGHT, key.D):
-            self.client.send(protocol.client.move_tank(1, 0.))
+            self.client.send(protocol.move_tank(1, 0.))
     
 class Client(DatagramProtocol):
     """
@@ -73,8 +73,8 @@ class Client(DatagramProtocol):
         es lo que pasa en el servidor.
         """
         server_command = protocol.server.get_command(data)
-        if server_command == protocol.server.CREATE_TANK:
-            command, id_, x, y = protocol.server.get_create_tank(data)
+        if server_command == protocol.CREATE_TANK:
+            command, id_, x, y = protocol.get_create_tank(data)
             print("Create tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):
