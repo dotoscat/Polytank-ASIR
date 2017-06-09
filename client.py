@@ -85,6 +85,8 @@ class Client(DatagramProtocol):
         self.transport.write(data)
     
 if __name__ == "__main__":
+    pyglet.resource.path = ["graphics"]
+    pyglet.resource.reindex()
     view = View(640, 480)
     pyglet.app.run()
         
