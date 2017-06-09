@@ -15,42 +15,28 @@
 
 import struct
 
-class _Protocol(object):
-    def __init__(self):
-        self._command = struct.Struct("!i")
-        
-    def get_command(self, data):
-        return self._command.unpack_from(data)[0]
+CONNECT = 0
+CREATE_TANK = 1
+MOVE = 2
 
-class _Client(_Protocol):
-    CONNECT = 0
-    MOVE = 1
-        
-    def __init__(self):
-        super(_Client, self).__init__()
-        self._move_tank = struct.Struct("!iif")
-        
-    def connect(self):
-        return self._command.pack(_Client.CONNECT)
+_command = struct.Struct("!i")
+_create_tank = struct.Struct("!iiff")
+_move_tank = struct.Struct("!iif")
 
-    def move_tank(self, id_, direction):
-        return self._move_tank.pack(_Client.MOVE, id_, direction)
+def get_command(data):
+    return _command.unpack_from(data)[0]
 
-    def get_move_tank(self, data):
-        return self._move_tank.unpack(data)
+def connect():
+    return self._command.pack(CONNECT)
 
-class _Server(_Protocol):
-    CREATE_TANK = 0
-    
-    def __init__(self):
-        super(_Server, self).__init__()
-        self._create_tank = struct.Struct("!iiff")
-        
-    def create_tank(self, id_, x, y):
-        return self._create_tank.pack(_Server.CREATE_TANK, id_, x, y)
-    
-    def get_create_tank(self, data):
-        return self._create_tank.unpack(data)
+def move_tank(id_, direction):
+    return _move_tank.pack(_Client.MOVE, id_, direction)
 
-client = _Client()
-server = _Server()
+def get_move_tank(id_, direction):
+    return _move_tank.unpack(data)
+
+def create_tank(id_, x, y):
+    return _create_tank.pack(CREATE_TANK, id_, x, y)
+
+def get_create_tank(data):
+    return create_tank.unpack(data)
