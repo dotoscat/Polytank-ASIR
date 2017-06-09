@@ -27,7 +27,7 @@ def get_command(data):
     return _command.unpack_from(data)[0]
 
 def connect():
-    return self._command.pack(CONNECT)
+    return _command.pack(CONNECT)
 
 def move_tank(id_, direction):
     return _move_tank.pack(_Client.MOVE, id_, direction)
@@ -39,4 +39,4 @@ def create_tank(id_, x, y):
     return _create_tank.pack(CREATE_TANK, id_, x, y)
 
 def get_create_tank(data):
-    return create_tank.unpack(data)
+    return _create_tank.unpack(data)
