@@ -13,6 +13,22 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import pyglet
+import toyblock
+
+class Body:
+    ID = 1
+    __slots__ = ("x", "y", "id")
+    
+    def __init__(self):
+        self.x = 0.0
+        self.y = 0.0
+        self.id = Body.ID
+        Body.ID += 1
+
+_tank_def = (Body, pyglet.sprite.Sprite)
+_tanks = toyblock.Pool(4, _tank_def)
+
 class Engine(object):
     def __init__(self):
         self.entities = []
