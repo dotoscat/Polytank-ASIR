@@ -42,15 +42,15 @@ class Engine(object):
         body = entity.get_component(Body)
         if id_ == 0:
             id_ = self._give_id()
+        body.id = id_
         self._entities[id_] = entity
         return entity, body
     
     def create_tank(self, x=0.0, y=0.0):
         entity, body = self._get_object_from_pool(self._tanks_pool)
-        id_ = body.id
         body.x = x
         body.y = y
-        return id_, x, y
+        return body.id, x, y
     
     def recreate_tank(self, id_, x, y):
         entity, body = self._get_object_from_pool(self._tanks_pool, id_)

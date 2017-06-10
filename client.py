@@ -47,14 +47,14 @@ class View(pyglet.window.Window):
     def on_key_press(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A):
-            self.client.send(protocol.move_tank(1, 1.))
+            self.client.send(protocol.move(1, 1.))
         elif symbol in (key.RIGHT, key.D):
-            self.client.send(protocol.move_tank(1, -1.))
+            self.client.send(protocol.move(1, -1.))
     
     def on_key_release(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A, key.RIGHT, key.D):
-            self.client.send(protocol.move_tank(1, 0.))
+            self.client.send(protocol.move(1, 0.))
     
 class Client(DatagramProtocol):
     """

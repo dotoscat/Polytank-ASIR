@@ -42,7 +42,7 @@ class Server(DatagramProtocol):
             self.transport.write(recreate_tank, addr)
         elif command == protocol.MOVE:
             action = "MOVE"
-            command, id_, direction = protocol.get_move_tank(data)
+            command, id_, direction = protocol.get_move(data)
             print(command, id_, direction)
         else:
             action = "NOT DEFINED ACTION"

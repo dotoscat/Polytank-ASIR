@@ -32,7 +32,7 @@ def connect():
 def move(id_, direction):
     return _move.pack(MOVE, id_, direction)
 
-def get_move(id_, direction):
+def get_move(data):
     return _move.unpack(data)
 
 def recreate_tank(id_, x, y):
