@@ -17,7 +17,7 @@
 
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
-from polytanks.engine import Engine
+from polytanks.engine import Engine, Body
 
 class Server(DatagramProtocol):
     """
@@ -34,11 +34,12 @@ class Server(DatagramProtocol):
         para que lo pueda manejar el motor.
         """
         import polytanks.protocol as protocol
-        command = protocol.client.get_command(data)
+        command = protocol.get_command(data)
         if command == protocol.CONNECT:
-            create_tank = protocol.create_tank(1, 32.0, 32.0)
+            id_, x, y = self._engine.create_tank()
+            recreate_tank = protocol.recreate_tank(id_, x, y)
             action = "CONNECT"
-            self.transport.write(create_tank, addr)
+            self.transport.write(recreate_tank, addr)
         elif command == protocol.MOVE:
             action = "MOVE"
             command, id_, direction = protocol.get_move_tank(data)

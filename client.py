@@ -65,17 +65,17 @@ class Client(DatagramProtocol):
         port = 7777
         
         self.transport.connect(host, port)
-        self.transport.write(protocol.client.connect())
+        self.transport.write(protocol.connect())
         
     def datagramReceived(self, data, addr):
         """
         Con la ayuda del módulo protocol el cliente puede saber qué
         es lo que pasa en el servidor.
         """
-        server_command = protocol.server.get_command(data)
-        if server_command == protocol.CREATE_TANK:
-            command, id_, x, y = protocol.get_create_tank(data)
-            print("Create tank with id {} at {}, {}".format(id_, x, y))
+        server_command = protocol.get_command(data)
+        if server_command == protocol.RECREATE_TANK:
+            command, id_, x, y = protocol.get_recreate_tank(data)
+            print("(Re)created tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):
         print("With hope some server will be listening")

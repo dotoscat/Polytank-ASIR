@@ -16,12 +16,12 @@
 import struct
 
 CONNECT = 0
-CREATE_TANK = 1
+RECREATE_TANK = 1
 MOVE = 2
 
 _command = struct.Struct("!i")
-_create_tank = struct.Struct("!iiff")
-_move_tank = struct.Struct("!iif")
+_recreate_tank = struct.Struct("!iiff")
+_move = struct.Struct("!iif")
 
 def get_command(data):
     return _command.unpack_from(data)[0]
@@ -29,14 +29,14 @@ def get_command(data):
 def connect():
     return _command.pack(CONNECT)
 
-def move_tank(id_, direction):
-    return _move_tank.pack(_Client.MOVE, id_, direction)
+def move(id_, direction):
+    return _move.pack(MOVE, id_, direction)
 
-def get_move_tank(id_, direction):
-    return _move_tank.unpack(data)
+def get_move(id_, direction):
+    return _move.unpack(data)
 
-def create_tank(id_, x, y):
-    return _create_tank.pack(CREATE_TANK, id_, x, y)
+def recreate_tank(id_, x, y):
+    return _recreate_tank.pack(RECREATE_TANK, id_, x, y)
 
-def get_create_tank(data):
-    return _create_tank.unpack(data)
+def get_recreate_tank(data):
+    return _recreate_tank.unpack(data)
