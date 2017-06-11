@@ -19,7 +19,7 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 import pyglet
 import polytanks.protocol as protocol
-from polytanks.engine import Engine
+from polytanks.engine import Engine, Body
 import toyblock
 
 class View(pyglet.window.Window):
@@ -34,17 +34,31 @@ class View(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super(View, self).__init__(*args, **kwargs)
         self._engine = Engine()
-        self._client = Client(self._engine)
+        self._client = Client(self._engine, self)
+        self._images = {}
+        self._sprites = {}
+        self._draw_sprites = []
+        self._graphics_system = toyblock.System(self._update_entities)
         
         def iterate_reactor(dt):
             reactor.runUntilCurrent()
             reactor.doSelect(0)
         
-        pyglet.clock.schedule(iterate_reactor)
-        reactor.listenUDP(0, self._client)
+        def iterate_graphics_system(dt):
+            self._graphics_system.run()
         
+        pyglet.clock.schedule(iterate_reactor)
+        pyglet.clock.schedule(iterate_graphics_system)
+        reactor.listenUDP(0, self._client)
+        self._load_images()
+    
+    def _load_images(self):
+        self._images["tank"] = pyglet.resource.image("tank.png")
+    
     def on_draw(self):
         self.clear()
+        for sprite in self._draw_sprites:
+            sprite.draw()
 
     def on_key_press(self, symbol, modifiers):
         from pyglet.window import key
@@ -58,13 +72,26 @@ class View(pyglet.window.Window):
         if symbol in (key.LEFT, key.A, key.RIGHT, key.D):
             self._client.send(protocol.move(1, 0.))
     
+    def add_to_draw(self, entity, id_, image_name):
+        image = self._images[image_name]
+        self._sprites[id_] = pyglet.sprite.Sprite(image)
+        self._graphics_system.add_entity(entity)
+
+    def _update_entities(self, system, entity):
+        body = entity.get_component(Body)
+        sprite = self._sprites[body.id]
+        sprite.x = body.x
+        sprite.y = body.y
+        self._draw_sprites.append(sprite)
+
 class Client(DatagramProtocol):
     """
     Esta clase se encarga de gestionar la red entre el servidor y el cliente.
     """
-    def __init__(self, engine):
+    def __init__(self, engine, view):
         super(Client, self).__init__()
         self._engine = engine
+        self._view = view
     
     def startProtocol(self):
         host = "127.0.0.1"
@@ -81,6 +108,8 @@ class Client(DatagramProtocol):
         server_command = protocol.get_command(data)
         if server_command == protocol.RECREATE_TANK:
             command, id_, x, y = protocol.get_recreate_tank(data)
+            entity, body = self._engine.recreate_tank(id_, x, y)
+            self._view.add_to_draw(entity, id_, "tank")
             print("(Re)created tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):

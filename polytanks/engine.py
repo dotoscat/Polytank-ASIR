@@ -52,7 +52,9 @@ class Engine(object):
         return body.id, x, y
     
     def recreate_tank(self, id_, x, y):
-        entity, body = self._get_object_from_pool(self._tanks_pool, id_)
+        pair = self._get_object_from_pool(self._tanks_pool, id_)
+        entity, body = pair
         body.x = x
         body.y = y
+        return pair
         
