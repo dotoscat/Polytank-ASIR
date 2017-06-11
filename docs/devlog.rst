@@ -2,6 +2,16 @@
 devlog de **juego multijugador en línea de tanques: Polytanks**
 ===============================================================
 
+2017-06-11
+==========
+
+¡Por fin me dibuja algo el cliente por la pantalla! El servidor da la orden
+a quien se conectó y ahí está. Al final el servidor se encarga nada más
+que de los datos como las físicas o la posición, mientras que el cliente
+se encarga pues de dibujarlo por pantalla. Estoy siguiendo el modelo-vista-
+controlador, solamente que este modelo está implementado en el servidor
+y el cliente.
+
 2017-06-08
 ==========
 
