@@ -19,6 +19,8 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 import pyglet
 import polytanks.protocol as protocol
+from polytanks.engine import Engine
+import toyblock
 
 class View(pyglet.window.Window):
     """
@@ -31,15 +33,15 @@ class View(pyglet.window.Window):
     """
     def __init__(self, *args, **kwargs):
         super(View, self).__init__(*args, **kwargs)
-        client = Client()
-        self.client = client
+        self._engine = Engine()
+        self._client = Client(self._engine)
         
         def iterate_reactor(dt):
             reactor.runUntilCurrent()
             reactor.doSelect(0)
         
         pyglet.clock.schedule(iterate_reactor)
-        reactor.listenUDP(0, client)
+        reactor.listenUDP(0, self._client)
         
     def on_draw(self):
         self.clear()
@@ -47,19 +49,23 @@ class View(pyglet.window.Window):
     def on_key_press(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A):
-            self.client.send(protocol.move(1, 1.))
+            self._client.send(protocol.move(1, 1.))
         elif symbol in (key.RIGHT, key.D):
-            self.client.send(protocol.move(1, -1.))
+            self._client.send(protocol.move(1, -1.))
     
     def on_key_release(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A, key.RIGHT, key.D):
-            self.client.send(protocol.move(1, 0.))
+            self._client.send(protocol.move(1, 0.))
     
 class Client(DatagramProtocol):
     """
     Esta clase se encarga de gestionar la red entre el servidor y el cliente.
     """
+    def __init__(self, engine):
+        super(Client, self).__init__()
+        self._engine = engine
+    
     def startProtocol(self):
         host = "127.0.0.1"
         port = 7777
