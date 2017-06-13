@@ -23,13 +23,30 @@ class Body:
         self.y = 0.0
         self.id = 0
 
-_tank_def = (Body,)
+class Physics:
+    __slots__ = ("vel_x", "vel_y")
+    
+    def __init__(self):
+        self.vel_x = 0.0
+        self.vel_y = 0.0
+
+class Cannon:
+    __slots__ = ("aim", "canon_x", "canon_y")
+    
+    def __init__(self):
+        self.aim = 0.0
+        self.canon_x = 0.0
+        self.canon_y = 0.0
+
+_tank_def = (Body, Physics)
 
 class Engine(object):
     def __init__(self):
         self._id = 1
         self._tanks_pool = toyblock.Pool(4, _tank_def)
         self._entities = {}
+        self._systems = {}
+        #self._systems["physics"] = toyblock.System()#Add some callable for the system
     
     def _give_id(self):
         id_ = self._id
@@ -45,6 +62,11 @@ class Engine(object):
         self._entities[id_] = entity
         return entity, body
     
+    def move(self, id_, direction):
+        entity = self._entities[id_]
+        physics = entity.get_component(Physics)
+        physics.vel_x = 32.0*direction
+    
     def create_tank(self, x=0.0, y=0.0):
         entity, body = self._get_object_from_pool(self._tanks_pool)
         body.x = x
@@ -57,4 +79,9 @@ class Engine(object):
         body.x = x
         body.y = y
         return pair
-        
+    
+    def _physics_system(self, system, entity, dt):
+        body = entity.get_component(Body)
+        physics = entity.get_component(Physics)
+        body.x = physics.vel_x*dt
+        body.y = physics.vel_y*dt
