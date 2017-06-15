@@ -66,6 +66,12 @@ class View(pyglet.window.Window):
             self._client.send(protocol.move(1, -1.))
         elif symbol in (key.RIGHT, key.D):
             self._client.send(protocol.move(1, 1.))
+        elif symbol == key.C:
+            print("C")
+            if self._client.is_connected():
+                self._client.disconnect()
+            else:
+                self._client.connect()
     
     def on_key_release(self, symbol, modifiers):
         from pyglet.window import key
@@ -92,14 +98,8 @@ class Client(DatagramProtocol):
         super(Client, self).__init__()
         self._engine = engine
         self._view = view
-    
-    def startProtocol(self):
-        host = "127.0.0.1"
-        port = 7777
-        
-        self.transport.connect(host, port)
-        self.transport.write(protocol.connect())
-        
+        self._connected = False
+            
     def datagramReceived(self, data, addr):
         """
         Con la ayuda del módulo protocol el cliente puede saber qué
@@ -114,10 +114,31 @@ class Client(DatagramProtocol):
         
     def connectionRefused(self):
         print("With hope some server will be listening")
-        pyglet.app.exit()
     
     def send(self, data):
         self.transport.write(data)
+    
+    def is_connected(self):
+        return self._connected
+    
+    def connect(self, host="127.0.0.1", port=7777):
+        if self._connected: return False
+        self.transport.connect(host, port)
+        self.transport.write(protocol.connect())
+        self._connected = True
+        return True
+    
+    def disconnect(self):
+        if not self._connected: return False
+        deferred = self.transport.stopListening()
+        
+        def _set_disconnected():
+            print("Disconnected")
+            self._connected = False
+        
+        deferred.addCallback(_set_disconnected)
+        
+        return True
     
 if __name__ == "__main__":
     pyglet.resource.path = ["graphics"]

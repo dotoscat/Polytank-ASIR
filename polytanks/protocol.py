@@ -16,8 +16,9 @@
 import struct
 
 CONNECT = 0
-RECREATE_TANK = 1
-MOVE = 2
+DISCONNECT = 1
+RECREATE_TANK = 2
+MOVE = 3
 
 _command = struct.Struct("!i")
 _recreate_tank = struct.Struct("!iiff")
