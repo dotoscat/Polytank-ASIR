@@ -33,10 +33,15 @@ AIM = 0x0100 << 6
 TANK = 0x0100
 
 _buffer = bytearray(64)
+_buffer_iterator = range(len(_buffer))
 
 _command = struct.Struct("!xi")
 _recreate_tank = struct.Struct("!iiff")
 _move = struct.Struct("!iif")
+
+def reset_buffer():
+    for i in _buffer_iterator:
+        _buffer[i] = 0
 
 def command_is(command, data):
     return _command.unpack_from(data)[0] & command == command
@@ -45,7 +50,8 @@ def get_command(data):
     return _command.unpack_from(data)[0]
 
 def connect():
-    return _command.pack_into(_buffer, 0, CONNECT)
+    _command.pack_into(_buffer, 0, CONNECT)
+    return _buffer
 
 def move(id_, direction):
     return _move.pack(MOVE, id_, direction)
