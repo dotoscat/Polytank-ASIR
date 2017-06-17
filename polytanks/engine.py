@@ -19,12 +19,14 @@ class Body:
     __slots__ = ("x", "y", "id", "type")
     
     TANK = 1
+    ID = 0
     
-    def __init__(self):
+    def __init__(self, type_=None):
         self.x = 0.0
         self.y = 0.0
-        self.id = 0
-        self.type = None
+        self.id = Body.ID
+        Body.ID += 1
+        self.type = type_
 
 class Physics:
     __slots__ = ("vel_x", "vel_y")
@@ -46,23 +48,17 @@ _tank_def = (Body, Physics)
 class Engine(object):
     MAX_ENTITIES = 32
     def __init__(self):
-        self._id = 1
-        self._tanks_pool = toyblock.Pool(4, _tank_def)
+        args = (
+            ((Body.TANK,), None),
+            None
+        )
+        self._tanks_pool = toyblock.Pool(4, _tank_def, args)
         self._entities = [None for i in range(Engine.MAX_ENTITIES)]
         self._systems = {}
         #self._systems["physics"] = toyblock.System()#Add some callable for the system
-    
-    def _give_id(self):
-        id_ = self._id
-        self._id += 1
-        return id_
-    
+        
     def _get_object_from_pool(self, pool, id_=0):
         entity = pool.get()
-        body = entity.get_component(Body)
-        if id_ == 0:
-            id_ = self._give_id()
-        body.id = id_
         self._entities[id_] = entity
         return entity, body
     
@@ -72,18 +68,12 @@ class Engine(object):
         physics.vel_x = 32.0*direction
     
     def create_tank(self, x=0.0, y=0.0):
-        entity, body = self._get_object_from_pool(self._tanks_pool)
+        entity = self._get_object_from_pool(self._tanks_pool)
+        body = entity.get_component(Body)
         body.x = x
         body.y = y
         return body.id, x, y
-    
-    def recreate_tank(self, id_, x, y):
-        pair = self._get_object_from_pool(self._tanks_pool, id_)
-        entity, body = pair
-        body.x = x
-        body.y = y
-        return pair
-    
+        
     def _physics_system(self, system, entity, dt):
         body = entity.get_component(Body)
         physics = entity.get_component(Physics)
