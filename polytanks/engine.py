@@ -57,7 +57,7 @@ class Engine(object):
         self._systems = {}
         #self._systems["physics"] = toyblock.System()#Add some callable for the system
         
-    def _get_object_from_pool(self, pool, id_=0):
+    def _get_object_from_pool(self, pool):
         entity = pool.get()
         self._entities[id_] = entity
         return entity
