@@ -16,12 +16,15 @@
 import toyblock
 
 class Body:
-    __slots__ = ("x", "y", "id")
+    __slots__ = ("x", "y", "id", "type")
+    
+    TANK = 1
     
     def __init__(self):
         self.x = 0.0
         self.y = 0.0
         self.id = 0
+        self.type = None
 
 class Physics:
     __slots__ = ("vel_x", "vel_y")
@@ -41,10 +44,11 @@ class Cannon:
 _tank_def = (Body, Physics)
 
 class Engine(object):
+    MAX_ENTITIES = 32
     def __init__(self):
         self._id = 1
         self._tanks_pool = toyblock.Pool(4, _tank_def)
-        self._entities = {}
+        self._entities = [None for i in range(Engine.MAX_ENTITIES)]
         self._systems = {}
         #self._systems["physics"] = toyblock.System()#Add some callable for the system
     
@@ -85,3 +89,6 @@ class Engine(object):
         physics = entity.get_component(Physics)
         body.x = physics.vel_x*dt
         body.y = physics.vel_y*dt
+
+    def fill_buffer(self):
+        pass
