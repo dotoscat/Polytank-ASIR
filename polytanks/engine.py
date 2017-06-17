@@ -60,7 +60,7 @@ class Engine(object):
     def _get_object_from_pool(self, pool, id_=0):
         entity = pool.get()
         self._entities[id_] = entity
-        return entity, body
+        return entity
     
     def move(self, id_, direction):
         entity = self._entities[id_]

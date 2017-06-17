@@ -107,9 +107,9 @@ class Client(DatagramProtocol):
         """
         server_command = protocol.get_command(data)
         if server_command == protocol.RECREATE_TANK:
-            command, id_, x, y = protocol.get_recreate_tank(data)
-            entity, body = self._engine.create_tank(id_, x, y)
-            self._view.add_to_draw(entity, id_, "tank")
+            #command, id_, x, y = protocol.get_recreate_tank(data)
+            #entity, body = self._engine.create_tank(id_, x, y)
+            #self._view.add_to_draw(entity, id_, "tank")
             print("(Re)created tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):

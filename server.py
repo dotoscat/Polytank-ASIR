@@ -26,8 +26,12 @@ class Server(DatagramProtocol):
     a partir de la interfaz de Engine.
     """
     def __init__(self):
+        import polytanks.protocol as protocol
         super(Server, self).__init__()
         self._engine = Engine()
+        self._action = {
+            protocol.CONNECT: self._connect
+        }
     
     def datagramReceived(self, data, addr):
         """Aquí el servidor recibe datos de los clientes y debe transformarlos
@@ -35,18 +39,18 @@ class Server(DatagramProtocol):
         """
         import polytanks.protocol as protocol
         command = protocol.get_command(data)
-        if command == protocol.CONNECT:
-            id_, x, y = self._engine.create_tank()
-            recreate_tank = protocol.recreate_tank(id_, x, y)
-            action = "CONNECT"
-            self.transport.write(recreate_tank, addr)
-        elif command == protocol.MOVE:
-            action = "MOVE"
-            command, id_, direction = protocol.get_move(data)
-            print(command, id_, direction)
+        action = self._action.get(command)
+        if action is not None:
+            action(data, addr)
         else:
-            action = "NOT DEFINED ACTION"
-        print("{} from {}".format(action, addr))
+            print("paquete inválido".format(action, addr))
+
+    def _connect(self, data, addr):
+        """Qué hacer si alguien se conecta.
+        Enviar copia completa del motor.
+        """
+        print("Conectado!")
+        
 
 if __name__ == "__main__":
     reactor.listenUDP(7777, Server())
