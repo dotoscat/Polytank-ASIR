@@ -18,6 +18,7 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from polytanks.engine import Engine, Body
+import polytanks.protocol as protocol
 
 class Server(DatagramProtocol):
     """
@@ -37,7 +38,6 @@ class Server(DatagramProtocol):
         """Aquí el servidor recibe datos de los clientes y debe transformarlos
         para que lo pueda manejar el motor.
         """
-        import polytanks.protocol as protocol
         command = protocol.get_command(data)
         action = self._action.get(command)
         if action is not None:
@@ -47,8 +47,11 @@ class Server(DatagramProtocol):
 
     def _connect(self, data, addr):
         """Qué hacer si alguien se conecta.
-        Enviar copia completa del motor.
+        Enviar copia completa (snapshot) del motor.
         """
+        self._engine.create_tank(32, 32)
+        print(protocol.get_snapshot_buffer(self._engine))
+        #self.transport.write()
         print("Conectado!")
         
 

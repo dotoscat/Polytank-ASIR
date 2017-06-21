@@ -14,6 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import struct
+from . import engine
 
 #COMMANDS
 CONNECT = 0x0001
@@ -35,8 +36,13 @@ TANK = 0x0100
 _buffer = bytearray(64)
 _buffer_iterator = range(len(_buffer))
 
-_command = struct.Struct("!xi")
-_recreate_tank = struct.Struct("!iiff")
+_structs = {
+    engine.Body: struct.Struct("!ffii"),
+    engine.Physics: struct.Struct("!ff")
+}
+
+_command = struct.Struct("!i")
+_object_type = _command
 _move = struct.Struct("!iif")
 
 def reset_buffer():
@@ -47,11 +53,24 @@ def command_is(command, data):
     return _command.unpack_from(data)[0] & command == command
 
 def get_command(data):
-    return _command.unpack_from(data)[0]
+    return _command.unpack_from(data)[0] & 0x00FF
 
 def connect():
     _command.pack_into(_buffer, 0, CONNECT)
     return _buffer
+
+def get_snapshot_buffer(the_engine):
+    snapshot_buffer = bytearray()
+    snapshot_buffer += _command.pack(SNAPSHOT)
+    for entity in the_engine.entities():
+        body = entity.get_component(engine.Body)
+        object_def = engine.object_def[body.type]
+        snapshot_buffer += _object_type.pack(body.type)
+        for type_ in object_def:
+            component = entity.get_component(type_)
+            component_values = [getattr(component, attr) for attr in component.__slots__]
+            snapshot_buffer += _structs[type_].pack(*component_values)
+    return snapshot_buffer
 
 def move(id_, direction):
     return _move.pack(MOVE, id_, direction)

@@ -43,23 +43,30 @@ class Cannon:
         self.canon_x = 0.0
         self.canon_y = 0.0
 
-_tank_def = (Body, Physics)
+object_def = {
+    Body.TANK: (Body, Physics)
+}
 
 class Engine(object):
+
     MAX_ENTITIES = 32
+        
     def __init__(self):
         args = (
             ((Body.TANK,), None),
             None
         )
-        self._tanks_pool = toyblock.Pool(4, _tank_def, args)
+        self._tanks_pool = toyblock.Pool(4, object_def[Body.TANK], args)
         self._entities = [None for i in range(Engine.MAX_ENTITIES)]
+        self._n_entities = 0
         self._systems = {}
         #self._systems["physics"] = toyblock.System()#Add some callable for the system
         
     def _get_object_from_pool(self, pool):
         entity = pool.get()
+        id_ = entity.get_component(Body).id
         self._entities[id_] = entity
+        self._n_entities += 1
         return entity
     
     def move(self, id_, direction):
@@ -80,5 +87,7 @@ class Engine(object):
         body.x = physics.vel_x*dt
         body.y = physics.vel_y*dt
 
-    def fill_buffer(self):
-        pass
+    def entities(self):
+        for ent in self._entities:
+            if ent is None: continue
+            yield ent

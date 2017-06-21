@@ -106,11 +106,12 @@ class Client(DatagramProtocol):
         es lo que pasa en el servidor.
         """
         server_command = protocol.get_command(data)
-        if server_command == protocol.RECREATE_TANK:
+        if server_command == protocol.SNAPSHOT:
+            print("Snapshot from server!", data)
             #command, id_, x, y = protocol.get_recreate_tank(data)
             #entity, body = self._engine.create_tank(id_, x, y)
             #self._view.add_to_draw(entity, id_, "tank")
-            print("(Re)created tank with id {} at {}, {}".format(id_, x, y))
+            #print("(Re)created tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):
         print("With hope some server will be listening")
