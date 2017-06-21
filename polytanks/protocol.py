@@ -38,6 +38,10 @@ _structs = {
     engine.Physics: struct.Struct("!ff")
 }
 
+_actions = {
+    engine.Body.TANK: "create_tank"
+}
+
 _command = struct.Struct("!i")
 _object_type = _command
 _move = struct.Struct("!iif")
@@ -63,6 +67,23 @@ def get_snapshot_buffer(the_engine):
             component_values = [getattr(component, attr) for attr in component.__slots__]
             snapshot_buffer += _structs[type_].pack(*component_values)
     return snapshot_buffer
+
+def set_engine_from_snapshot(the_engine, buffer_):
+    position = _command.size
+    buffer_len = len(buffer_)
+    while position < buffer_len:
+        object_type = _object_type.unpack_from(buffer_, position)[0]
+        position += _object_type.size
+        print('object_type', object_type)
+        object_def = engine.object_def[object_type]
+        values = []
+        for type_ in object_def:
+            type_struct = _structs[type_]
+            values.extend(type_struct.unpack_from(buffer_, position))
+            position += type_struct.size
+        action = _actions[object_type]
+        print(action)
+        # Continue
 
 def move(id_, direction):
     return _move.pack(MOVE, id_, direction)
