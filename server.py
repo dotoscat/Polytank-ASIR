@@ -31,7 +31,7 @@ class Server(DatagramProtocol):
         super(Server, self).__init__()
         self._engine = Engine()
         self._action = {
-            protocol.CONNECT: self._connect
+            protocol.CONNECT: self.__connect
         }
     
     def datagramReceived(self, data, addr):
@@ -45,13 +45,13 @@ class Server(DatagramProtocol):
         else:
             print("paquete inválido".format(action, addr))
 
-    def _connect(self, data, addr):
+    def __connect(self, data, addr):
         """Qué hacer si alguien se conecta.
         Enviar copia completa (snapshot) del motor.
         """
         self._engine.create_tank(32, 32)
-        print(protocol.get_snapshot_buffer(self._engine))
-        #self.transport.write()
+        snapshot_buffer = protocol.get_snapshot_buffer(self._engine)
+        self.transport.write(snapshot_buffer, addr)
         print("Conectado!")
         
 
