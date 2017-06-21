@@ -33,9 +33,6 @@ AIM = 0x0100 << 6
 #OBJECT TYPE
 TANK = 0x0100
 
-_buffer = bytearray(64)
-_buffer_iterator = range(len(_buffer))
-
 _structs = {
     engine.Body: struct.Struct("!ffii"),
     engine.Physics: struct.Struct("!ff")
@@ -45,10 +42,6 @@ _command = struct.Struct("!i")
 _object_type = _command
 _move = struct.Struct("!iif")
 
-def reset_buffer():
-    for i in _buffer_iterator:
-        _buffer[i] = 0
-
 def command_is(command, data):
     return _command.unpack_from(data)[0] & command == command
 
@@ -56,8 +49,7 @@ def get_command(data):
     return _command.unpack_from(data)[0] & 0x00FF
 
 def connect():
-    _command.pack_into(_buffer, 0, CONNECT)
-    return _buffer
+    return _command.pack(CONNECT)
 
 def get_snapshot_buffer(the_engine):
     snapshot_buffer = bytearray()
