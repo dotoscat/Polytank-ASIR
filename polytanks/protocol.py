@@ -34,7 +34,7 @@ AIM = 0x0100 << 6
 TANK = 0x0100
 
 _structs = {
-    engine.Body: struct.Struct("!ffii"),
+    engine.Body: struct.Struct("!iiff"),
     engine.Physics: struct.Struct("!ff")
 }
 
@@ -61,7 +61,6 @@ def get_snapshot_buffer(the_engine):
     for entity in the_engine.entities():
         body = entity.get_component(engine.Body)
         object_def = engine.object_def[body.type]
-        snapshot_buffer += _object_type.pack(body.type)
         for type_ in object_def:
             component = entity.get_component(type_)
             component_values = [getattr(component, attr) for attr in component.__slots__]
@@ -73,8 +72,8 @@ def set_engine_from_snapshot(the_engine, buffer_):
     buffer_len = len(buffer_)
     while position < buffer_len:
         object_type = _object_type.unpack_from(buffer_, position)[0]
-        position += _object_type.size
         print('object_type', object_type)
+        #You don't increase position because object_Type is part of Body
         object_def = engine.object_def[object_type]
         values = []
         for type_ in object_def:
@@ -83,7 +82,6 @@ def set_engine_from_snapshot(the_engine, buffer_):
             position += type_struct.size
         action = _actions[object_type]
         print(action)
-        # Continue
 
 def move(id_, direction):
     return _move.pack(MOVE, id_, direction)

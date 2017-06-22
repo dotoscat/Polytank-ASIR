@@ -16,17 +16,18 @@
 import toyblock
 
 class Body:
-    __slots__ = ("x", "y", "id", "type")
+    __slots__ = ("type", "id", "x", "y")
     
     TANK = 1
     ID = 0
     
     def __init__(self, type_=None):
-        self.x = 0.0
-        self.y = 0.0
+        self.type = type_
         self.id = Body.ID
         Body.ID += 1
-        self.type = type_
+        self.x = 0.0
+        self.y = 0.0
+
 
 class Physics:
     __slots__ = ("vel_x", "vel_y")
