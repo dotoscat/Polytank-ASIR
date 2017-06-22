@@ -80,7 +80,7 @@ class Engine(object):
         body = entity.get_component(Body)
         body.x = x
         body.y = y
-        return body.id, x, y
+        return entity, body.id
         
     def _physics_system(self, system, entity, dt):
         body = entity.get_component(Body)

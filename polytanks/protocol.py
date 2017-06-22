@@ -82,11 +82,12 @@ def set_engine_from_snapshot(the_engine, buffer_):
             type_struct = _structs[type_]
             values.extend(type_struct.unpack_from(buffer_, position))
             position += type_struct.size
+        print('from snapshot', values)
         action = _actions[object_type]
         engine_method = getattr(the_engine, action)
         method_spec = getargspec(engine_method)
         n_args = len(method_spec.args) - 1
-        engine_method(*values[2:2+n_args])
+        yield engine_method(*values[2:2+n_args])
 
 def move(id_, direction):
     return _move.pack(MOVE, id_, direction)
