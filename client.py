@@ -39,6 +39,7 @@ class View(pyglet.window.Window):
         self._sprites = {}
         self._draw_sprites = []
         self._graphics_system = toyblock.System(self._update_entities)
+        self.player_id = None
         
         def iterate_reactor(dt):
             reactor.runUntilCurrent()
@@ -108,9 +109,11 @@ class Client(DatagramProtocol):
         server_command = protocol.get_command(data)
         if server_command == protocol.SNAPSHOT:
             print("Snapshot from server!", data)
+            self._view.player_id = protocol.get_playerid_from_snapshot(data)
             for entity_id in protocol.set_engine_from_snapshot(self._engine, data):
                 print(entity_id)
                 self._view.add_to_draw(*entity_id, "tank")
+            print("Manejas la entidad con id", self._view.player_id)
             #print("(Re)created tank with id {} at {}, {}".format(id_, x, y))
         
     def connectionRefused(self):

@@ -56,9 +56,17 @@ def get_command(data):
 def connect():
     return _command.pack(CONNECT)
 
-def get_snapshot_buffer(the_engine):
+def pack_snapshot_header(player_id):
+    header = SNAPSHOT | (player_id << 8)
+    return _command.pack(header)
+
+def get_playerid_from_snapshot(buffer_):
+    header = _command.unpack_from(buffer_)[0]
+    return header >> 8
+
+def get_snapshot_buffer(the_engine, player_id):
     snapshot_buffer = bytearray()
-    snapshot_buffer += _command.pack(SNAPSHOT)
+    snapshot_buffer += pack_snapshot_header(player_id)
     for entity in the_engine.entities():
         body = entity.get_component(engine.Body)
         object_def = engine.object_def[body.type]

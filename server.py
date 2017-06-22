@@ -49,8 +49,8 @@ class Server(DatagramProtocol):
         """Qué hacer si alguien se conecta.
         Enviar copia completa (snapshot) del motor.
         """
-        self._engine.create_tank(32, 32)
-        snapshot_buffer = protocol.get_snapshot_buffer(self._engine)
+        entity, id_ = self._engine.create_tank(32, 32)
+        snapshot_buffer = protocol.get_snapshot_buffer(self._engine, id_)
         self.transport.write(snapshot_buffer, addr)
         print("Conectado!")
         
