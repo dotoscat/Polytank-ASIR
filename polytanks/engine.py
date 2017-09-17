@@ -13,42 +13,9 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import toyblock
+import ogf4py3.Scene as Scene
 
-class Body:
-    __slots__ = ("type", "id", "x", "y")
-    
-    TANK = 1
-    ID = 0
-    
-    def __init__(self, type_=None):
-        self.type = type_
-        self.id = Body.ID
-        Body.ID += 1
-        self.x = 0.0
-        self.y = 0.0
-
-
-class Physics:
-    __slots__ = ("vel_x", "vel_y")
-    
-    def __init__(self):
-        self.vel_x = 0.0
-        self.vel_y = 0.0
-
-class Cannon:
-    __slots__ = ("aim", "canon_x", "canon_y")
-    
-    def __init__(self):
-        self.aim = 0.0
-        self.canon_x = 0.0
-        self.canon_y = 0.0
-
-object_def = {
-    Body.TANK: (Body, Physics)
-}
-
-class Engine(object):
+class Game(object):
 
     MAX_ENTITIES = 32
         

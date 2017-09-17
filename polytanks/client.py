@@ -1,4 +1,3 @@
-#!/usr/bin/env  python
 #Copyright (C) 2017  Oscar Triano 'dotoscat' <dotoscat (at) gmail (dot) com>
 
 #This program is free software: you can redistribute it and/or modify
@@ -15,21 +14,20 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet
-import polytanks.ogf4py3 as ogf4py3
-import polytanks.assets
-from polytanks.client import Client
+from pyglet.window import key
+from .ogf4py3 import Scene
 
-if __name__ == "__main__":
-    WIDTH = 800
-    HEIGHT = 600
-    director = ogf4py3.Director(
-        caption="Polytanks client",
-        width=WIDTH,
-        height=HEIGHT,
-        vwidth=WIDTH/2.,
-        vheight=HEIGHT/2.
-        )
-        
-    director.scene = Client()
-        
-    pyglet.app.run()
+from . import assets
+
+print(assets)
+
+class Client(Scene):
+    def __init__(self):
+        super().__init__(1)
+        self.sprite = pyglet.sprite.Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[0])
+
+    def on_key_press(self, symbol, modifier):
+        print(symbol, modifier)
+
+    def on_key_release(self, symbol, modifier):
+        print(symbol, modifier)

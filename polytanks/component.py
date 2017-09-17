@@ -1,4 +1,3 @@
-#!/usr/bin/env  python
 #Copyright (C) 2017  Oscar Triano 'dotoscat' <dotoscat (at) gmail (dot) com>
 
 #This program is free software: you can redistribute it and/or modify
@@ -14,22 +13,10 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyglet
-import polytanks.ogf4py3 as ogf4py3
-import polytanks.assets
-from polytanks.client import Client
-
-if __name__ == "__main__":
-    WIDTH = 800
-    HEIGHT = 600
-    director = ogf4py3.Director(
-        caption="Polytanks client",
-        width=WIDTH,
-        height=HEIGHT,
-        vwidth=WIDTH/2.,
-        vheight=HEIGHT/2.
-        )
+class TankGraphic:
+    def __init__(self, base, cannon):
+        self.base = base
+        self.cannon = cannon
         
-    director.scene = Client()
-        
-    pyglet.app.run()
+    def set_position(self, x, y):
+        self.base.set_position(x, y)
