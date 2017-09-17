@@ -1,4 +1,3 @@
-#!/usr/bin/env  python
 #Copyright (C) 2017  Oscar Triano 'dotoscat' <dotoscat (at) gmail (dot) com>
 
 #This program is free software: you can redistribute it and/or modify
@@ -14,19 +13,16 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import pyglet
-import polytanks.ogf4py3 as ogf4py3
 
-import polytanks.assets
+ASSETS_DIR = "assets"
 
-if __name__ == "__main__":
-    WIDTH = 800
-    HEIGHT = 600
-    director = ogf4py3.Director(
-        caption="Polytanks client",
-        width=WIDTH,
-        height=HEIGHT,
-        vwidth=WIDTH,
-        vheight=HEIGHT
-        )
-    pyglet.app.run()
+pyglet.resource.path = [ASSETS_DIR]
+pyglet.resource.reindex()
+
+images = {
+    entry.name.split('.')[0] : pyglet.resource.image(entry.name)
+    for entry in os.scandir(os.path.realpath(ASSETS_DIR))
+    if entry.name.endswith(".png")
+}
