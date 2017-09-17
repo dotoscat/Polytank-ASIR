@@ -13,18 +13,29 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import toyblock
 import pyglet
+from pyglet.sprite import Sprite
 from pyglet.window import key
 from .ogf4py3 import Scene
-
+from .ogf4py3.component import Body
+from .ogf4py3 import system
 from . import assets
 
-print(assets)
+TANK = (Body, Sprite)
 
 class Client(Scene):
     def __init__(self):
         super().__init__(1)
-        self.sprite = pyglet.sprite.Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[0])
+        self.tank_pool = TANK_POOL = toyblock.Pool(4, TANK,
+            (None, (assets.images["tank-base"],)),
+            ({"gravity": True}, {'batch': self.batch, 'group': self.group[0]}),
+            systems=(system.physics, system.sprite))
+        self.tank = self.tank_pool.get()
+
+    def update(self, dt):
+        system.physics(dt, 0.)
+        system.sprite()
 
     def on_key_press(self, symbol, modifier):
         print(symbol, modifier)

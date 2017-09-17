@@ -16,7 +16,7 @@
 
 from pyglet.sprite import Sprite
 import toyblock
-from .components import Body, FloorCollision, Collision
+from .component import Body, FloorCollision, Collision
 
 @toyblock.System
 def physics(system, entity, dt, gravity):
@@ -40,9 +40,9 @@ def player_powerup(player, powerup, engine):
     engine.increase_fuel(25.)
     engine.sound["fuel_pickup"].play()
 
-collision_t = {
-    (Type.PLAYER, Type.POWERUP): player_powerup
-}
+#collision_t = {
+#    (Type.PLAYER, Type.POWERUP): player_powerup
+#}
 
 @toyblock.System
 def do_collision(system, entity, game_state):

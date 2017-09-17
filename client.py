@@ -16,7 +16,6 @@
 
 import pyglet
 import polytanks.ogf4py3 as ogf4py3
-import polytanks.assets
 from polytanks.client import Client
 
 if __name__ == "__main__":
