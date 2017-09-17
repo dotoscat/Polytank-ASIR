@@ -14,74 +14,22 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyglet
 from pyglet.sprite import Sprite
-from pyglet.gl import glViewport, glOrtho, glMatrixMode, glLoadIdentity
-from pyglet import gl
 import toyblock
-from .components import (Body, PlatformSprite, FloorCollision,
-    Collision, Input)
-from . import constants
-from .constants import Type, GRAVITY
+from .components import Body, FloorCollision, Collision
 
-@toyblock.system
-def input_sys(system, entity, engine):
-    input_ = entity[Input]
-    body = entity[Body]
-    floor_collision = entity[FloorCollision]
-
-    if input_.left:
-        body.vel_x = -constants.SPEED
-        entity[Sprite].image = engine.assets["car_left"]
-    if input_.right:
-        body.vel_x = constants.SPEED
-        entity[Sprite].image = engine.assets["car_right"]
-    if not input_.left and not input_.right and body.vel_x != 0.:
-        body.vel_x = 0.
-    # print(input_.jump, input_.jump_pressed, input_._jumps)
-    if input_.jump and input_.jump_pressed and floor_collision.touch_floor:
-        floor_collision.touch_floor = False
-        body.vel_y = constants.JUMP
-        body.gravity = True
-        input_._jumps -= 1
-        engine.decrease_fuel(5.)
-        engine.sound["second_jump"].play()
-    elif (input_.jump and input_.jump_pressed
-        and not floor_collision.touch_floor and input_._jumps > 0):
-        body.vel_y = constants.JUMP/1.5
-        input_._jumps -= 1
-        engine.decrease_fuel(2.5)
-        engine.sound["second_jump"].play()
-    elif not input_._jump and body.vel_y > 0.0:
-        body.vel_y = 0.
-    input_.jump_pressed = False
-    if floor_collision.touch_floor:
-        input_.reset_jumps()
-
-@toyblock.system
+@toyblock.System
 def physics(system, entity, dt, gravity):
     body = entity[Body]
     body.update(dt, gravity)
 
-@toyblock.system
-def update_graphics(system, entity):
+@toyblock.System
+def sprite(system, entity):
     body = entity[Body]
     entity[Sprite].set_position(body.x, body.y)
 
-@toyblock.system
-def recycle(system, entity):
-    if entity[Body].y + 16. < 0.0:
-        entity.free()
-
-@toyblock.system
-def update_platform_sprite(system, entity):
-    body = entity[Body]
-    platform = entity[PlatformSprite]
-    platform.x = body.x
-    platform.y = body.y
-
-@toyblock.system
-def update_collision(system, entity):
+@toyblock.System
+def collision(system, entity):
     body = entity[Body]
     collision = entity[Collision]
     collision.x = body.x
@@ -96,7 +44,7 @@ collision_t = {
     (Type.PLAYER, Type.POWERUP): player_powerup
 }
 
-@toyblock.system
+@toyblock.System
 def do_collision(system, entity, game_state):
     entities = system.entities
     entity_collision = entity[Collision]
@@ -110,7 +58,7 @@ def do_collision(system, entity, game_state):
             == sysentity_collision.type): continue
         collision_t[(entity_collision.type, sysentity_collision.type)](entity, sysentity, game_state)
 
-@toyblock.system
+@toyblock.System
 def platform_collision(system, entity, engine):
     body = entity[Body]
     floor_collision = entity[FloorCollision]
@@ -139,13 +87,3 @@ def platform_collision(system, entity, engine):
         break
     if not touched and floor_collision.touch_floor:
         engine.sound["landing"].play()
-
-def do(dt, engine):
-    input_sys(engine)
-    physics(dt, -GRAVITY)
-    recycle()
-    update_collision()
-    platform_collision(engine)
-    do_collision(engine)
-    update_platform_sprite()
-    update_graphics()
