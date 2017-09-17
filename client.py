@@ -1,4 +1,4 @@
-#!/usr/bin/env  python3
+#!/usr/bin/env  python
 #Copyright (C) 2017  Oscar Triano 'dotoscat' <dotoscat (at) gmail (dot) com>
 
 #This program is free software: you can redistribute it and/or modify
@@ -13,3 +13,18 @@
 
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import pyglet
+import polytanks.ogf4py3 as ogf4py3
+
+if __name__ == "__main__":
+    WIDTH = 800
+    HEIGHT = 600
+    director = ogf4py3.Director(
+        caption="Polytanks client",
+        width=WIDTH,
+        height=HEIGHT,
+        vwidth=WIDTH,
+        vheight=HEIGHT
+        )
+    pyglet.app.run()
