@@ -84,10 +84,10 @@ class Collision(object):
         self.collides_with = 0
 
     def intersects(self, b):
-        if b.y >= self.top: return False# top
-        if b.top <= self.y: return False# bottom
-        if b.right <= self.x: return False# left
-        if b.x >= self.right: return False# right
+        if b.y >= self.top: return False    # top
+        if b.top <= self.y: return False    # bottom
+        if b.right <= self.x: return False  # left
+        if b.x >= self.right: return False  # right
         return True
 
     def __contains__(self, pair):
