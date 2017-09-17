@@ -48,6 +48,8 @@ class View(pyglet.window.Window):
         def iterate_graphics_system(dt):
             self._graphics_system.run()
         
+        
+        
         pyglet.clock.schedule(iterate_reactor)
         pyglet.clock.schedule(iterate_graphics_system)
         reactor.listenUDP(0, self._client)
@@ -63,10 +65,13 @@ class View(pyglet.window.Window):
 
     def on_key_press(self, symbol, modifiers):
         from pyglet.window import key
+        player_id = self.player_id
         if symbol in (key.LEFT, key.A):
-            self._client.send(protocol.move(1, -1.))
+            self._engine.move(player_id, -1.)
+            #self._client.send(protocol.move(1, -1.))
         elif symbol in (key.RIGHT, key.D):
-            self._client.send(protocol.move(1, 1.))
+            self._engine.move(player_id, 1.)
+            #self._client.send(protocol.move(1, 1.))
         elif symbol == key.C:
             print("C")
             if self._client.is_connected():
@@ -77,7 +82,8 @@ class View(pyglet.window.Window):
     def on_key_release(self, symbol, modifiers):
         from pyglet.window import key
         if symbol in (key.LEFT, key.A, key.RIGHT, key.D):
-            self._client.send(protocol.move(1, 0.))
+            self._engine.move(player_id, 0.)
+            #self._client.send(protocol.move(self.player_id, 0.))
     
     def add_to_draw(self, entity, id_, image_name):
         image = self._images[image_name]

@@ -61,7 +61,7 @@ class Engine(object):
         self._entities = [None for i in range(Engine.MAX_ENTITIES)]
         self._n_entities = 0
         self._systems = {}
-        #self._systems["physics"] = toyblock.System()#Add some callable for the system
+        self._systems["physics"] = toyblock.System(Engine.physics_system)#Add some callable for the system
         
     def _get_object_from_pool(self, pool):
         entity = pool.get()
@@ -82,11 +82,11 @@ class Engine(object):
         body.y = y
         return entity, body.id
         
-    def _physics_system(self, system, entity, dt):
+    def physics_system(system, entity, dt):
         body = entity.get_component(Body)
         physics = entity.get_component(Physics)
-        body.x = physics.vel_x*dt
-        body.y = physics.vel_y*dt
+        body.x += physics.vel_x*dt
+        body.y += physics.vel_y*dt
 
     def entities(self):
         for ent in self._entities:
