@@ -73,3 +73,7 @@ class Client(Scene):
     def on_key_release(self, symbol, modifier):
         if symbol in (key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        print(x, y, dx, dy)
+        print("virtual", self.director.get_virtual_xy(x, y), self.director.get_virtual_xy(dx, dy))

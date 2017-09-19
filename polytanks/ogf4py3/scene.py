@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from weakref import proxy
 import pyglet
 
 class Scene(object):
@@ -29,8 +30,18 @@ class Scene(object):
     """
 
     def __init__(self, n_groups):
+        self._director = None
         self._batch = pyglet.graphics.Batch()
         self._groups = [pyglet.graphics.OrderedGroup(i) for i in range(n_groups)]
+
+    @property
+    def director(self):
+        """Is it just a proxy of :class:`Director`."""
+        return self._director
+        
+    @director.setter
+    def director(self, director):
+        self._director = None if director is None else proxy(director)
 
     @property
     def batch(self):

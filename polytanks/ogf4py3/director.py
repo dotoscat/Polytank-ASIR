@@ -65,11 +65,18 @@ class Director(pyglet.window.Window):
         if self._scene is not None:
             self.remove_handlers(self._scene)
             self._scene.quit()
+            self._scene.director = None
             pyglet.clock.unschedule(self._scene.update)
         self._scene = scene
         self.push_handlers(scene)
         pyglet.clock.schedule(scene.update)
         scene.init()
+        scene.director = self
+
+    def get_virtual_xy(self, x, y):
+        vx = x if self._vwidth is None else x/self.width*self._vwidth
+        vy = y if self._vheight is None else y/self.height*self._vheight
+        return vx, vy
 
     def on_key_press(self, symbol, modifiers):
         super(Director, self).on_key_press(symbol, modifiers)
