@@ -21,20 +21,35 @@ from .ogf4py3 import Scene
 from .ogf4py3.component import Body
 from .ogf4py3 import system
 from . import assets
+from .component import TankGraphic
 
-TANK = (Body, Sprite)
+TANK = (Body, TankGraphic)
 
 class Client(Scene):
     def __init__(self):
-        super().__init__(1)
-        self.tank_pool = TANK_POOL = toyblock.Pool(4, TANK,
-            (None, (assets.images["tank-base"],)),
-            ({"gravity": True}, {'batch': self.batch, 'group': self.group[0]}),
-            systems=(system.physics, system.sprite))
+        super().__init__(2)
+        
+        @toyblock.System
+        def update_tank_graphic(self, entity):
+            body = entity[Body]
+            entity[TankGraphic].set_position(body.x, body.y)
+        
+        self.update_tank_graphic = update_tank_graphic
+        
+        tank_sprites = (
+            Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[1]),
+            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[0])
+        )
+        
+        self.tank_pool = toyblock.Pool(4, TANK,
+            (None, tank_sprites),
+            ({"gravity": True},),
+            systems=(system.physics, update_tank_graphic))
         self.tank = self.tank_pool.get()
 
     def update(self, dt):
         system.physics(dt, 0.)
+        self.update_tank_graphic()
         system.sprite()
 
     def on_key_press(self, symbol, modifier):

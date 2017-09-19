@@ -14,9 +14,11 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class TankGraphic:
-    def __init__(self, base, cannon):
+    def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base
         self.cannon = cannon
+        self.cannon_anchor = cannon_anchor
         
     def set_position(self, x, y):
         self.base.set_position(x, y)
+        self.cannon.set_position(self.cannon_anchor[0] + x, self.cannon_anchor[1] + y)
