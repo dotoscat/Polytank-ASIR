@@ -13,6 +13,22 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+class PlayerInput:
+    def __init__(self):
+        self.move = 0.
+        
+    def move_left(self):
+        self.move = -1.
+        
+    def move_right(self):
+        self.move = 1.
+        
+    def moves(self):
+        return self.move != 0.
+        
+    def stop_moving(self):
+        self.move = 0.
+
 class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base

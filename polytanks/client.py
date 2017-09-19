@@ -21,11 +21,13 @@ from .ogf4py3 import Scene
 from .ogf4py3.component import Body
 from .ogf4py3 import system
 from . import assets
-from .component import TankGraphic
+from .component import TankGraphic, PlayerInput
 
-TANK = (Body, TankGraphic)
+TANK = (PlayerInput, Body, TankGraphic)
 
 class Client(Scene):
+    TANK_SPEED = 64.
+    
     def __init__(self):
         super().__init__(2)
         
@@ -34,6 +36,14 @@ class Client(Scene):
             body = entity[Body]
             entity[TankGraphic].set_position(body.x, body.y)
         
+        @toyblock.System
+        def update_user_input(self, entity):
+            if entity[PlayerInput].moves():
+                entity[Body].vel_x = entity[PlayerInput].move*Client.TANK_SPEED
+            else:
+                entity[Body].vel_x = 0.
+            
+        self.update_user_input = update_user_input
         self.update_tank_graphic = update_tank_graphic
         
         tank_sprites = (
@@ -42,18 +52,24 @@ class Client(Scene):
         )
         
         self.tank_pool = toyblock.Pool(4, TANK,
-            (None, tank_sprites),
-            ({"gravity": True},),
-            systems=(system.physics, update_tank_graphic))
+            (None, None, tank_sprites),
+            (None, {"gravity": True},),
+            systems=(system.physics, update_tank_graphic, update_user_input))
         self.tank = self.tank_pool.get()
+        self.player_input = self.tank[PlayerInput]
 
     def update(self, dt):
+        self.update_user_input()
         system.physics(dt, 0.)
         self.update_tank_graphic()
         system.sprite()
 
     def on_key_press(self, symbol, modifier):
-        print(symbol, modifier)
+        if symbol == key.LEFT:
+            self.player_input.move_left()
+        elif symbol == key.RIGHT:
+            self.player_input.move_right()
 
     def on_key_release(self, symbol, modifier):
-        print(symbol, modifier)
+        if symbol in (key.LEFT, key.RIGHT) and self.player_input.moves():
+            self.player_input.stop_moving()
