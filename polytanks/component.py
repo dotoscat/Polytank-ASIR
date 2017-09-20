@@ -16,7 +16,7 @@
 class PlayerInput:
     def __init__(self):
         self.move = 0.
-        self.cannon_angle = 0.
+        self.aim_pointer = (0., 0.)
         
     def move_left(self):
         self.move = -1.
@@ -30,9 +30,6 @@ class PlayerInput:
     def stop_moving(self):
         self.move = 0.
         
-    def move_cannon(self, angle):
-        self.cannon_angle = angle
-
 class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base

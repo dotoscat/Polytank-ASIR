@@ -26,3 +26,6 @@ images = {
     for entry in os.scandir(os.path.realpath(ASSETS_DIR))
     if entry.name.endswith(".png")
 }
+
+images["tank-cannon"].anchor_x = 0.
+images["tank-cannon"].anchor_y = 4.
