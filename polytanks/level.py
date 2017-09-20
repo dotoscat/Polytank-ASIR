@@ -14,12 +14,29 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyglet.sprite import Sprite
-from .ogf4py3.component import Body
-from .component import TankGraphic, PlayerInput
+from .constant import SIZE
 
-TANK_DEF = (PlayerInput, Body, TankGraphic)
-PLATFORM_DEF = (Sprite,)
-VWIDTH = 400
-VHEIGHT = 300
-TANK_SPEED = 64.
-SIZE = 16.
+basic = [
+    "........................__......",
+    "........................._......",
+    ".....___............_...........",
+    "...__......__............_......",
+    "..____________....._______......",
+    "................................",
+    "................................",
+]
+
+def load_level(level, pool):
+    x = 0.
+    y = 0.
+    pool.free_all()
+    for line in reversed(level):
+        x = 0.
+        for tile in line:
+            print(tile, end='')
+            if tile == '_':
+                platform = pool.get()
+                platform.set(Sprite, {"x": x, "y": y})
+            x += SIZE
+        print()
+        y += SIZE

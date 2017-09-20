@@ -24,14 +24,15 @@ from . import assets
 from .component import TankGraphic, PlayerInput
 from .system import update_tank_graphic, update_user_input
 from . import constant
+from . import level
 
 class Client(Scene):    
     def __init__(self):
-        super().__init__(2)
+        super().__init__(3)
                             
         tank_args = (
-            Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[1]),
-            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[0]),
+            Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
+            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
             (8.5, 12.5)
         )
         
@@ -42,6 +43,13 @@ class Client(Scene):
         self.tank = self.tank_pool.get()
         self.tank.set(Body, {'x': 200., 'y': 200.})
         self.player_input = self.tank[PlayerInput]
+        
+        self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
+            ((assets.images["platform"],),),
+            ({"batch": self.batch, "group": self.group[0]},),
+        )
+        
+        level.load_level(level.basic, self.platform_pool)
 
     def update(self, dt):
         update_user_input()
