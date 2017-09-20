@@ -62,4 +62,4 @@ class Client(Scene):
     def on_mouse_motion(self, x, y, dx, dy):
         aim_pointer = self.director.get_virtual_xy(x, y)
         self.player_input.aim_pointer = aim_pointer
-        
+                
