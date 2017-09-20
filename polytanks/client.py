@@ -23,12 +23,9 @@ from .ogf4py3 import system
 from . import assets
 from .component import TankGraphic, PlayerInput
 from .system import update_tank_graphic, update_user_input
+from . import constant
 
-TANK = (PlayerInput, Body, TankGraphic)
-
-class Client(Scene):
-    TANK_SPEED = 64.
-    
+class Client(Scene):    
     def __init__(self):
         super().__init__(2)
                             
@@ -38,7 +35,7 @@ class Client(Scene):
             (8.5, 12.5)
         )
         
-        self.tank_pool = toyblock.Pool(4, TANK,
+        self.tank_pool = toyblock.Pool(4, constant.TANK_DEF,
             (None, None, tank_args),
             (None, {"gravity": True},),
             systems=(system.physics, update_tank_graphic, update_user_input))
