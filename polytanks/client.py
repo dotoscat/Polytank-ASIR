@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from math import atan2, degrees
 import toyblock
 import pyglet
 from pyglet.sprite import Sprite
@@ -42,17 +43,19 @@ class Client(Scene):
                 entity[Body].vel_x = entity[PlayerInput].move*Client.TANK_SPEED
             else:
                 entity[Body].vel_x = 0.
+            entity[TankGraphic].cannon.rotation = entity[PlayerInput].cannon_angle
             
         self.update_user_input = update_user_input
         self.update_tank_graphic = update_tank_graphic
         
-        tank_sprites = (
+        tank_args = (
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[1]),
-            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[0])
+            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[0]),
+            (8., 12.)
         )
         
         self.tank_pool = toyblock.Pool(4, TANK,
-            (None, None, tank_sprites),
+            (None, None, tank_args),
             (None, {"gravity": True},),
             systems=(system.physics, update_tank_graphic, update_user_input))
         self.tank = self.tank_pool.get()
@@ -75,5 +78,6 @@ class Client(Scene):
             self.player_input.stop_moving()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        print(x, y, dx, dy)
-        print("virtual", self.director.get_virtual_xy(x, y), self.director.get_virtual_xy(dx, dy))
+        x, y = self.director.get_virtual_xy(x, y)
+        self.player_input.move_cannon(degrees(atan2(x, y)))
+        
