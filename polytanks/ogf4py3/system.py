@@ -59,17 +59,18 @@ def do_collision(system, entity, game_state):
         collision_t[(entity_collision.type, sysentity_collision.type)](entity, sysentity, game_state)
 
 @toyblock.System
-def platform_collision(system, entity, callback=None):
-    """
+def platform_collision(system, entity, platforms, callback=None):
+    """This system requires the next additional parameters
+     
     Parameters:
-        callback (callable): callback when an entity touch the floor.
+        platforms (iterable of platforms)
+        callback (callable or None): callback when an entity touch the floor. If None, then is not triggered.
     """
     body = entity[Body]
     floor_collision = entity[FloorCollision]
-    platforms = engine.platforms
     if floor_collision.touch_floor:
         platform_collision = floor_collision.platform[Collision]
-        body.y = floor_collision.platform[Body].y + 8.
+        body.y = platform_collision.y + platform_collision.height
         points = floor_collision.get_points(body.x, body.y)
         #if (points[0] in platform_collision or points[1] in platform_collision):
         #    return

@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import toyblock
 import pyglet
 from pyglet.sprite import Sprite
@@ -37,23 +38,35 @@ class Client(Scene):
         )
         
         self.tank_pool = toyblock.Pool(4, constant.TANK_DEF,
-            (None, None, tank_args),
-            (None, {"gravity": True},),
-            systems=(system.physics, update_tank_graphic, update_user_input))
+            (None, (*(0., 0.), *(constant.SIZE, 0.)), None, tank_args),
+            (None, None, {"gravity": True},),
+            systems=(system.physics, update_tank_graphic, update_user_input, system.platform_collision))
         self.tank = self.tank_pool.get()
-        self.tank.set(Body, {'x': 200., 'y': 200.})
+        self.tank.set(Body, {'x': 200., 'y': 100.})
         self.player_input = self.tank[PlayerInput]
         
         self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
-            ((assets.images["platform"],),),
-            ({"batch": self.batch, "group": self.group[0]},),
+            (None, (assets.images["platform"],),),
+            (None, {"batch": self.batch, "group": self.group[0]},),
         )
+        self.platforms = []
+        self.platform_pool.init(self.init_entity)
         
         level.load_level(level.basic, self.platform_pool)
 
+    def touch_floor(self):
+        print("touch")
+        logging.info("Touch floor")
+
+    def init_entity(self, entity):
+        if entity.pool == self.platform_pool:
+            self.platforms.append(entity)
+        logging.info("init", entity)
+
     def update(self, dt):
         update_user_input()
-        system.physics(dt, 0.)
+        system.physics(dt, -32.)
+        system.platform_collision(self.platforms, self.touch_floor)
         update_tank_graphic()
         system.sprite()
 

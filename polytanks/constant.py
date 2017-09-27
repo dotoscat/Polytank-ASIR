@@ -14,11 +14,11 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyglet.sprite import Sprite
-from .ogf4py3.component import Body
+from .ogf4py3.component import Body, Collision, FloorCollision
 from .component import TankGraphic, PlayerInput
 
-TANK_DEF = (PlayerInput, Body, TankGraphic)
-PLATFORM_DEF = (Sprite,)
+TANK_DEF = (PlayerInput, FloorCollision, Body, TankGraphic)
+PLATFORM_DEF = (Collision, Sprite)
 VWIDTH = 400
 VHEIGHT = 300
 TANK_SPEED = 64.

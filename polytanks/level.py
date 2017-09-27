@@ -14,6 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyglet.sprite import Sprite
+from .ogf4py3.component import Collision
 from .constant import SIZE
 
 basic = [
@@ -37,6 +38,14 @@ def load_level(level, pool):
             if tile == '_':
                 platform = pool.get()
                 platform.set(Sprite, {"x": x, "y": y})
+                collision_attrs = {
+                    "x": x,
+                    "y": y,
+                    "width": SIZE,
+                    "height": SIZE/4.
+                }
+                print(collision_attrs)
+                platform.set(Collision, collision_attrs)
             x += SIZE
         print()
         y += SIZE
