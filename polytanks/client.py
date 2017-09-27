@@ -65,7 +65,7 @@ class Client(Scene):
         logging.info("init", entity)
 
     def update(self, dt):
-        update_user_input()
+        update_user_input(dt)
         system.physics(dt, -G)
         system.platform_collision(self.platforms, self.touch_floor)
         update_tank_graphic()
@@ -82,6 +82,8 @@ class Client(Scene):
     def on_key_release(self, symbol, modifier):
         if symbol in (key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
+        if symbol == key.UP and self.player_input.do_jump:
+            self.player_input.not_jump()
 
     def on_mouse_motion(self, x, y, dx, dy):
         aim_pointer = self.director.get_virtual_xy(x, y)

@@ -37,6 +37,10 @@ class Body(object):
         self.x += self.vel_x*dt
         self.y += self.vel_y*dt
 
+    def apply_force(self, dt, x=0., y=0.):
+        self.vel_x += x*dt
+        self.vel_y += y*dt
+
 class FloorCollision(object):
     """This collision component is specific for floor collisions.
     

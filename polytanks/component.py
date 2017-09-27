@@ -34,6 +34,9 @@ class PlayerInput:
     def jump(self):
         self.do_jump = True
     
+    def not_jump(self):
+        self.do_jump = False
+    
 class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base

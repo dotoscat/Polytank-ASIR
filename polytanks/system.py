@@ -25,14 +25,18 @@ def update_tank_graphic(self, entity):
     entity[TankGraphic].set_position(body.x, body.y)
 
 @toyblock.System
-def update_user_input(self, entity):
+def update_user_input(self, entity, dt):
     player_input = entity[PlayerInput]
     player_body = entity[Body]
     player_body.vel_x = player_input.move*TANK_SPEED
     if player_input.do_jump and entity[FloorCollision].touch_floor:
         player_body.vel_y = G/2.
+        player_input.do_jump = False
+    elif player_input.do_jump and not entity[FloorCollision].touch_floor:
+        player_body.apply_force(dt, y=G*1.5)
+        
     aim_pointer = player_input.aim_pointer
     cannon_position = entity[TankGraphic].cannon.position
     angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
     entity[TankGraphic].cannon.rotation = -degrees(angle)
-    player_input.do_jump = False
+    
