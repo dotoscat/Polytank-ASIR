@@ -60,6 +60,10 @@ def do_collision(system, entity, game_state):
 
 @toyblock.System
 def platform_collision(system, entity, callback=None):
+    """
+    Parameters:
+        callback (callable): callback when an entity touch the floor.
+    """
     body = entity[Body]
     floor_collision = entity[FloorCollision]
     platforms = engine.platforms
