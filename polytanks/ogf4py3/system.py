@@ -71,7 +71,6 @@ def platform_collision(system, entity, platforms, callback=None):
     points = floor_collision.get_points(body.x, body.y)
     body.gravity = True
     touched = floor_collision.touch_floor
-    floor_collision.touch_floor = False
     floor_collision.platform = None
     for platform in platforms:
         platform_collision = platform[Collision]
@@ -82,7 +81,6 @@ def platform_collision(system, entity, platforms, callback=None):
         body.y = platform_collision.top
         body.vel_y = 0.0
         body.gravity = False
-        floor_collision.touch_floor = True
         floor_collision.platform = platform
         break
     if callable(callback) and not touched and floor_collision.touch_floor:
