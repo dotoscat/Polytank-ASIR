@@ -59,7 +59,7 @@ def do_collision(system, entity, game_state):
         collision_t[(entity_collision.type, sysentity_collision.type)](entity, sysentity, game_state)
 
 @toyblock.System
-def platform_collision(system, entity, engine):
+def platform_collision(system, entity, callback=None):
     body = entity[Body]
     floor_collision = entity[FloorCollision]
     platforms = engine.platforms
@@ -85,5 +85,5 @@ def platform_collision(system, entity, engine):
         floor_collision.touch_floor = True
         floor_collision.platform = platform
         break
-    if not touched and floor_collision.touch_floor:
-        engine.sound["landing"].play()
+    if callable(callback) and not touched and floor_collision.touch_floor:
+        callback()
