@@ -15,7 +15,7 @@
 
 from math import atan2, degrees, hypot
 import toyblock
-from .ogf4py3.component import Body
+from .ogf4py3.component import Body, FloorCollision
 from .component import TankGraphic, PlayerInput
 from .constant import TANK_SPEED, VHEIGHT as G
 
@@ -29,7 +29,7 @@ def update_user_input(self, entity):
     player_input = entity[PlayerInput]
     player_body = entity[Body]
     player_body.vel_x = player_input.move*TANK_SPEED
-    if player_input.do_jump:
+    if player_input.do_jump and entity[FloorCollision].touch_floor:
         player_body.vel_y = G
     aim_pointer = player_input.aim_pointer
     cannon_position = entity[TankGraphic].cannon.position
