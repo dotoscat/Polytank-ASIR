@@ -14,21 +14,26 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from math import fabs
+
 class Body(object):
     """Basic component for physics.
        
     You can enable or disable gravity for this :class:`Body` with the
     attribute *gravity*.
     """
-    def __init__(self, gravity=False):
+    def __init__(self, gravity=False, max_fall_speed=0.):
         self.x = 0.0
         self.y = 0.0
         self.vel_x = 0.0
         self.vel_y = 0.0
+        self.max_fall_speed = max_fall_speed
         self.gravity = gravity
 
     def update(self, dt, g_force=0.):
         if self.gravity: self.vel_y += g_force*dt
+        if self.vel_y < 0. and fabs(self.vel_y) > self.max_fall_speed > 0.:
+            self.vel_y = -self.max_fall_speed
         self.x += self.vel_x*dt
         self.y += self.vel_y*dt
 

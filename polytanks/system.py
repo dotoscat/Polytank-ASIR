@@ -30,7 +30,7 @@ def update_user_input(self, entity):
     player_body = entity[Body]
     player_body.vel_x = player_input.move*TANK_SPEED
     if player_input.do_jump and entity[FloorCollision].touch_floor:
-        player_body.vel_y = G
+        player_body.vel_y = G/2.
     aim_pointer = player_input.aim_pointer
     cannon_position = entity[TankGraphic].cannon.position
     angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
