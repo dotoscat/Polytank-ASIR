@@ -25,6 +25,7 @@ from . import assets
 from .component import TankGraphic, PlayerInput
 from .system import update_tank_graphic, update_user_input
 from . import constant
+from .constant import VHEIGHT as G
 from . import level
 
 class Client(Scene):    
@@ -65,7 +66,7 @@ class Client(Scene):
 
     def update(self, dt):
         update_user_input()
-        system.physics(dt, -32.)
+        system.physics(dt, -G)
         system.platform_collision(self.platforms, self.touch_floor)
         update_tank_graphic()
         system.sprite()
