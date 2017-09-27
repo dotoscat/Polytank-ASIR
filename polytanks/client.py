@@ -76,6 +76,8 @@ class Client(Scene):
             self.player_input.move_left()
         elif symbol == key.RIGHT:
             self.player_input.move_right()
+        elif symbol == key.UP:
+            self.player_input.jump()
 
     def on_key_release(self, symbol, modifier):
         if symbol in (key.LEFT, key.RIGHT) and self.player_input.moves():

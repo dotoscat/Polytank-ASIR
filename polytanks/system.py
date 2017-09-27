@@ -17,7 +17,7 @@ from math import atan2, degrees, hypot
 import toyblock
 from .ogf4py3.component import Body
 from .component import TankGraphic, PlayerInput
-from .constant import TANK_SPEED
+from .constant import TANK_SPEED, VHEIGHT as G
 
 @toyblock.System
 def update_tank_graphic(self, entity):
@@ -29,7 +29,10 @@ def update_user_input(self, entity):
     player_input = entity[PlayerInput]
     player_body = entity[Body]
     player_body.vel_x = player_input.move*TANK_SPEED
+    if player_input.do_jump:
+        player_body.vel_y = G
     aim_pointer = player_input.aim_pointer
     cannon_position = entity[TankGraphic].cannon.position
     angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
     entity[TankGraphic].cannon.rotation = -degrees(angle)
+    player_input.do_jump = False

@@ -15,6 +15,7 @@
 
 class PlayerInput:
     def __init__(self):
+        self.do_jump = False
         self.move = 0.
         self.aim_pointer = (0., 0.)
         
@@ -29,7 +30,10 @@ class PlayerInput:
         
     def stop_moving(self):
         self.move = 0.
-        
+    
+    def jump(self):
+        self.do_jump = True
+    
 class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base
