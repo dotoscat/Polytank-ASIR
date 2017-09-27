@@ -63,9 +63,13 @@ class FloorCollision(object):
         self.touch_floor = False
 
 class Collision(object):
-    """
-        collision.type = PLAYER
-        collision.collides_with = ENEMY | PLATFORM | POWERUP
+    """Rect collision.
+    
+    Attributes:
+        x (Float)
+        y (Float)
+        type (Int): Type of collision.
+        collides_with (Int): Use this as flag of *type*
     """
     @property
     def right(self):
