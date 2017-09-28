@@ -89,3 +89,12 @@ class Client(Scene):
         aim_pointer = self.director.get_virtual_xy(x, y)
         self.player_input.aim_pointer = aim_pointer
                 
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        aim_pointer = self.director.get_virtual_xy(x, y)
+        self.player_input.aim_pointer = aim_pointer
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        pass #Accumulate power
+        
+    def on_mouse_release(self, x, y, button, modifiers):
+        pass #Release power
