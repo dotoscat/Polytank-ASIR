@@ -38,5 +38,6 @@ def update_user_input(self, entity, dt):
     aim_pointer = player_input.aim_pointer
     cannon_position = entity[TankGraphic].cannon.position
     angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
+    player_input.cannon_angle = angle
     entity[TankGraphic].cannon.rotation = -degrees(angle)
     

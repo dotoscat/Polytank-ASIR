@@ -18,6 +18,7 @@ class PlayerInput:
         self.do_jump = False
         self.move = 0.
         self.aim_pointer = (0., 0.)
+        self.cannon_angle = 0.
         
     def move_left(self):
         self.move = -1.
@@ -42,6 +43,7 @@ class TankGraphic:
         self.base = base
         self.cannon = cannon
         self.cannon_anchor = cannon_anchor
+        print(cannon_anchor)
         
     def set_position(self, x, y):
         self.base.set_position(x, y)

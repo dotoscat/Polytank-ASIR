@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from math import cos, sin
 import logging
 import toyblock
 import pyglet
@@ -46,8 +47,14 @@ class Client(Scene):
         self.tank.set(Body, {'x': 200., 'y': 100.})
         self.player_input = self.tank[PlayerInput]
         
+        self.bullet_pool = toyblock.Pool(64, constant.BULLET_DEF,
+            (None, (assets.images["bullet"],)),
+            ({"gravity": True, "max_fall_speed": G/2.}, {"batch": self.batch, "group": self.group[2]}),
+            systems=(system.physics, system.sprite)
+        )
+        
         self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
-            (None, (assets.images["platform"],),),
+            (None, (assets.images["platform"],)),
             (None, {"batch": self.batch, "group": self.group[0]},),
         )
         self.platforms = []
@@ -97,4 +104,10 @@ class Client(Scene):
         pass #Accumulate power
         
     def on_mouse_release(self, x, y, button, modifiers):
+        bullet = self.bullet_pool.get()
+        angle = self.player_input.cannon_angle
+        vel_x = G*cos(angle)
+        vel_y = G*sin(angle)
+        x, y = self.tank[TankGraphic].cannon.position
+        bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y})
         pass #Release power

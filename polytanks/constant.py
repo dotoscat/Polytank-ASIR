@@ -19,6 +19,7 @@ from .component import TankGraphic, PlayerInput
 
 TANK_DEF = (PlayerInput, FloorCollision, Body, TankGraphic)
 PLATFORM_DEF = (Collision, Sprite)
+BULLET_DEF = (Body, Sprite)
 VWIDTH = 400
 VHEIGHT = 300
 TANK_SPEED = 64.
