@@ -43,7 +43,6 @@ class TankGraphic:
         self.base = base
         self.cannon = cannon
         self.cannon_anchor = cannon_anchor
-        print(cannon_anchor)
         
     def set_position(self, x, y):
         self.base.set_position(x, y)

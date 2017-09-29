@@ -110,4 +110,4 @@ class Client(Scene):
         vel_y = G*sin(angle)
         x, y = self.tank[TankGraphic].cannon.position
         bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y})
-        pass #Release power
+        #Release power
