@@ -70,8 +70,8 @@ class Director(pyglet.window.Window):
         self._scene = scene
         self.push_handlers(scene)
         pyglet.clock.schedule(scene.update)
-        scene.init()
         scene.director = self
+        scene.init()
 
     def get_virtual_xy(self, x, y):
         vx = x if self._vwidth is None else x/self.width*self._vwidth
