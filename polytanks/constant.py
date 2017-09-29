@@ -17,6 +17,9 @@ from pyglet.sprite import Sprite
 from .ogf4py3.component import Body, Collision, FloorCollision
 from .component import TankGraphic, PlayerInput
 
+TANK = 1
+PLATFORM = 2
+BULLET = 3
 TANK_DEF = (PlayerInput, FloorCollision, Body, TankGraphic)
 PLATFORM_DEF = (Collision, Sprite)
 BULLET_DEF = (Body, Sprite)
