@@ -85,3 +85,35 @@ def platform_collision(system, entity, platforms, callback=None):
         break
     if callable(callback) and not touched and floor_collision.touch_floor:
         callback()
+
+class AliveZone(toyblock.System):
+    """This is a basic system where the entities are freed if they are out of bounds.
+    
+    The parameters are relative to left and bottom.
+    
+    Parameters:
+        x1 (float):
+        y1 (float):
+        x2 (float):
+        y2 (float):
+        
+    Returns:
+        An :class:AliveZone.    
+        
+    Example:
+        safezone = AliveZone(0., 0., SCREEN_WIDTH, SCREEN_HEIGHT)
+        entity_systems = (safezone, physics, ...)
+        #  ...
+        
+    """
+    def __init__(self, x1, y1, x2, y2):
+        super().__init__(self._call)
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+    
+    def _call(self, system, entity):
+        body = entity[Body]
+        if not (self.x1 <= body.x <= self.x2 and self.y1 <= body.y <= self.y2):
+            entity.free()

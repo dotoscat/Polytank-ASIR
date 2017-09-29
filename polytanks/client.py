@@ -47,10 +47,11 @@ class Client(Scene):
         self.tank.set(Body, {'x': 200., 'y': 100.})
         self.player_input = self.tank[PlayerInput]
         
+        self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
         self.bullet_pool = toyblock.Pool(64, constant.BULLET_DEF,
             (None, (assets.images["bullet"],)),
-            ({"gravity": True, "max_fall_speed": G/2.}, {"batch": self.batch, "group": self.group[2]}),
-            systems=(system.physics, system.sprite)
+            ({"gravity": True}, {"batch": self.batch, "group": self.group[2]}),
+            systems=(system.physics, system.sprite, self.system_alive_zone)
         )
         
         self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
@@ -73,6 +74,7 @@ class Client(Scene):
 
     def update(self, dt):
         update_user_input(dt)
+        self.system_alive_zone()
         system.physics(dt, -G)
         system.platform_collision(self.platforms, self.touch_floor)
         update_tank_graphic()
