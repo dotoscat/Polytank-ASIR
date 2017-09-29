@@ -32,7 +32,7 @@ from . import level
 class Client(Scene):    
     def __init__(self):
         super().__init__(3)
-                            
+        
         tank_args = (
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),

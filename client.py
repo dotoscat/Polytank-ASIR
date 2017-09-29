@@ -28,7 +28,7 @@ if __name__ == "__main__":
         vwidth=WIDTH/2.,
         vheight=HEIGHT/2.
         )
-        
+    director.set_background_color(0., 0., 0.)
     director.scene = Client()
         
     pyglet.app.run()
