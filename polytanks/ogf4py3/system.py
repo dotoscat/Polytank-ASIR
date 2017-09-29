@@ -101,10 +101,12 @@ class AliveZone(toyblock.System):
         An :class:AliveZone.    
         
     Example:
-        safezone = AliveZone(0., 0., SCREEN_WIDTH, SCREEN_HEIGHT)
-        entity_systems = (safezone, physics, ...)
-        #  ...
-        
+    
+        .. code-block:: python
+            
+            safezone = AliveZone(0., 0., SCREEN_WIDTH, SCREEN_HEIGHT)
+            entity_systems = (safezone, physics, ...)
+            #  ...
     """
     def __init__(self, x1, y1, x2, y2):
         super().__init__(self._call)
