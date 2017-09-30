@@ -35,28 +35,44 @@ def collision(system, entity):
     collision.x = body.x
     collision.y = body.y
 
-def player_powerup(player, powerup, engine):
-    powerup.free()
-    engine.increase_fuel(25.)
-    engine.sound["fuel_pickup"].play()
-
-#collision_t = {
-#    (Type.PLAYER, Type.POWERUP): player_powerup
-#}
-
-@toyblock.System
-def do_collision(system, entity, game_state):
-    entities = system.entities
-    entity_collision = entity[Collision]
-    for sysentity in entities:
-        #3prin
-        if sysentity == entity: continue
-        sysentity_collision = sysentity[Collision]
-        #print(entity_collision.x, entity_collision.y, sysentity_collision.x, sysentity_collision.y)
-        if not (entity_collision.intersects(sysentity_collision)
-            and entity_collision.collides_with & sysentity_collision.type
-            == sysentity_collision.type): continue
-        collision_t[(entity_collision.type, sysentity_collision.type)](entity, sysentity, game_state)
+class CheckCollision(toyblock.System):
+    """System for collisions. This is a naive implementation.
+    
+    With a :class:Collision component set the attribute *set* and then
+    fills its *collides_with* the types, or groups, that you want collide with.
+    
+    Example:
+        PLAYER = 1
+        BALL = 1 << 1
+        ENEMIES = 1 << 2
+    
+        Player.set(Collision, {"collides_with": BALL | ENEMIES, "type": PLAYER})
+        Ball.set(Collision, {"type": BALL})
+    
+        my_collision = CheckCollision()
+        my_collision.table[(PLAYER, BALL)] = player_ball_callback
+    """
+    def __init__(self):
+        super().__init__(self._call)
+        self._table = {}
+        
+    @property
+    def table(self):
+        """Return a table where you assign a pair with its callable."""
+        return self._table    
+    
+    def _call(self):
+        entities = system.entities
+        entity_collision = entity[Collision]
+        table = self._table
+        for sysentity in entities:
+            if sysentity == entity: continue
+            sysentity_collision = sysentity[Collision]
+            if not (
+                entity_collision.collides_with & sysentity_collision.type == sysentity_collision.type
+                and entity_collision.intersects(sysentity_collision)):
+                    continue
+            table[(entity_collision.type, sysentity_collision.type)](entity, sysentity)
 
 @toyblock.System
 def platform_collision(system, entity, platforms, callback=None):
