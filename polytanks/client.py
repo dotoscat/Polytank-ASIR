@@ -81,17 +81,17 @@ class Client(Scene):
         system.sprite()
 
     def on_key_press(self, symbol, modifier):
-        if symbol == key.LEFT:
+        if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
-        elif symbol == key.RIGHT:
+        elif symbol in (key.D, key.RIGHT):
             self.player_input.move_right()
-        elif symbol == key.UP:
+        elif symbol in (key.W, key.UP):
             self.player_input.jump()
 
     def on_key_release(self, symbol, modifier):
-        if symbol in (key.LEFT, key.RIGHT) and self.player_input.moves():
+        if symbol in (key.A, key.D, key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
-        if symbol == key.UP and self.player_input.do_jump:
+        if symbol in (key.UP, key.W) and self.player_input.do_jump:
             self.player_input.not_jump()
 
     def on_mouse_motion(self, x, y, dx, dy):
