@@ -31,9 +31,7 @@ def sprite(system, entity):
 @toyblock.System
 def collision(system, entity):
     body = entity[Body]
-    collision = entity[Collision]
-    collision.x = body.x
-    collision.y = body.y
+    entity[Collision].update(body.x, body.y)
 
 class CheckCollision(toyblock.System):
     """System for collisions. This is a naive implementation.
@@ -69,10 +67,10 @@ class CheckCollision(toyblock.System):
             if sysentity == entity: continue
             sysentity_collision = sysentity[Collision]
             if not (
-                entity_collision.collides_with & sysentity_collision.type == sysentity_collision.type
+                entity_collision.collides_with & sysentity_collision.type_ == sysentity_collision.type_
                 and entity_collision.intersects(sysentity_collision)):
                     continue
-            table[(entity_collision.type, sysentity_collision.type)](entity, sysentity)
+            table[(entity_collision.type_, sysentity_collision.type_)](entity, sysentity)
 
 @toyblock.System
 def platform_collision(system, entity, platforms, callback=None):

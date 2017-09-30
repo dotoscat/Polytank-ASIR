@@ -94,13 +94,18 @@ class Collision(object):
     def top(self):
         return self.y + self.height
 
-    def __init__(self):
+    def __init__(self, type_=0, collides_with=0, offset=(0, 0)):
         self.x = 0.0
         self.y = 0.0
         self.width = 0.0
         self.height = 0.0
-        self.type = 0
-        self.collides_with = 0
+        self.type_ = type_
+        self.offset = offset
+        self.collides_with = collides_with
+
+    def update(self, x, y):
+        self.x = x - self.offset[0]
+        self.y = y - self.offset[1]
 
     def intersects(self, b):
         if b.y >= self.top: return False    # top
