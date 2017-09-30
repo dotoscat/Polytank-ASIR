@@ -59,17 +59,17 @@ class CheckCollision(toyblock.System):
         """Return a table where you assign a pair with its callable."""
         return self._table    
     
-    def _call(self):
+    def _call(self, system, entity):
         entities = system.entities
         entity_collision = entity[Collision]
         table = self._table
         for sysentity in entities:
             if sysentity == entity: continue
             sysentity_collision = sysentity[Collision]
-            if not (
-                entity_collision.collides_with & sysentity_collision.type_ == sysentity_collision.type_
-                and entity_collision.intersects(sysentity_collision)):
-                    continue
+            if not entity_collision.collides_with & sysentity_collision.type_ == sysentity_collision.type_:
+                continue
+            if not entity_collision.intersects(sysentity_collision):
+                continue
             table[(entity_collision.type_, sysentity_collision.type_)](entity, sysentity)
 
 @toyblock.System

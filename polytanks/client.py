@@ -20,7 +20,7 @@ import pyglet
 from pyglet.sprite import Sprite
 from pyglet.window import key
 from .ogf4py3 import Scene
-from .ogf4py3.component import Body
+from .ogf4py3.component import Body, Collision
 from .ogf4py3 import system
 from . import assets
 from .component import TankGraphic, PlayerInput
@@ -32,6 +32,12 @@ from . import level
 class Client(Scene):    
     def __init__(self):
         super().__init__(3)
+        
+        self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
+        self.system_client_collision = system.CheckCollision()
+        self.system_client_collision.table.update({
+            (constant.BULLET, constant.PLATFORM): self.bullet_platform
+        })
         
         tank_args = (
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
@@ -46,17 +52,19 @@ class Client(Scene):
         self.tank = self.tank_pool.get()
         self.tank.set(Body, {'x': 200., 'y': 100.})
         self.player_input = self.tank[PlayerInput]
-        
-        self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
         self.bullet_pool = toyblock.Pool(64, constant.BULLET_DEF,
-            (None, (assets.images["bullet"],)),
-            ({"gravity": True}, {"batch": self.batch, "group": self.group[2]}),
-            systems=(system.physics, system.sprite, self.system_alive_zone)
+            (None, None, (assets.images["bullet"],)),
+            (
+                {"gravity": True},
+                {"type_": constant.BULLET, "collides_with": constant.PLATFORM, "offset": (-2., -2.)},
+                {"batch": self.batch, "group": self.group[2]}),
+            systems=(system.physics, system.collision, system.sprite, self.system_alive_zone, self.system_client_collision)
         )
         
         self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
             (None, (assets.images["platform"],)),
-            (None, {"batch": self.batch, "group": self.group[0]},),
+            ({"type_": constant.PLATFORM}, {"batch": self.batch, "group": self.group[0]},),
+            systems=(self.system_client_collision,)
         )
         self.platforms = []
         self.platform_pool.init(self.init_entity)
@@ -74,11 +82,18 @@ class Client(Scene):
 
     def update(self, dt):
         update_user_input(dt)
+        system.collision()
         self.system_alive_zone()
         system.physics(dt, -G)
         system.platform_collision(self.platforms, self.touch_floor)
+        self.system_client_collision()
         update_tank_graphic()
         system.sprite()
+
+    def bullet_platform(self, bullet, platform):
+        print(bullet, platform)
+        if bullet[Body].vel_y < 0.:
+            bullet.free()
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):
@@ -112,4 +127,5 @@ class Client(Scene):
         vel_y = G*sin(angle)
         x, y = self.tank[TankGraphic].cannon.position
         bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y})
+        bullet.set(Collision, {"width": 4., "height": 4.})
         #Release power
