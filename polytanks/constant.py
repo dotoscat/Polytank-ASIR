@@ -18,11 +18,11 @@ from .ogf4py3.component import Body, Collision, FloorCollision
 from .component import TankGraphic, PlayerInput
 
 TANK = 1
-PLATFORM = 2
-BULLET = 3
+PLATFORM = 1 << 1
+BULLET = 1 << 2
 TANK_DEF = (PlayerInput, FloorCollision, Body, TankGraphic)
 PLATFORM_DEF = (Collision, Sprite)
-BULLET_DEF = (Body, Sprite)
+BULLET_DEF = (Body, Collision, Sprite)
 VWIDTH = 400
 VHEIGHT = 300
 TANK_SPEED = 64.
