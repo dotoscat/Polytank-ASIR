@@ -104,8 +104,8 @@ class Collision(object):
         self.collides_with = collides_with
 
     def update(self, x, y):
-        self.x = x - self.offset[0]
-        self.y = y - self.offset[1]
+        self.x = x + self.offset[0]
+        self.y = y + self.offset[1]
 
     def intersects(self, b):
         if b.y >= self.top: return False    # top
