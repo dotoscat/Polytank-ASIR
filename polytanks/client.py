@@ -70,7 +70,7 @@ class Client(Scene):
         
         self.tank_pool = toyblock.Pool(4, constant.TANK_DEF,
             (None, (*(0., 0.), *(constant.SIZE, 0.)), None, tank_args),
-            (None, None, {"gravity": True, "max_fall_speed": G/2.},),
+            (None, None, {"gravity": True, "max_falling_speed": G/2., "max_ascending_speed": G/2.},),
             systems=(system.physics, update_tank_graphic, update_user_input, system.platform_collision))
         self.tank = self.tank_pool.get()
         self.tank.set(Body, {'x': 200., 'y': 100.})

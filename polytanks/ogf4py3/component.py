@@ -22,18 +22,21 @@ class Body(object):
     You can enable or disable gravity for this :class:`Body` with the
     attribute *gravity*.
     """
-    def __init__(self, gravity=False, max_fall_speed=0.):
+    def __init__(self, gravity=False, max_falling_speed=0., max_ascending_speed=0.):
         self.x = 0.0
         self.y = 0.0
         self.vel_x = 0.0
         self.vel_y = 0.0
-        self.max_fall_speed = max_fall_speed
+        self.max_falling_speed = max_falling_speed
+        self.max_ascending_speed = max_ascending_speed
         self.gravity = gravity
 
     def update(self, dt, g_force=0.):
         if self.gravity: self.vel_y += g_force*dt
-        if self.vel_y < 0. and fabs(self.vel_y) > self.max_fall_speed > 0.:
-            self.vel_y = -self.max_fall_speed
+        if self.vel_y < 0. and fabs(self.vel_y) > self.max_falling_speed > 0.:
+            self.vel_y = -self.max_falling_speed
+        elif self.vel_y > self.max_ascending_speed > 0.:
+            self.vel_y = self.max_ascending_speed
         self.x += self.vel_x*dt
         self.y += self.vel_y*dt
 
