@@ -104,8 +104,8 @@ class Client(Scene):
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
 
-    def touch_floor(self):
-        print("touch")
+    def touch_floor(self, entity):
+        entity[PlayerInput].reset_time_floating()
         logging.info("Touch floor")
 
     def clean_entity(self, entity):

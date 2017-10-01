@@ -75,7 +75,9 @@ class CheckCollision(toyblock.System):
 @toyblock.System
 def platform_collision(system, entity, platforms, callback=None):
     """This system requires the next additional parameters
-     
+    
+    *callback* accepts as parameter the entity.
+    
     Parameters:
         platforms (iterable of platforms)
         callback (callable or None): callback when an entity touch the floor. If None, then is not triggered.
@@ -98,7 +100,7 @@ def platform_collision(system, entity, platforms, callback=None):
         floor_collision.platform = platform
         break
     if callable(callback) and not touched and floor_collision.touch_floor:
-        callback()
+        callback(entity)
 
 class AliveZone(toyblock.System):
     """This is a basic system where the entities are freed if they are out of bounds.
