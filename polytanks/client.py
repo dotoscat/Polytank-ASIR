@@ -29,7 +29,30 @@ from . import constant
 from .constant import VHEIGHT as G
 from . import level
 
-class Client(Scene):    
+class Client(Scene):
+    
+    class Point:
+        def __init__(self, x=0., y=0.):
+            self.x = x
+            self.y = y
+            
+        @property
+        def point(self):
+            return (self.x, self.y)
+            
+        @point.setter
+        def point(self, pair):
+            if not isinstance(pair, tuple):
+                raise ValueError("Use a tuple for the point")
+            self.x = pair[0]
+            self.y = pair[1]
+     
+        def __getitem__(self, i):
+            if not isinstance(i, int):
+                raise ValueError("Use an integer for indexing")
+            if i == 0: return self.x
+            if i == 1: return self.y
+     
     def __init__(self):
         super().__init__(3)
         
@@ -72,11 +95,15 @@ class Client(Scene):
         self.platform_pool.init(self.init_entity)
         
         level.load_level(level.basic, self.platform_pool)
+        
+        self.cursor_point = Client.Point()
 
     def init(self):
         cursor = pyglet.window.ImageMouseCursor(assets.images["eyehole"])
         self.director.set_mouse_cursor(cursor)
-        #  self.director.set_exclusive_mouse(True)
+        self.director.set_exclusive_mouse(True)
+        self.cursor_point.x = constant.VWIDTH/2.
+        self.cursor_point.y = constant.VHEIGHT/2.
 
     def touch_floor(self):
         print("touch")
@@ -123,12 +150,18 @@ class Client(Scene):
             self.player_input.not_jump()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        aim_pointer = self.director.get_virtual_xy(x, y)
-        self.player_input.aim_pointer = aim_pointer
+        print("mouse motion", x, y, dx, dy)
+        vdx, vdy = self.director.get_virtual_xy(dx, dy)
+        self.cursor_point.x += vdx
+        self.cursor_point.y += vdy
+        self.player_input.aim_pointer = self.cursor_point
                 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        aim_pointer = self.director.get_virtual_xy(x, y)
-        self.player_input.aim_pointer = aim_pointer
+        print("mouse drag", x, y, dx, dy)
+        vdx, vdy = self.director.get_virtual_xy(dx, dy)
+        self.cursor_point.x += vdx
+        self.cursor_point.y += vdy
+        self.player_input.aim_pointer = self.cursor_point
 
     def on_mouse_press(self, x, y, button, modifiers):
         pass #Accumulate power
