@@ -60,6 +60,8 @@ class Client(Scene):
                 {"batch": self.batch, "group": self.group[2]}),
             systems=(system.physics, system.collision, system.sprite, self.system_alive_zone, self.system_client_collision)
         )
+        self.bullet_pool.init(self.init_entity)
+        self.bullet_pool.clean(self.clean_entity)
         
         self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
             (None, (assets.images["platform"],)),
@@ -75,9 +77,15 @@ class Client(Scene):
         print("touch")
         logging.info("Touch floor")
 
+    def clean_entity(self, entity):
+        if entity.pool == self.bullet_pool:
+            entity[Sprite].visible = False
+
     def init_entity(self, entity):
         if entity.pool == self.platform_pool:
             self.platforms.append(entity)
+        elif entity.pool == self.bullet_pool:
+            entity[Sprite].visible = True
         logging.info("init", entity)
 
     def update(self, dt):
