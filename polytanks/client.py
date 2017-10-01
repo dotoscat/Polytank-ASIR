@@ -160,6 +160,14 @@ class Client(Scene):
         vdx, vdy = self.director.get_virtual_xy(dx, dy)
         self.cursor_point.x += vdx
         self.cursor_point.y += vdy
+        if self.cursor_point.x < 0.:
+            self.cursor_point.x = 0.
+        elif self.cursor_point.x > constant.VWIDTH:
+            self.cursor_point.x = constant.VWIDTH
+        if self.cursor_point.y < 0.:
+            self.cursor_point.y = 0.
+        elif self.cursor_point.y > constant.VHEIGHT:
+            self.cursor_point.y = constant.VHEIGHT
         self.player_input.aim_pointer = self.cursor_point
         self.cursor.position = self.cursor_point.point
 
