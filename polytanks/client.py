@@ -120,6 +120,12 @@ class Client(Scene):
         logging.info("init", entity)
 
     def update(self, dt):
+        if self.player_input.accumulate_power and self.player_input.release_power:
+            self.player_input.accumulate_power = False
+            power = int(self.player_input.time_power)
+            self.player_input.time_power = 0.
+            self._spawn_bullet()
+            print("Bullet of powah", power)
         update_user_input(dt)
         system.collision()
         self.system_alive_zone()
@@ -172,9 +178,16 @@ class Client(Scene):
         self.cursor.position = self.cursor_point.point
 
     def on_mouse_press(self, x, y, button, modifiers):
-        pass #Accumulate power
+        self.player_input.accumulate_power = True
         
     def on_mouse_release(self, x, y, button, modifiers):
+        if not self.player_input.accumulate_power: return
+        self.player_input.accumulate_power = False
+        power = int(self.player_input.time_power)
+        self.player_input.time_power = 0.
+        self._spawn_bullet()
+
+    def _spawn_bullet(self):
         bullet = self.bullet_pool.get()
         angle = self.player_input.cannon_angle
         vel_x = G*cos(angle)
@@ -182,4 +195,3 @@ class Client(Scene):
         x, y = self.tank[TankGraphic].cannon.position
         bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y})
         bullet.set(Collision, {"width": 4., "height": 4.})
-        #Release power

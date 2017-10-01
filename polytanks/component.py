@@ -21,10 +21,17 @@ class PlayerInput:
         self.cannon_angle = 0.
         self.time_floating = 0.
         self.MAX_TIME_FLOATING = 3.
+        self.accumulate_power = False
+        self.time_power = 0.
+        self.MAX_TIME_POWER = 3.
     
     @property
     def floats(self):
         return self.time_floating < self.MAX_TIME_FLOATING
+    
+    @property
+    def release_power(self):
+        return self.time_power > self.MAX_TIME_POWER
     
     def reset_time_floating(self):
         self.time_floating = 0.

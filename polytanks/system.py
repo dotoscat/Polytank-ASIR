@@ -35,7 +35,11 @@ def update_user_input(self, entity, dt):
     elif player_input.floats and player_input.do_jump and not entity[FloorCollision].touch_floor:
         player_input.time_floating += dt
         player_body.apply_force(dt, y=G*1.5)
-        
+    
+    if player_input.accumulate_power and not player_input.release_power:
+        player_input.time_power += dt
+        print(player_input.time_power)
+    
     aim_pointer = player_input.aim_pointer
     cannon_position = entity[TankGraphic].cannon.position
     angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
