@@ -54,7 +54,7 @@ class Client(Scene):
             if i == 1: return self.y
      
     def __init__(self):
-        super().__init__(3)
+        super().__init__(4)
         
         self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
         self.system_client_collision = system.CheckCollision()
@@ -97,10 +97,9 @@ class Client(Scene):
         level.load_level(level.basic, self.platform_pool)
         
         self.cursor_point = Client.Point()
+        self.cursor = Sprite(assets.images["eyehole"], batch=self.batch, group=self.group[3])
 
     def init(self):
-        cursor = pyglet.window.ImageMouseCursor(assets.images["eyehole"])
-        self.director.set_mouse_cursor(cursor)
         self.director.set_exclusive_mouse(True)
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
@@ -150,18 +149,19 @@ class Client(Scene):
             self.player_input.not_jump()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        print("mouse motion", x, y, dx, dy)
-        vdx, vdy = self.director.get_virtual_xy(dx, dy)
-        self.cursor_point.x += vdx
-        self.cursor_point.y += vdy
-        self.player_input.aim_pointer = self.cursor_point
-                
+        #  print("mouse motion", x, y, dx, dy)
+        self._update_mouse(dx, dy)
+        
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        print("mouse drag", x, y, dx, dy)
+        #  print("mouse drag", x, y, dx, dy)
+        self._update_mouse(dx, dy)
+
+    def _update_mouse(self, dx, dy):
         vdx, vdy = self.director.get_virtual_xy(dx, dy)
         self.cursor_point.x += vdx
         self.cursor_point.y += vdy
         self.player_input.aim_pointer = self.cursor_point
+        self.cursor.position = self.cursor_point.point
 
     def on_mouse_press(self, x, y, button, modifiers):
         pass #Accumulate power
