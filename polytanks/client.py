@@ -122,10 +122,7 @@ class Client(Scene):
     def update(self, dt):
         if self.player_input.accumulate_power and self.player_input.release_power:
             self.player_input.accumulate_power = False
-            power = int(self.player_input.time_power)
-            self.player_input.time_power = 0.
-            self._spawn_bullet()
-            print("Bullet of powah", power)
+            self.player_shoots()
         update_user_input(dt)
         system.collision()
         self.system_alive_zone()
@@ -183,15 +180,29 @@ class Client(Scene):
     def on_mouse_release(self, x, y, button, modifiers):
         if not self.player_input.accumulate_power: return
         self.player_input.accumulate_power = False
+        self.player_shoots()
+
+    def player_shoots(self):
+        x, y = self.tank[TankGraphic].cannon.position
         power = int(self.player_input.time_power)
         self.player_input.time_power = 0.
-        self._spawn_bullet()
-
-    def _spawn_bullet(self):
-        bullet = self.bullet_pool.get()
         angle = self.player_input.cannon_angle
-        vel_x = G*cos(angle)
-        vel_y = G*sin(angle)
-        x, y = self.tank[TankGraphic].cannon.position
-        bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y})
+        force = G
+        gravity = True
+        if power == 0:
+            force *= 1.
+            gravity = False
+        elif power == 1:
+            force *= 1.
+            gravity = True
+        elif power >= 2:
+            force *= 1
+            gravity = False
+        self._spawn_bullet(x, y, force, angle, gravity)
+
+    def _spawn_bullet(self, x, y, force, angle, gravity):
+        bullet = self.bullet_pool.get()
+        vel_x = force*cos(angle)
+        vel_y = force*sin(angle)
+        bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y, "gravity": gravity})
         bullet.set(Collision, {"width": 4., "height": 4.})
