@@ -32,7 +32,8 @@ def update_user_input(self, entity, dt):
     if player_input.do_jump and entity[FloorCollision].touch_floor:
         player_body.vel_y = G/2.
         player_input.do_jump = False
-    elif player_input.do_jump and not entity[FloorCollision].touch_floor:
+    elif player_input.floats and player_input.do_jump and not entity[FloorCollision].touch_floor:
+        player_input.time_floating += dt
         player_body.apply_force(dt, y=G*1.5)
         
     aim_pointer = player_input.aim_pointer
