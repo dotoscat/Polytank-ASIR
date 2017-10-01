@@ -73,6 +73,11 @@ class Client(Scene):
         
         level.load_level(level.basic, self.platform_pool)
 
+    def init(self):
+        cursor = pyglet.window.ImageMouseCursor(assets.images["eyehole"])
+        self.director.set_mouse_cursor(cursor)
+        #  self.director.set_exclusive_mouse(True)
+
     def touch_floor(self):
         print("touch")
         logging.info("Touch floor")

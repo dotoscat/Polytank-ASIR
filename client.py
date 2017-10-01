@@ -26,7 +26,8 @@ if __name__ == "__main__":
         width=WIDTH,
         height=HEIGHT,
         vwidth=WIDTH/2.,
-        vheight=HEIGHT/2.
+        vheight=HEIGHT/2.,
+        fullscreen=False
         )
     director.set_background_color(0., 0., 0.)
     director.scene = Client()

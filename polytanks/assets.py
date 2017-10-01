@@ -31,3 +31,5 @@ images["tank-cannon"].anchor_x = 0.
 images["tank-cannon"].anchor_y = 4.
 images["bullet"].anchor_x = 4.
 images["bullet"].anchor_y = 4.
+images["eyehole"].anchor_x = 8.
+images["eyehole"].anchor_y = 8.
