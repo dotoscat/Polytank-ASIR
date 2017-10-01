@@ -97,11 +97,11 @@ class Collision(object):
     def top(self):
         return self.y + self.height
 
-    def __init__(self, type_=0, collides_with=0, offset=(0, 0)):
-        self.x = 0.0
-        self.y = 0.0
-        self.width = 0.0
-        self.height = 0.0
+    def __init__(self, x=0., y=0., type_=0, collides_with=0, width=0., height=0., offset=(0, 0)):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
         self.type_ = type_
         self.offset = offset
         self.collides_with = collides_with
@@ -119,3 +119,12 @@ class Collision(object):
 
     def __contains__(self, pair):
         return self.x <= pair[0] <= self.right and self.y <= pair[1] <= self.top
+
+class Timer:
+    def __init__(self, time):
+        self.time = 0.
+        self.max_time = time
+
+    @property
+    def done(self):
+        return self.time >= self.max_time

@@ -94,6 +94,16 @@ class Client(Scene):
         self.platforms = []
         self.platform_pool.init(self.init_entity)
         
+        self.explosion_pool = toyblock.Pool(64, constant.EXPLOSION_DEF,
+            (None, None, (0.25,), (assets.images["explosion"],)),
+            (None, {"type_": constant.EXPLOSION, "collides_with": constant.EXPLOSION,
+                    "offset": (-4., -4.), "width": 16., "height": 16.},
+            None, {"batch": self.batch, "group": self.group[3]}),
+            systems=(system.lifespan, system.sprite)
+        )
+        self.explosion_pool.init(self.init_entity)
+        self.explosion_pool.clean(self.clean_entity)
+        
         level.load_level(level.basic, self.platform_pool)
         
         self.cursor_point = Client.Point()
@@ -109,17 +119,18 @@ class Client(Scene):
         logging.info("Touch floor")
 
     def clean_entity(self, entity):
-        if entity.pool == self.bullet_pool:
+        if entity.pool in (self.bullet_pool, self.explosion_pool):
             entity[Sprite].visible = False
 
     def init_entity(self, entity):
         if entity.pool == self.platform_pool:
             self.platforms.append(entity)
-        elif entity.pool == self.bullet_pool:
+        elif entity.pool in (self.bullet_pool, self.explosion_pool):
             entity[Sprite].visible = True
         logging.info("init", entity)
 
     def update(self, dt):
+        system.lifespan(dt)
         if self.player_input.accumulate_power and self.player_input.release_power:
             self.player_input.accumulate_power = False
             self.player_shoots()
@@ -135,7 +146,10 @@ class Client(Scene):
     def bullet_platform(self, bullet, platform):
         print(bullet, platform)
         if bullet[Body].vel_y < 0.:
+            x = bullet[Body].x
+            y = bullet[Body].y
             bullet.free()
+            self._spawn_explosion(x, y)
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):
@@ -206,3 +220,7 @@ class Client(Scene):
         vel_y = force*sin(angle)
         bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y, "gravity": gravity})
         bullet.set(Collision, {"width": 4., "height": 4.})
+
+    def _spawn_explosion(self, x, y):
+        explosion = self.explosion_pool.get()
+        explosion.set(Body, {'x': x, 'y': y})

@@ -13,16 +13,19 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from . import assets
 from pyglet.sprite import Sprite
-from .ogf4py3.component import Body, Collision, FloorCollision
+from .ogf4py3.component import Body, Collision, FloorCollision, Timer
 from .component import TankGraphic, PlayerInput
 
 TANK = 1
 PLATFORM = 1 << 1
 BULLET = 1 << 2
+EXPLOSION = 1 << 3
 TANK_DEF = (PlayerInput, FloorCollision, Body, TankGraphic)
 PLATFORM_DEF = (Collision, Sprite)
 BULLET_DEF = (Body, Collision, Sprite)
+EXPLOSION_DEF = (Body, Collision, Timer, Sprite)
 VWIDTH = 400
 VHEIGHT = 300
 TANK_SPEED = 64.

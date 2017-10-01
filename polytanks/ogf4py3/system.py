@@ -16,7 +16,7 @@
 
 from pyglet.sprite import Sprite
 import toyblock
-from .component import Body, FloorCollision, Collision
+from .component import Body, FloorCollision, Collision, Timer
 
 @toyblock.System
 def physics(system, entity, dt, gravity):
@@ -135,3 +135,11 @@ class AliveZone(toyblock.System):
         body = entity[Body]
         if not (self.x1 <= body.x <= self.x2 and self.y1 <= body.y <= self.y2):
             entity.free()
+
+@toyblock.System
+def lifespan(system, entity, dt):
+    timer = entity[Timer]
+    timer.time += dt
+    if timer.done:
+        timer.time = 0.
+        entity.free()
