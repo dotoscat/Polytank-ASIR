@@ -14,26 +14,23 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pyglet.sprite import Sprite
-import toyblock
-from .component import Body, FloorCollision, Collision, Timer
+from . import toyblock3
 
-@toyblock.System
+@toyblock3.system("body")
 def physics(system, entity, dt, gravity):
-    body = entity[Body]
-    body.update(dt, gravity)
+    entity.body.update(dt, gravity)
 
-@toyblock.System
+@toyblock3.system("body", "sprite")
 def sprite(system, entity):
-    body = entity[Body]
-    entity[Sprite].set_position(body.x, body.y)
+    body = entity.body
+    entity.sprite.set_position(body.x, body.y)
 
-@toyblock.System
+@toyblock3.system("body", "collision")
 def collision(system, entity):
-    body = entity[Body]
-    entity[Collision].update(body.x, body.y)
+    body = entity.body
+    entity.collision.update(body.x, body.y)
 
-class CheckCollision(toyblock.System):
+class CheckCollision(toyblock3.System):
     """System for collisions. This is a naive implementation.
     
     With a :class:Collision component set the attribute *set* and then
@@ -51,8 +48,9 @@ class CheckCollision(toyblock.System):
         my_collision.table[(PLAYER, BALL)] = player_ball_callback
     """
     def __init__(self):
-        super().__init__(self._call)
+        super().__init__("collision")
         self._table = {}
+        self.callable = self._call
         
     @property
     def table(self):
@@ -61,18 +59,18 @@ class CheckCollision(toyblock.System):
     
     def _call(self, system, entity):
         entities = system.entities
-        entity_collision = entity[Collision]
+        entity_collision = entity.collision
         table = self._table
         for sysentity in entities:
             if sysentity == entity: continue
-            sysentity_collision = sysentity[Collision]
+            sysentity_collision = sysentity.collision
             if not entity_collision.collides_with & sysentity_collision.type_ == sysentity_collision.type_:
                 continue
             if not entity_collision.intersects(sysentity_collision):
                 continue
             table[(entity_collision.type_, sysentity_collision.type_)](entity, sysentity)
 
-@toyblock.System
+@toyblock.system("body", "floor_collision", "collision")
 def platform_collision(system, entity, platforms, callback=None):
     """This system requires the next additional parameters
     
@@ -82,14 +80,14 @@ def platform_collision(system, entity, platforms, callback=None):
         platforms (iterable of platforms)
         callback (callable or None): callback when an entity touch the floor. If None, then is not triggered.
     """
-    body = entity[Body]
-    floor_collision = entity[FloorCollision]
+    body = entity.body
+    floor_collision = entity.floor_collision
     points = floor_collision.get_points(body.x, body.y)
     body.gravity = True
     touched = floor_collision.touch_floor
     floor_collision.platform = None
     for platform in platforms:
-        platform_collision = platform[Collision]
+        platform_collision = platform.collision
         if (body.vel_y > 0.0 or
         (points[0] not in platform_collision and
         points[1] not in platform_collision)):
@@ -125,20 +123,21 @@ class AliveZone(toyblock.System):
             #  ...
     """
     def __init__(self, x1, y1, x2, y2):
-        super().__init__(self._call)
+        super().__init__("body")
+        self.callable = _call
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
     
     def _call(self, system, entity):
-        body = entity[Body]
+        body = entity.body
         if not (self.x1 <= body.x <= self.x2 and self.y1 <= body.y <= self.y2):
             entity.free()
 
-@toyblock.System
+@toyblock.system("timer")
 def lifespan(system, entity, dt):
-    timer = entity[Timer]
+    timer = entity.timer
     timer.time += dt
     if timer.done:
         timer.time = 0.
