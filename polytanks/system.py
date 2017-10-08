@@ -15,24 +15,22 @@
 
 from math import atan2, degrees, hypot
 import toyblock
-from .ogf4py3.component import Body, FloorCollision
-from .component import TankGraphic, PlayerInput
 from .constant import TANK_SPEED, VHEIGHT as G
 
-@toyblock.System
+@toyblock.system("body", "tank_graphic")
 def update_tank_graphic(self, entity):
-    body = entity[Body]
-    entity[TankGraphic].set_position(body.x, body.y)
+    body = entity.body
+    entity.tank_graphic.set_position(body.x, body.y)
 
-@toyblock.System
+@toyblock.system("player_input", "body", "floor_collision")
 def update_user_input(self, entity, dt):
-    player_input = entity[PlayerInput]
-    player_body = entity[Body]
+    player_input = entity.player_input
+    player_body = entity.body
     player_body.vel_x = player_input.move*TANK_SPEED
-    if player_input.do_jump and entity[FloorCollision].touch_floor:
+    if player_input.do_jump and entity.floor_collision.touch_floor:
         player_body.vel_y = G/2.
         player_input.do_jump = False
-    elif player_input.floats and player_input.do_jump and not entity[FloorCollision].touch_floor:
+    elif player_input.floats and player_input.do_jump and not entity.floor_collision.touch_floor:
         player_input.time_floating += dt
         player_body.apply_force(dt, y=G*1.5)
     
