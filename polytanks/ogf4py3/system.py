@@ -70,7 +70,7 @@ class CheckCollision(toyblock3.System):
                 continue
             table[(entity_collision.type_, sysentity_collision.type_)](entity, sysentity)
 
-@toyblock.system("body", "floor_collision", "collision")
+@toyblock3.system("body", "floor_collision", "collision")
 def platform_collision(system, entity, platforms, callback=None):
     """This system requires the next additional parameters
     
@@ -100,7 +100,7 @@ def platform_collision(system, entity, platforms, callback=None):
     if callable(callback) and not touched and floor_collision.touch_floor:
         callback(entity)
 
-class AliveZone(toyblock.System):
+class AliveZone(toyblock3.System):
     """This is a basic system where the entities are freed if they are out of bounds.
     
     The parameters are relative to left and bottom.
@@ -124,7 +124,7 @@ class AliveZone(toyblock.System):
     """
     def __init__(self, x1, y1, x2, y2):
         super().__init__("body")
-        self.callable = _call
+        self.callable = self._call
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
@@ -135,7 +135,7 @@ class AliveZone(toyblock.System):
         if not (self.x1 <= body.x <= self.x2 and self.y1 <= body.y <= self.y2):
             entity.free()
 
-@toyblock.system("timer")
+@toyblock3.system("timer")
 def lifespan(system, entity, dt):
     timer = entity.timer
     timer.time += dt

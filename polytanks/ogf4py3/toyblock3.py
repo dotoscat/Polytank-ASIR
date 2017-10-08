@@ -39,7 +39,7 @@ class InstanceBuilder:
         self._components = {}
         self._iterator = None
         
-    def add(self, component, type_, *args, **kwargs):
+    def add(self, component, type__, *args, **kwargs):
         """Defines what a component is.
         
         Add a component with its type and arguments.
@@ -54,7 +54,7 @@ class InstanceBuilder:
         """
         if not isinstance(component, str):
             raise TypeError("component must be a String type. {} given.".format(type(component)))
-        self._components[component] = {"type": type_, "args": args, "kwargs": kwargs}
+        self._components[component] = {"type": type__, "args": args, "kwargs": kwargs}
         return self
 
     @property

@@ -15,12 +15,12 @@
 
 from math import cos, sin
 import logging
-import toyblock
 import pyglet
 from pyglet.sprite import Sprite
 from pyglet.window import key
+from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
-from .ogf4py3.component import Body, Collision
+from .ogf4py3.component import Body, Collision, FloorCollision, Timer
 from .ogf4py3 import system
 from . import assets
 from .component import TankGraphic, PlayerInput
@@ -62,45 +62,61 @@ class Client(Scene):
             (constant.BULLET, constant.PLATFORM): self.bullet_platform
         })
         
-        tank_args = (
+        tank_builder = toyblock3.InstanceBuilder()
+        tank_builder.add("player_input", PlayerInput)
+        tank_builder.add("floor_collision", FloorCollision, *(0., 0.), *(constant.SIZE, 0.))
+        tank_builder.add("body", Body, gravity=True, max_falling_speed=G/2., max_ascending_speed=G/2.)
+        tank_builder.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
-            (8.5, 12.5)
-        )
+            (8.5, 12.5),)
         
-        self.tank_pool = toyblock.Pool(4, constant.TANK_DEF,
-            (None, (*(0., 0.), *(constant.SIZE, 0.)), None, tank_args),
-            (None, None, {"gravity": True, "max_falling_speed": G/2., "max_ascending_speed": G/2.},),
-            systems=(system.physics, update_tank_graphic, update_user_input, system.platform_collision))
+        self.tank_pool = toyblock3.build_Entity(4, tank_builder,
+            system.physics, update_tank_graphic, update_user_input, system.platform_collision)
         self.tank = self.tank_pool.get()
-        self.tank.set(Body, {'x': 200., 'y': 100.})
-        self.player_input = self.tank[PlayerInput]
-        self.bullet_pool = toyblock.Pool(64, constant.BULLET_DEF,
-            (None, None, (assets.images["bullet"],)),
-            (
-                {"gravity": True},
-                {"type_": constant.BULLET, "collides_with": constant.PLATFORM, "offset": (-2., -2.)},
-                {"batch": self.batch, "group": self.group[2]}),
-            systems=(system.physics, system.collision, system.sprite, self.system_alive_zone, self.system_client_collision)
-        )
+        self.tank.set("body", x=200., y=100.)
+        self.player_input = self.tank.player_input
+        
+        bullet_builder = toyblock3.InstanceBuilder()
+        bullet_builder.add("body", Body, gravity=True)
+        print("constant.BULLET", constant.BULLET)
+        print(bullet_builder, bullet_builder._components)
+        bullet_builder.add("collision", Collision, type_=constant.BULLET,
+            collides_with=constant.PLATFORM, offset=(-2., -2.))
+        bullet_builder.add("sprite", Sprite, assets.images["bullet"],
+                            batch=self.batch, group=self.group[2])
+        
+        self.bullet_pool = toyblock3.build_Entity(
+            64, bullet_builder,
+            system.physics, system.collision, system.sprite,
+            self.system_alive_zone, self.system_client_collision)
+        
         self.bullet_pool.init(self.init_entity)
         self.bullet_pool.clean(self.clean_entity)
         
-        self.platform_pool = toyblock.Pool(64, constant.PLATFORM_DEF,
-            (None, (assets.images["platform"],)),
-            ({"type_": constant.PLATFORM}, {"batch": self.batch, "group": self.group[0]},),
-            systems=(self.system_client_collision,)
-        )
+        plat_builder = toyblock3.InstanceBuilder()
+        plat_builder.add("collision", Collision, type_=constant.PLATFORM)
+        plat_builder.add("sprite", Sprite, assets.images["platform"],
+            batch=self.batch, group=self.group[0])
+        
+        self.platform_pool = toyblock3.build_Entity(
+            64, plat_builder, self.system_client_collision)
+            
         self.platforms = []
         self.platform_pool.init(self.init_entity)
         
-        self.explosion_pool = toyblock.Pool(64, constant.EXPLOSION_DEF,
-            (None, None, (0.25,), (assets.images["explosion"],)),
-            (None, {"type_": constant.EXPLOSION, "collides_with": constant.EXPLOSION,
-                    "offset": (-4., -4.), "width": 16., "height": 16.},
-            None, {"batch": self.batch, "group": self.group[3]}),
-            systems=(system.lifespan, system.sprite)
-        )
+        expl_builder = toyblock3.InstanceBuilder()
+        expl_builder.add("body", Body)
+        expl_builder.add("collision", Collision,
+            type_=constant.EXPLOSION, collides_with=constant.EXPLOSION,
+            offset=(-4., -4.), width=16., height=16.)
+        expl_builder.add("timer", Timer, 0.25)
+        expl_builder.add("sprite", Sprite, assets.images["explosion"],
+            batch=self.batch, group=self.group[3])
+        
+        self.explosion_pool = toyblock3.build_Entity(64, expl_builder,
+            system.lifespan, system.sprite)
+            
         self.explosion_pool.init(self.init_entity)
         self.explosion_pool.clean(self.clean_entity)
         
@@ -115,17 +131,19 @@ class Client(Scene):
         self.cursor_point.y = constant.VHEIGHT/2.
 
     def touch_floor(self, entity):
-        entity[PlayerInput].reset_time_floating()
+        entity.player_input.reset_time_floating()
         logging.info("Touch floor")
 
     def clean_entity(self, entity):
-        if entity.pool in (self.bullet_pool, self.explosion_pool):
-            entity[Sprite].visible = False
+        if (isinstance(entity, self.bullet_pool)
+            or isinstance(entity, self.explosion_pool)):
+            entity.sprite.visible = False
 
     def init_entity(self, entity):
-        if entity.pool == self.platform_pool:
+        if isinstance(entity, self.platform_pool):
             self.platforms.append(entity)
-        elif entity.pool in (self.bullet_pool, self.explosion_pool):
+        elif (isinstance(entity, self.bullet_pool)
+            or isinstance(entity, self.explosion_pool)):
             entity[Sprite].visible = True
         logging.info("init", entity)
 
@@ -145,9 +163,9 @@ class Client(Scene):
 
     def bullet_platform(self, bullet, platform):
         print(bullet, platform)
-        if bullet[Body].vel_y < 0.:
-            x = bullet[Body].x
-            y = bullet[Body].y
+        if bullet.body.vel_y < 0.:
+            x = bullet.body.x
+            y = bullet.body.y
             bullet.free()
             self._spawn_explosion(x, y)
 
@@ -197,7 +215,7 @@ class Client(Scene):
         self.player_shoots()
 
     def player_shoots(self):
-        x, y = self.tank[TankGraphic].cannon.position
+        x, y = self.tank.tank_graphic.cannon.position
         power = int(self.player_input.time_power)
         self.player_input.time_power = 0.
         angle = self.player_input.cannon_angle
@@ -218,9 +236,9 @@ class Client(Scene):
         bullet = self.bullet_pool.get()
         vel_x = force*cos(angle)
         vel_y = force*sin(angle)
-        bullet.set(Body, {"vel_x": vel_x, "vel_y": vel_y, "x": x, "y": y, "gravity": gravity})
-        bullet.set(Collision, {"width": 4., "height": 4.})
+        bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
+        bullet.set("collision", width=4., height=4.)
 
     def _spawn_explosion(self, x, y):
         explosion = self.explosion_pool.get()
-        explosion.set(Body, {'x': x, 'y': y})
+        explosion.set("body", x=x, y=y)

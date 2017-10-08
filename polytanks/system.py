@@ -14,15 +14,15 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from math import atan2, degrees, hypot
-import toyblock
+from .ogf4py3 import toyblock3
 from .constant import TANK_SPEED, VHEIGHT as G
 
-@toyblock.system("body", "tank_graphic")
+@toyblock3.system("body", "tank_graphic")
 def update_tank_graphic(self, entity):
     body = entity.body
     entity.tank_graphic.set_position(body.x, body.y)
 
-@toyblock.system("player_input", "body", "floor_collision")
+@toyblock3.system("player_input", "body", "floor_collision")
 def update_user_input(self, entity, dt):
     player_input = entity.player_input
     player_body = entity.body
@@ -39,8 +39,8 @@ def update_user_input(self, entity, dt):
         print(player_input.time_power)
     
     aim_pointer = player_input.aim_pointer
-    cannon_position = entity[TankGraphic].cannon.position
+    cannon_position = entity.tank_graphic.cannon.position
     angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
     player_input.cannon_angle = angle
-    entity[TankGraphic].cannon.rotation = -degrees(angle)
+    entity.tank_graphic.cannon.rotation = -degrees(angle)
     
