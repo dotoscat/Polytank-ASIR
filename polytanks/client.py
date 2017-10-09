@@ -79,8 +79,6 @@ class Client(Scene):
         
         bullet_builder = toyblock3.InstanceBuilder()
         bullet_builder.add("body", Body, gravity=True)
-        print("constant.BULLET", constant.BULLET)
-        print(bullet_builder, bullet_builder._components)
         bullet_builder.add("collision", Collision, type_=constant.BULLET,
             collides_with=constant.PLATFORM, offset=(-2., -2.))
         bullet_builder.add("sprite", Sprite, assets.images["bullet"],
@@ -116,7 +114,7 @@ class Client(Scene):
         
         self.explosion_pool = toyblock3.build_Entity(64, expl_builder,
             system.lifespan, system.sprite)
-            
+                
         self.explosion_pool.init(self.init_entity)
         self.explosion_pool.clean(self.clean_entity)
         
@@ -144,7 +142,7 @@ class Client(Scene):
             self.platforms.append(entity)
         elif (isinstance(entity, self.bullet_pool)
             or isinstance(entity, self.explosion_pool)):
-            entity[Sprite].visible = True
+            entity.sprite.visible = True
         logging.info("init", entity)
 
     def update(self, dt):
@@ -162,7 +160,6 @@ class Client(Scene):
         system.sprite()
 
     def bullet_platform(self, bullet, platform):
-        print(bullet, platform)
         if bullet.body.vel_y < 0.:
             x = bullet.body.x
             y = bullet.body.y
