@@ -263,12 +263,10 @@ def build_Entity(n, instance_builder, *systems):
     _Entity._entities = entities
     _Entity._used = deque()
     _Entity._systems = []
-    
+
     for system in systems:
-        insert = False
-        for component in instance_builder.components:
-            insert = insert or component in system.components
-            if not insert: continue
+        if any((component in instance_builder.components
+            for component in system.components)):
             _Entity._systems.append(system)
     
     return _Entity
