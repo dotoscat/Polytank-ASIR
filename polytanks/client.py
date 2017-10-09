@@ -163,6 +163,8 @@ class Client(Scene):
         if bullet.body.vel_y < 0.:
             x = bullet.body.x
             y = bullet.body.y
+            print("destroy", bullet)
+            print("on", platform)
             bullet.free()
             self._spawn_explosion(x, y)
 

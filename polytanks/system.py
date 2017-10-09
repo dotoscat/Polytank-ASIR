@@ -36,7 +36,7 @@ def update_user_input(self, entity, dt):
     
     if player_input.accumulate_power and not player_input.release_power:
         player_input.time_power += dt
-        print(player_input.time_power)
+        #  print(player_input.time_power)
     
     aim_pointer = player_input.aim_pointer
     cannon_position = entity.tank_graphic.cannon.position

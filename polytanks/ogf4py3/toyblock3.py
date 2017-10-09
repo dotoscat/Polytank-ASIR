@@ -97,11 +97,14 @@ class Entity:
                 a_bullet.body.x = x
                 a_bullet.body.y = y
     """
-    __slots__ = ()
+    __slots__ = ("_alive")
         
     _init = None
     _clean = None
-        
+    
+    def __init__(self):
+        self._alive = False
+    
     @classmethod
     def get(cls):
         """Return an unused instance from its pool."""
@@ -109,6 +112,7 @@ class Entity:
         if cls._entities:
             entity = cls._entities.pop()
             cls._used.append(entity)
+            entity._alive = True
             for system in cls._systems:
                 system._add_entity(entity)
             if cls._init is not None:
@@ -145,8 +149,10 @@ class Entity:
     
     @classmethod
     def _free(cls, entity):
+        if not entity._alive: return
         cls._used.remove(entity)
         cls._entities.append(entity)
+        entity._alive = False
         for system in cls._systems:
             system._remove_entity(entity)
         if cls._clean is not None:
