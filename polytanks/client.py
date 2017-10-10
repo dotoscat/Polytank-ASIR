@@ -209,8 +209,8 @@ class Client(Scene):
 
     def _spawn_bullet(self, x, y, force, angle, gravity):
         bullet = self.bullet_pool.get()
-        vel_x = force*cos(angle)
-        vel_y = force*sin(angle)
+        vel_x = force*cos(angle) + self.tank.body.vel_x
+        vel_y = force*sin(angle) + self.tank.body.vel_y
         bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
         bullet.set("collision", width=4., height=4.)
 
