@@ -198,20 +198,13 @@ class Client(Scene):
 
     def player_shoots(self):
         x, y = self.tank.tank_graphic.cannon.position
-        power = int(self.player_input.time_power)
+        power = self.player_input.time_power
         self.player_input.time_power = 0.
         angle = self.player_input.cannon_angle
-        force = G
+        force = G/2.
         gravity = True
-        if power == 0:
-            force *= 1.
-            gravity = False
-        elif power == 1:
-            force *= 1.
-            gravity = True
-        elif power >= 2:
-            force *= 1
-            gravity = False
+        if power >= 1.:
+            force *= power
         self._spawn_bullet(x, y, force, angle, gravity)
 
     def _spawn_bullet(self, x, y, force, angle, gravity):
