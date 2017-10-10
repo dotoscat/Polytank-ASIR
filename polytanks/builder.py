@@ -16,12 +16,13 @@
 from pyglet.sprite import Sprite
 from .ogf4py3 import toyblock3
 from .ogf4py3.component import Body, Collision, FloorCollision, Timer
-from .component import PlayerInput
+from .component import PlayerInput, Tank
 from . import constant
 from .constant import G
 
 tank = toyblock3.InstanceBuilder()
 tank.add("id", int)
+tank.add("tank", Tank)
 tank.add("player_input", PlayerInput)
 tank.add("floor_collision", FloorCollision, *(0., 0.), *(constant.SIZE, 0.))
 tank.add("body", Body, gravity=True, max_falling_speed=G/2., max_ascending_speed=G/2.)

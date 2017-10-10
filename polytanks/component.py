@@ -53,7 +53,14 @@ class PlayerInput:
     
     def not_jump(self):
         self.do_jump = False
-    
+
+class Tank:
+    def __init__(self):
+        self.damage = 0
+        
+    def reset(self):
+        self.damage = 0
+
 class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base
