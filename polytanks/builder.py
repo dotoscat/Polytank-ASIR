@@ -21,11 +21,13 @@ from . import constant
 from .constant import G
 
 tank = toyblock3.InstanceBuilder()
+tank.add("id", int)
 tank.add("player_input", PlayerInput)
 tank.add("floor_collision", FloorCollision, *(0., 0.), *(constant.SIZE, 0.))
 tank.add("body", Body, gravity=True, max_falling_speed=G/2., max_ascending_speed=G/2.)
 
 bullet = toyblock3.InstanceBuilder()
+bullet.add("id", int)
 bullet.add("body", Body, gravity=True)
 bullet.add("collision", Collision, type_=constant.BULLET,
     collides_with=constant.PLATFORM, offset=(-2., -2.))
@@ -34,6 +36,7 @@ platform = toyblock3.InstanceBuilder()
 platform.add("collision", Collision, type_=constant.PLATFORM)
 
 explosion = toyblock3.InstanceBuilder()
+explosion.add("id", int)
 explosion.add("body", Body)
 explosion.add("collision", Collision,
     type_=constant.EXPLOSION, collides_with=constant.EXPLOSION,
