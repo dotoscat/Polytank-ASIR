@@ -14,7 +14,22 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from math import cos, sin
 from . import toyblock3
 
 from .director import Director
 from .scene import Scene
+
+def magnitude_to_vector(magnitude, angle):
+    """
+    Parameters:
+        magnitude (number):
+        angle (float): In radians.
+    
+    Return:
+        A :class:`tuple` with x, y
+    
+    """
+    x = magnitude*cos(angle)
+    y = magnitude*sin(angle)
+    return x, y

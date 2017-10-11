@@ -13,12 +13,12 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from math import cos, sin
 import logging
 import pyglet
 
 from pyglet.sprite import Sprite
 from pyglet.window import key
+from .ogf4py3 import magnitude_to_vector
 from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
 from .ogf4py3 import system
@@ -209,8 +209,9 @@ class Client(Scene):
 
     def _spawn_bullet(self, x, y, force, angle, gravity):
         bullet = self.bullet_pool.get()
-        vel_x = force*cos(angle) + self.tank.body.vel_x
-        vel_y = force*sin(angle) + self.tank.body.vel_y
+        vel = magnitude_to_vector(force, angle)
+        vel_x = vel[0] + self.tank.body.vel_x
+        vel_y = vel[1] + self.tank.body.vel_y
         bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
         bullet.set("collision", width=4., height=4.)
 
