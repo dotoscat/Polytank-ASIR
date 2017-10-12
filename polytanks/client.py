@@ -135,10 +135,7 @@ class Client(Scene):
 
     def update(self, dt):
         system.lifespan(dt)
-        if self.player_input.accumulate_power and self.player_input.release_power:
-            self.player_input.accumulate_power = False
-            self.player_shoots()
-        update_user_input(dt)
+        update_user_input(dt, self)
         system.collision()
         self.system_alive_zone()
         system.physics(dt, -G)
@@ -197,7 +194,7 @@ class Client(Scene):
     def on_mouse_release(self, x, y, button, modifiers):
         if not self.player_input.accumulate_power: return
         self.player_input.accumulate_power = False
-        self.player_shoots()
+        self.player_input.shoots = True
 
     def player_shoots(self):
         x, y = self.tank.tank_graphic.cannon.position

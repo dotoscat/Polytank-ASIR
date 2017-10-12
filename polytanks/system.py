@@ -23,7 +23,11 @@ def update_tank_graphic(self, entity):
     entity.tank_graphic.set_position(body.x, body.y)
 
 @toyblock3.system("player_input", "body", "floor_collision")
-def update_user_input(self, entity, dt):
+def update_user_input(self, entity, dt, engine):
+    """
+    :obj:`engine` deberá tener como método :meth:`player_shoots`
+    o el método :meth:`_spawn_bullet`.
+    """
     player_input = entity.player_input
     player_body = entity.body
     player_body.vel_x = player_input.move*TANK_SPEED
@@ -38,10 +42,18 @@ def update_user_input(self, entity, dt):
         player_input.time_power += dt
         #  print(player_input.time_power)
     
+    if player_input.accumulate_power and player_input.release_power:
+        player_input.accumulate_power = False
+        player_input.shoots = True
+    
     aim_pointer = player_input.aim_pointer
     cannon_position = entity.tank_graphic.cannon.position
     angle = get_angle_from(*cannon_position, *aim_pointer)
     #  angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
     player_input.cannon_angle = angle
     entity.tank_graphic.cannon.rotation = -degrees(angle)
+    
+    if player_input.shoots:
+        engine.player_shoots()
+        player_input.shoots = False
     

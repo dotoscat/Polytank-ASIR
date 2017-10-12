@@ -24,6 +24,7 @@ class PlayerInput:
         self.accumulate_power = False
         self.time_power = 0.
         self.MAX_TIME_POWER = 3.
+        self.shoots = False
     
     @property
     def floats(self):
