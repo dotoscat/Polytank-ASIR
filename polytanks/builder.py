@@ -16,7 +16,7 @@
 from pyglet.sprite import Sprite
 from .ogf4py3 import toyblock3
 from .ogf4py3.component import Body, Collision, FloorCollision, Timer
-from .component import PlayerInput, Tank
+from .component import PlayerInput, Tank, Bullet
 from . import constant
 from .constant import G
 
@@ -29,6 +29,7 @@ tank.add("body", Body, gravity=True, max_falling_speed=G/2., max_ascending_speed
 
 bullet = toyblock3.InstanceBuilder()
 bullet.add("id", int)
+bullet.add("bullet", Bullet)
 bullet.add("body", Body, gravity=True)
 bullet.add("collision", Collision, type_=constant.BULLET,
     collides_with=constant.PLATFORM, offset=(-2., -2.))

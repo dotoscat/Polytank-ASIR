@@ -205,7 +205,8 @@ class Client(Scene):
         gravity = True
         if power >= 1.:
             force *= power
-        self._spawn_bullet(x, y, force, angle, gravity)
+        bullet = self._spawn_bullet(x, y, force, angle, gravity)
+        bullet.set("bullet", owner=self.tank, power=power)
 
     def _spawn_bullet(self, x, y, force, angle, gravity):
         bullet = self.bullet_pool.get()
@@ -214,6 +215,7 @@ class Client(Scene):
         vel_y = vel[1] + self.tank.body.vel_y
         bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
         bullet.set("collision", width=4., height=4.)
+        return bullet
 
     def _spawn_explosion(self, x, y):
         explosion = self.explosion_pool.get()
