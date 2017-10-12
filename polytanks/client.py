@@ -151,15 +151,14 @@ class Client(Scene):
             x = bullet.body.x
             y = bullet.body.y
             bullet.free()
-            self._spawn_explosion(x, y)
+            self._spawn_explosion(x, y, 7)
 
     def bullet_tank(self, bullet, tank):
-        print("done")
         if bullet.bullet.owner == self.tank: return
         x = bullet.body.x
         y = bullet.body.y
         bullet.free()
-        self._spawn_explosion(x, y)
+        self._spawn_explosion(x, y, 7)
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):
@@ -227,6 +226,7 @@ class Client(Scene):
         bullet.set("collision", width=4., height=4.)
         return bullet
 
-    def _spawn_explosion(self, x, y):
+    def _spawn_explosion(self, x, y, damage, knockback=0):
         explosion = self.explosion_pool.get()
         explosion.set("body", x=x, y=y)
+        explosion.set("explosion", damage=damage, knockback=knockback)
