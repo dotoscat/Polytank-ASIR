@@ -63,7 +63,8 @@ class Client(Scene):
         self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
         self.system_client_collision = system.CheckCollision()
         self.system_client_collision.table.update({
-            (constant.BULLET, constant.PLATFORM): self.bullet_platform
+            (constant.BULLET, constant.PLATFORM): self.bullet_platform,
+            (constant.BULLET, constant.TANK): self.bullet_tank
         })
         
         builder.tank.add("tank_graphic", TankGraphic,
@@ -72,7 +73,8 @@ class Client(Scene):
             (8.5, 12.5),)
         
         self.tank_pool = toyblock3.build_Entity(4, builder.tank,
-            system.physics, update_tank_graphic, update_user_input, system.platform_collision)
+            system.physics, update_tank_graphic, update_user_input,
+            system.platform_collision, self.system_client_collision, system.collision)
         self.tank = self.tank_pool.get()
         self.tank.set("body", x=200., y=100.)
         self.player_input = self.tank.player_input
@@ -150,6 +152,14 @@ class Client(Scene):
             y = bullet.body.y
             bullet.free()
             self._spawn_explosion(x, y)
+
+    def bullet_tank(self, bullet, tank):
+        print("done")
+        if bullet.bullet.owner == self.tank: return
+        x = bullet.body.x
+        y = bullet.body.y
+        bullet.free()
+        self._spawn_explosion(x, y)
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):
