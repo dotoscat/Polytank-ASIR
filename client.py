@@ -17,16 +17,17 @@
 import pyglet
 import polytanks.ogf4py3 as ogf4py3
 from polytanks.client import Client
+from polytanks import constant
 
 if __name__ == "__main__":
     WIDTH = 800
     HEIGHT = 600
     director = ogf4py3.Director(
         caption="Polytanks client",
-        width=WIDTH,
-        height=HEIGHT,
-        vwidth=WIDTH/2.,
-        vheight=HEIGHT/2.,
+        width=constant.WIDTH,
+        height=constant.HEIGHT,
+        vwidth=constant.VWIDTH,
+        vheight=constant.VHEIGHT,
         fullscreen=False
         )
     director.set_background_color(0., 0., 0.)
