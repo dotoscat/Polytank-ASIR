@@ -159,14 +159,14 @@ class Client(Scene):
             x = bullet.body.x
             y = bullet.body.y
             bullet.free()
-            self._spawn_explosion(x, y, 7)
+            self._spawn_explosion(x, y, 1)
 
     def bullet_tank(self, bullet, tank):
         if bullet.bullet.owner == self.tank: return
         x = bullet.body.x
         y = bullet.body.y
         bullet.free()
-        self._spawn_explosion(x, y, 7)
+        self._spawn_explosion(x, y, 1)
 
     def explosion_tank(self, explosion, tank):
         tank.tank.damage += explosion.explosion.damage
