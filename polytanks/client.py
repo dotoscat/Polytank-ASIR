@@ -18,6 +18,7 @@ import pyglet
 
 from pyglet.sprite import Sprite
 from pyglet.window import key
+from .ogf4py3 import gui
 from .ogf4py3 import magnitude_to_vector
 from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
@@ -58,7 +59,7 @@ class Client(Scene):
             if i == 1: return self.y
      
     def __init__(self):
-        super().__init__(4)
+        super().__init__(5)
         
         self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
         self.system_client_collision = system.CheckCollision()
@@ -114,6 +115,11 @@ class Client(Scene):
         
         self.cursor_point = Client.Point()
         self.cursor = Sprite(assets.images["eyehole"], batch=self.batch, group=self.group[3])
+        
+        self.damage = gui.NumberLabel("%", batch=self.batch, group=self.group[4])
+        self.damage.value = 0
+        self.damage.x = 32.
+        self.damage.y = 8.
 
     def init(self):
         self.director.set_exclusive_mouse(True)
@@ -164,7 +170,7 @@ class Client(Scene):
 
     def explosion_tank(self, explosion, tank):
         tank.tank.damage += explosion.explosion.damage
-        print(tank.tank.damage,'%')
+        self.damage.value = tank.tank.damage
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):

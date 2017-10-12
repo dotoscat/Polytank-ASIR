@@ -105,6 +105,21 @@ class Menu(object):
         if self._cursor is None: return
         self._entry[self._cursor](self)
 
+class NumberLabel(pyglet.text.Label):
+    def __init__(self, suffix, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._value = 0
+        self.suffix = suffix
+
+    @property
+    def value(self):
+        return self._value
+        
+    @value.setter
+    def value(self, value):
+        self._value = value
+        self.text = "{} {}".format(self._value, self.suffix)
+
 class FractionLabel(pyglet.text.Label):
     def __init__(self, width, filler, *args, **kwargs):
         super(FractionLabel, self).__init__(*args, **kwargs)
