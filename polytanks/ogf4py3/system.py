@@ -92,7 +92,7 @@ def platform_collision(system, entity, platforms, callback=None):
         (points[0] not in platform_collision and
         points[1] not in platform_collision)):
             continue
-        body.y = platform_collision.top
+        body.y = platform_collision.top + -floor_collision.get_offset_y()
         body.vel_y = 0.0
         body.gravity = False
         floor_collision.platform = platform

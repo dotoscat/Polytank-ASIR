@@ -71,6 +71,9 @@ class FloorCollision(object):
     def touch_floor(self):
         return self.platform is not None
 
+    def get_offset_y(self):
+        return self._xy1[1]
+
     def get_points(self, x, y):
         """Get two new points given *x* and *y*."""
         xy1 = self._xy1

@@ -27,6 +27,8 @@ images = {
     if entry.name.endswith(".png")
 }
 
+images["tank-base"].anchor_x = 8.
+images["tank-base"].anchor_y = 8.
 images["tank-cannon"].anchor_x = 0.
 images["tank-cannon"].anchor_y = 4.
 images["bullet"].anchor_x = 4.

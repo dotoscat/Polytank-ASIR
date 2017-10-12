@@ -72,7 +72,7 @@ class Client(Scene):
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
-            (8.5, 12.5),)
+            (0., 4.),)
         
         self.tank_pool = toyblock3.build_Entity(4, builder.tank,
             system.physics, update_tank_graphic, update_user_input,
