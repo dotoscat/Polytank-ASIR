@@ -19,7 +19,7 @@ import pyglet
 from pyglet.sprite import Sprite
 from pyglet.window import key
 from .ogf4py3 import gui
-from .ogf4py3 import magnitude_to_vector
+from .ogf4py3 import magnitude_to_vector, get_angle_from
 from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
 from .ogf4py3 import system
@@ -171,6 +171,11 @@ class Client(Scene):
     def explosion_tank(self, explosion, tank):
         tank.tank.damage += explosion.explosion.damage
         self.damage.value = tank.tank.damage
+        angle = get_angle_from(explosion.body.x, explosion.body.y,
+            tank.body.x, tank.body.y)
+        force = magnitude_to_vector(G, angle)
+        tank.body.vel_x = force[0]
+        tank.body.vel_y = force[1]
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):
