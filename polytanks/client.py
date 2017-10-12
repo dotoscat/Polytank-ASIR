@@ -44,7 +44,7 @@ class Client(Scene):
         @point.setter
         def point(self, pair):
             if not isinstance(pair, tuple):
-                raise ValueError("Use a tuple for the point")
+                raise TypeError("Use a tuple for the point")
             self.x = pair[0]
             self.y = pair[1]
         
@@ -53,7 +53,7 @@ class Client(Scene):
         
         def __getitem__(self, i):
             if not isinstance(i, int):
-                raise ValueError("Use an integer for indexing")
+                raise TypeError("Use an integer for indexing")
             if i == 0: return self.x
             if i == 1: return self.y
      
