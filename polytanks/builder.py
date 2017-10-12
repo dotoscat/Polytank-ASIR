@@ -44,6 +44,6 @@ explosion.add("id", int)
 explosion.add("explosion", Explosion)
 explosion.add("body", Body)
 explosion.add("collision", Collision,
-    type_=constant.EXPLOSION, collides_with=constant.EXPLOSION,
+    type_=constant.EXPLOSION, collides_with=constant.TANK,
     offset=(-4., -4.), width=16., height=16.)
 explosion.add("timer", Timer, 0.25)

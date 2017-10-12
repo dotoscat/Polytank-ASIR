@@ -64,7 +64,8 @@ class Client(Scene):
         self.system_client_collision = system.CheckCollision()
         self.system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,
-            (constant.BULLET, constant.TANK): self.bullet_tank
+            (constant.BULLET, constant.TANK): self.bullet_tank,
+            (constant.EXPLOSION, constant.TANK): self.explosion_tank
         })
         
         builder.tank.add("tank_graphic", TankGraphic,
@@ -103,7 +104,8 @@ class Client(Scene):
             batch=self.batch, group=self.group[3])
         
         self.explosion_pool = toyblock3.build_Entity(64, builder.explosion,
-            system.lifespan, system.sprite)
+            system.lifespan, system.sprite, self.system_client_collision,
+            system.collision)
                 
         self.explosion_pool.init(self.init_entity)
         self.explosion_pool.clean(self.clean_entity)
@@ -159,6 +161,10 @@ class Client(Scene):
         y = bullet.body.y
         bullet.free()
         self._spawn_explosion(x, y, 7)
+
+    def explosion_tank(self, explosion, tank):
+        tank.tank.damage += explosion.explosion.damage
+        print(tank.tank.damage,'%')
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):
