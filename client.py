@@ -20,8 +20,6 @@ from polytanks.client import Client
 from polytanks import constant
 
 if __name__ == "__main__":
-    WIDTH = 800
-    HEIGHT = 600
     director = ogf4py3.Director(
         caption="Polytanks client",
         width=constant.WIDTH,
