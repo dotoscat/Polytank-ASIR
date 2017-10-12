@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from math import atan2, degrees, hypot
+from math import degrees
 from .ogf4py3 import toyblock3, get_angle_from
 from .constant import TANK_SPEED, VHEIGHT as G
 
