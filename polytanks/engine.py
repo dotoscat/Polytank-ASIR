@@ -16,6 +16,7 @@
 from .system import update_tank_graphic, update_user_input
 from .ogf4py3 import system
 from . import constant
+from .constant import G
 
 system_alive_zone = system.AliveZone(0., 0.,
     constant.VWIDTH, constant.VHEIGHT)
@@ -28,4 +29,17 @@ systems = [system.lifespan, update_user_input, system.collision,
 
 class Engine:
     def __init__(self):
-        pass
+        self.platforms = []
+
+    def update(self, dt):
+        system.lifespan(dt)
+        update_user_input(dt, self)
+        system.collision()
+        system_alive_zone()
+        system.physics(dt, -G)
+        system.platform_collision(self.platforms, self.touch_floor)
+        system_client_collision()
+        update_tank_graphic()
+
+    def touch_floor(self, entity):
+        entity.player_input.reset_time_floating()

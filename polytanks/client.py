@@ -29,16 +29,13 @@ from . import constant
 from .constant import G
 from . import level
 from . import builder
+from . import engine
 from .component import TankGraphic
 
-system_alive_zone = system.AliveZone(0., 0.,
-    constant.VWIDTH, constant.VHEIGHT)
+system_client_collision = engine.system_client_collision
 
-system_client_collision = system.CheckCollision()
-
-systems = [system.lifespan, update_user_input, system.collision,
-    system_alive_zone, system.physics, system.platform_collision,
-    system_client_collision, update_tank_graphic, system.sprite]
+systems = engine.systems
+systems.append(system.sprite)
 
 class Client(Scene):
     
@@ -69,6 +66,8 @@ class Client(Scene):
      
     def __init__(self):
         super().__init__(5)
+        
+        self.engine = engine.Engine()
         
         system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,
@@ -147,14 +146,7 @@ class Client(Scene):
         logging.info("init", entity)
 
     def update(self, dt):
-        system.lifespan(dt)
-        update_user_input(dt, self)
-        system.collision()
-        system_alive_zone()
-        system.physics(dt, -G)
-        system.platform_collision(self.platforms, self.touch_floor)
-        system_client_collision()
-        update_tank_graphic()
+        self.engine.update(dt)
         system.sprite()
 
     def bullet_platform(self, bullet, platform):
