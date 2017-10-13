@@ -31,13 +31,13 @@ class Engine:
     def __init__(self):
         self.platforms = []
 
-    def update(self, dt):
+    def update(self, dt, platforms):
         system.lifespan(dt)
         update_user_input(dt, self)
         system.collision()
         system_alive_zone()
         system.physics(dt, -G)
-        system.platform_collision(self.platforms, self.touch_floor)
+        system.platform_collision(platforms, self.touch_floor)
         system_client_collision()
         update_tank_graphic()
 
