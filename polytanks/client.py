@@ -91,9 +91,7 @@ class Client(Scene):
                             batch=self.batch, group=self.group[2])
         
         self.bullet_pool = toyblock3.build_Entity(
-            64, builder.bullet,
-            system.physics, system.collision, system.sprite,
-            system_alive_zone, system_client_collision)
+            64, builder.bullet, *systems)
         
         self.bullet_pool.init(self.init_entity)
         self.bullet_pool.clean(self.clean_entity)
@@ -102,7 +100,7 @@ class Client(Scene):
             batch=self.batch, group=self.group[0])
         
         self.platform_pool = toyblock3.build_Entity(
-            64, builder.platform, system_client_collision)
+            64, builder.platform, *systems)
             
         self.platforms = []
         self.platform_pool.init(self.init_entity)
@@ -111,8 +109,7 @@ class Client(Scene):
             batch=self.batch, group=self.group[3])
         
         self.explosion_pool = toyblock3.build_Entity(64, builder.explosion,
-            system.lifespan, system.sprite, system_client_collision,
-            system.collision)
+            *systems)
                 
         self.explosion_pool.init(self.init_entity)
         self.explosion_pool.clean(self.clean_entity)
