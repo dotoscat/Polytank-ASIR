@@ -31,6 +31,15 @@ from . import level
 from . import builder
 from .component import TankGraphic
 
+system_alive_zone = system.AliveZone(0., 0.,
+    constant.VWIDTH, constant.VHEIGHT)
+
+system_client_collision = system.CheckCollision()
+
+systems = [system.lifespan, update_user_input, system.collision,
+    system_alive_zone, system.physics, system.platform_collision,
+    system_client_collision, update_tank_graphic, system.sprite]
+
 class Client(Scene):
     
     class Point:
@@ -61,9 +70,7 @@ class Client(Scene):
     def __init__(self):
         super().__init__(5)
         
-        self.system_alive_zone = system.AliveZone(0., 0., constant.VWIDTH, constant.VHEIGHT)
-        self.system_client_collision = system.CheckCollision()
-        self.system_client_collision.table.update({
+        system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,
             (constant.BULLET, constant.TANK): self.bullet_tank,
             (constant.EXPLOSION, constant.TANK): self.explosion_tank
@@ -76,7 +83,7 @@ class Client(Scene):
         
         self.tank_pool = toyblock3.build_Entity(4, builder.tank,
             system.physics, update_tank_graphic, update_user_input,
-            system.platform_collision, self.system_client_collision, system.collision)
+            system.platform_collision, system_client_collision, system.collision)
         self.tank = self.tank_pool.get()
         self.tank.set("body", x=200., y=100.)
         self.player_input = self.tank.player_input
@@ -87,7 +94,7 @@ class Client(Scene):
         self.bullet_pool = toyblock3.build_Entity(
             64, builder.bullet,
             system.physics, system.collision, system.sprite,
-            self.system_alive_zone, self.system_client_collision)
+            system_alive_zone, system_client_collision)
         
         self.bullet_pool.init(self.init_entity)
         self.bullet_pool.clean(self.clean_entity)
@@ -96,7 +103,7 @@ class Client(Scene):
             batch=self.batch, group=self.group[0])
         
         self.platform_pool = toyblock3.build_Entity(
-            64, builder.platform, self.system_client_collision)
+            64, builder.platform, system_client_collision)
             
         self.platforms = []
         self.platform_pool.init(self.init_entity)
@@ -105,7 +112,7 @@ class Client(Scene):
             batch=self.batch, group=self.group[3])
         
         self.explosion_pool = toyblock3.build_Entity(64, builder.explosion,
-            system.lifespan, system.sprite, self.system_client_collision,
+            system.lifespan, system.sprite, system_client_collision,
             system.collision)
                 
         self.explosion_pool.init(self.init_entity)
@@ -147,10 +154,10 @@ class Client(Scene):
         system.lifespan(dt)
         update_user_input(dt, self)
         system.collision()
-        self.system_alive_zone()
+        system_alive_zone()
         system.physics(dt, -G)
         system.platform_collision(self.platforms, self.touch_floor)
-        self.system_client_collision()
+        system_client_collision()
         update_tank_graphic()
         system.sprite()
 
