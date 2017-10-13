@@ -82,8 +82,7 @@ class Client(Scene):
             (0., 4.),)
         
         self.tank_pool = toyblock3.build_Entity(4, builder.tank,
-            system.physics, update_tank_graphic, update_user_input,
-            system.platform_collision, system_client_collision, system.collision)
+            *systems)
         self.tank = self.tank_pool.get()
         self.tank.set("body", x=200., y=100.)
         self.player_input = self.tank.player_input

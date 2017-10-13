@@ -271,8 +271,8 @@ def build_Entity(n, instance_builder, *systems):
     _Entity._systems = []
 
     for system in systems:
-        if any((component in system.components
-            for component in instance_builder.components)):
+        if all(component in instance_builder.components
+            for component in system.components):
             _Entity._systems.append(system)
     
     return _Entity
