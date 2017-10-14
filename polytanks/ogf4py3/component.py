@@ -158,6 +158,18 @@ class Platform(Collision):
         
     def reset(self):
         self.platform = None
+        
+    @staticmethod
+    def get_foot(*args, **kwargs):
+        collision = Platform(*args, **kwargs)
+        collision.type_ = Platform.FOOT
+        return collision
+
+    @staticmethod
+    def get_platform(*args, **kwargs):
+        collision = Platform(*args, **kwargs)
+        collision.type_ = Platform.PLATFORM
+        return collision
 
 class Timer:
     def __init__(self, time):
