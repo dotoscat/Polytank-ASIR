@@ -87,10 +87,13 @@ class Collision(object):
     """Rect collision.
     
     Attributes:
-        x (Float)
-        y (Float)
+        x (Float):
+        y (Float):
         type (Int): Type of collision.
         collides_with (Int): Use this as flag of *type*
+        width (Float):
+        height (Float):
+        offset (Tuple(x, y)): offset to respect a point. For instance a Body's position.
     """
     @property
     def right(self):
@@ -122,6 +125,39 @@ class Collision(object):
 
     def __contains__(self, pair):
         return self.x <= pair[0] <= self.right and self.y <= pair[1] <= self.top
+
+class Platform(Collision):
+    """This collision component is specific for platform collisions.
+    
+    This component uses two points (x, y), stored as pairs.
+    
+    Parameters:
+        x1 (Float): Pair 1's x.
+        y1 (Float): Pair 1's y.
+        x2 (Float): Pair 2's x.
+        y2 (Float): Pair 2's y.
+
+    Returns:
+        An instance of FloorCollision.
+        
+    Attributes:
+        platform (Entity or None): This is the last platform which this entity's component has touched.
+        touch_floor (Bool): Tells if *platform* is not None.
+    """
+    
+    FOOT = 1000
+    PLATFORM = 1001
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.platform = None
+        
+    @property
+    def touch_floor(self):
+        return self.platform is not None
+        
+    def reset(self):
+        self.platform = None
 
 class Timer:
     def __init__(self, time):

@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import toyblock3
+from .component import Platform
 
 @toyblock3.system("body")
 def physics(system, entity, dt, gravity):
@@ -69,6 +70,26 @@ class CheckCollision(toyblock3.System):
             if not entity_collision.intersects(sysentity_collision):
                 continue
             table[(entity_collision.type_, sysentity_collision.type_)](entity, sysentity)
+
+class PlatformCollision(toyblock3.System):
+    def __init__(self):
+        super()__init__("body", "platform")
+        self.callable = self._call
+        self.platforms = []
+        self.walkers = []
+    
+    def _add_entity(self, entity):
+        super()._add_entity(entity)
+        if entity.platform.type_ == Platform.FOOT:
+            self.walkers.append(entity)
+        elif entity.platform.type_ == Platform.PLATFORM:
+            self.platforms.append(entity)
+        
+    def _remove_entity(self, entity)
+        super()._remove_entity(entity)
+    
+    def _call(self, callback=None):
+        pass
 
 @toyblock3.system("body", "floor_collision", "collision")
 def platform_collision(system, entity, platforms, callback=None):
