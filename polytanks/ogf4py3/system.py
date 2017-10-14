@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import deque
 from . import toyblock3
 from .component import Platform
 
@@ -75,8 +76,8 @@ class PlatformCollision(toyblock3.System):
     def __init__(self):
         super()__init__("body", "platform")
         self.callable = self._call
-        self.platforms = []
-        self.walkers = []
+        self.platforms = deque()
+        self.walkers = deque()
     
     def _add_entity(self, entity):
         super()._add_entity(entity)
@@ -87,6 +88,10 @@ class PlatformCollision(toyblock3.System):
         
     def _remove_entity(self, entity)
         super()._remove_entity(entity)
+        if entity.platform.type_ == Platform.FOOT:
+            self.walkers.remove(entity)
+        elif entity.platform.type_ == Platform.PLATFORM:
+            self.platforms.remove(entity)
     
     def _call(self, callback=None):
         pass
