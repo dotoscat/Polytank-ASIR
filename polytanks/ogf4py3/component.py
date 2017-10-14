@@ -129,16 +129,8 @@ class Collision(object):
 class Platform(Collision):
     """This collision component is specific for platform collisions.
     
-    This component uses two points (x, y), stored as pairs.
-    
-    Parameters:
-        x1 (Float): Pair 1's x.
-        y1 (Float): Pair 1's y.
-        x2 (Float): Pair 2's x.
-        y2 (Float): Pair 2's y.
-
     Returns:
-        An instance of FloorCollision.
+        An instance of Platform.
         
     Attributes:
         platform (Entity or None): This is the last platform which this entity's component has touched.

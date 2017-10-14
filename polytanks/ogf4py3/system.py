@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from itertools import product, chain
 from collections import deque
 from . import toyblock3
 from .component import Platform
@@ -74,7 +75,7 @@ class CheckCollision(toyblock3.System):
 
 class PlatformCollision(toyblock3.System):
     def __init__(self):
-        super()__init__("body", "platform")
+        super().__init__("body", "platform")
         self.callable = self._call
         self.platforms = deque()
         self.walkers = deque()
@@ -86,16 +87,33 @@ class PlatformCollision(toyblock3.System):
         elif entity.platform.type_ == Platform.PLATFORM:
             self.platforms.append(entity)
         
-    def _remove_entity(self, entity)
+    def _remove_entity(self, entity):
         super()._remove_entity(entity)
         if entity.platform.type_ == Platform.FOOT:
             self.walkers.remove(entity)
         elif entity.platform.type_ == Platform.PLATFORM:
             self.platforms.remove(entity)
     
-    def _call(self, callback=None):
-        pass
-
+    def _call(self, system, entity, callback=None):
+        for platform in chain(self.platforms, self.walkers):
+            platform.platform.update(platform.body.x, platform.body.y)
+        
+        for walker, platform in product(self.walkers, self.platforms):
+            if walker.body.vel_y > 0.:
+                continue
+            walker.body.gravity = True
+            touched = walker.platform.touch_floor
+            walker.platform.platform = None
+            if not walker.platform.intersects(platform.platform):
+                continue
+            walker.body.y = platform_collision.top + -floor_collision.get_offset_y()
+            walker.body.vel_y = 0.
+            walker.body.gravity = False
+            floor_collision.platform = platform
+            if callable(callback) and not touched and floor_collision.touch_floor:
+                callback(entity)
+                break
+                
 @toyblock3.system("body", "floor_collision", "collision")
 def platform_collision(system, entity, platforms, callback=None):
     """This system requires the next additional parameters

@@ -146,7 +146,7 @@ class Client(Scene):
         logging.info("init", entity)
 
     def update(self, dt):
-        self.engine.update(dt, self.platforms)
+        self.engine.update(dt)
         system.sprite()
 
     def bullet_platform(self, bullet, platform):

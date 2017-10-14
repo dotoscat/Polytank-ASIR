@@ -22,22 +22,24 @@ system_alive_zone = system.AliveZone(0., 0.,
     constant.VWIDTH, constant.VHEIGHT)
 
 system_client_collision = system.CheckCollision()
+system_platform_collision = system.PlatformCollision()
 
 systems = [system.lifespan, update_user_input, system.collision,
-    system_alive_zone, system.physics, system.platform_collision,
+    system_alive_zone, system.physics, system_platform_collision,
     system_client_collision, update_tank_graphic]
 
 class Engine:
     def __init__(self):
         self.platforms = []
 
-    def update(self, dt, platforms):
+    def update(self, dt):
         system.lifespan(dt)
         update_user_input(dt, self)
         system.collision()
         system_alive_zone()
         system.physics(dt, -G)
-        system.platform_collision(platforms, self.touch_floor)
+        #  system.platform_collision(platforms, self.touch_floor)
+        system_platform_collision(self.touch_floor)
         system_client_collision()
         update_tank_graphic()
 
