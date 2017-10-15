@@ -41,7 +41,6 @@ class Engine:
         update_tank_graphic()
 
     def touch_floor(self, entity):
-        print(entity, "touch floor")
         entity.input.reset_time_floating()
 
     def shoot(self, entity):
@@ -53,7 +52,6 @@ class Engine:
         gravity = True
         if power >= 1.:
             force *= power
-        print(x, y, force, angle, gravity)
         bullet = self._spawn_bullet(entity, x, y, force, angle, gravity)
         bullet.set("bullet", owner=entity, power=power)
 
@@ -65,6 +63,11 @@ class Engine:
         bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
         bullet.set("collision", width=4., height=4.)
         return bullet
+
+    def _spawn_explosion(self, x, y, damage, knockback=0):
+        explosion = self.explosion_pool.get()
+        explosion.set("body", x=x, y=y)
+        explosion.set("explosion", damage=damage, knockback=knockback)
 
     def jump(self, entity):
         entity.body.vel_y = G/2.
