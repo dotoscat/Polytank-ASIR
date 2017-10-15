@@ -44,10 +44,26 @@ images["eyehole"].anchor_y = 8.
 images["explosion"].anchor_x = 8.
 images["explosion"].anchor_y = 8.
 
-def function_player(sound_name, f):
+def function_player(sound_name, f, loop=False):
+    """
+    This function player allows you to reproduce a sound and do
+    a call.
+    """
     sound = sounds[sound_name]
+    if loop:
+        player = pyglet.media.Player()
+        player.queue(sound)
+    else:
+        sound = sounds[sound_name]
     def _player(*args, **kwargs):
-        sound.play()
+        if loop:
+            if not player.playing:
+                player.queue(sound)
+                player.play()
+            else:
+                player.play()
+        else:
+            sound.play()
         f(*args, **kwargs)
     _player.__name__ = f.__name__
     return _player

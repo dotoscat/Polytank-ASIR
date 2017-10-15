@@ -34,8 +34,7 @@ def update_user_input(self, entity, dt, engine):
     if player_input.do_jump and entity.platform.touch_floor:
         engine.jump(entity)
     elif player_input.floats and player_input.do_jump and not entity.platform.touch_floor:
-        player_input.time_floating += dt
-        player_body.apply_force(dt, y=G*1.5)
+        engine.float(entity, dt)
     
     if player_input.accumulate_power and not player_input.release_power:
         player_input.time_power += dt

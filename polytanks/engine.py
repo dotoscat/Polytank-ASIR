@@ -50,3 +50,6 @@ class Engine:
         entity.body.vel_y = G/2.
         entity.player_input.do_jump = False
         
+    def float(self, entity, dt):
+        entity.player_input.time_floating += dt
+        entity.body.apply_force(dt, y=G*1.5)
