@@ -45,15 +45,16 @@ class Engine:
 
     def shoot(self, entity):
         print(entity)
-        return
-        x, y = self.tank.tank_graphic.cannon.position
-        power = self.player_input.time_power
-        self.player_input.time_power = 0.
-        angle = self.player_input.cannon_angle
+        x, y = entity.tank_graphic.cannon.position
+        power = entity.input.time_power
+        entity.input.time_power = 0.
+        angle = entity.input.cannon_angle
         force = G/2.
         gravity = True
         if power >= 1.:
             force *= power
+        print(x, y, force, angle, gravity)
+        return
         bullet = self._spawn_bullet(x, y, force, angle, gravity)
         bullet.set("bullet", owner=self.tank, power=power)
 
