@@ -44,45 +44,6 @@ class Body(object):
         self.vel_x += x*dt
         self.vel_y += y*dt
 
-class FloorCollision(object):
-    """This collision component is specific for floor collisions.
-    
-    This component uses two points (x, y), stored as pairs.
-    
-    Parameters:
-        x1 (Float): Pair 1's x.
-        y1 (Float): Pair 1's y.
-        x2 (Float): Pair 2's x.
-        y2 (Float): Pair 2's y.
-
-    Returns:
-        An instance of FloorCollision.
-        
-    Attributes:
-        platform (Entity or None): This is the last platform which this entity's component has touched.
-        touch_floor (Bool): Tells if *platform* is not None.
-    """
-    def __init__(self, x1, y1, x2, y2):
-        self._xy1 = (x1, y1)
-        self._xy2 = (x2, y2)
-        self.platform = None
-
-    @property
-    def touch_floor(self):
-        return self.platform is not None
-
-    def get_offset_y(self):
-        return self._xy1[1]
-
-    def get_points(self, x, y):
-        """Get two new points given *x* and *y*."""
-        xy1 = self._xy1
-        xy2 = self._xy2
-        return ((x + xy1[0], y + xy1[1]), (x + xy2[0], y + xy2[1]))
-
-    def reset(self):
-        self.platform = None
-
 class Collision(object):
     """Rect collision.
     

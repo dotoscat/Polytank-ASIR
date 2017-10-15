@@ -117,36 +117,6 @@ class PlatformCollision(toyblock3.System):
         if callable(callback) and not touched and entity.platform.touch_floor:
             callback(entity)
                 
-@toyblock3.system("body", "floor_collision", "collision")
-def platform_collision(system, entity, platforms, callback=None):
-    """This system requires the next additional parameters
-    
-    *callback* accepts as parameter the entity.
-    
-    Parameters:
-        platforms (iterable of platforms)
-        callback (callable or None): callback when an entity touch the floor. If None, then is not triggered.
-    """
-    body = entity.body
-    floor_collision = entity.floor_collision
-    points = floor_collision.get_points(body.x, body.y)
-    body.gravity = True
-    touched = floor_collision.touch_floor
-    floor_collision.platform = None
-    for platform in platforms:
-        platform_collision = platform.collision
-        if (body.vel_y > 0.0 or
-        (points[0] not in platform_collision and
-        points[1] not in platform_collision)):
-            continue
-        body.y = platform_collision.top + -floor_collision.get_offset_y()
-        body.vel_y = 0.0
-        body.gravity = False
-        floor_collision.platform = platform
-        break
-    if callable(callback) and not touched and floor_collision.touch_floor:
-        callback(entity)
-
 class AliveZone(toyblock3.System):
     """This is a basic system where the entities are freed if they are out of bounds.
     
