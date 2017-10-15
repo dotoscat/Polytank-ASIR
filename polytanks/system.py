@@ -31,7 +31,6 @@ def update_user_input(self, entity, dt, engine):
     player_input = entity.player_input
     player_body = entity.body
     player_body.vel_x = player_input.move*TANK_SPEED
-    print(player_body.vel_x, player_input.move)
     if player_input.do_jump and entity.platform.touch_floor:
         player_body.vel_y = G/2.
         player_input.do_jump = False

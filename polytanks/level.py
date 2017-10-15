@@ -43,7 +43,9 @@ def load_level(level, pool):
                     "height": SIZE/4.
                 }
                 print(collision_attrs)
+                platform.set("body", x=x, y=y)
                 platform.set("collision", **collision_attrs)
+                platform.set("platform", **collision_attrs)
             x += SIZE
         print()
         y += SIZE

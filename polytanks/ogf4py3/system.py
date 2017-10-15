@@ -106,11 +106,11 @@ class PlatformCollision(toyblock3.System):
             walker.platform.platform = None
             if not walker.platform.intersects(platform.platform):
                 continue
-            walker.body.y = platform_collision.top + -floor_collision.get_offset_y()
+            walker.body.y += platform.platform.top - walker.platform.y
             walker.body.vel_y = 0.
             walker.body.gravity = False
-            floor_collision.platform = platform
-            if callable(callback) and not touched and floor_collision.touch_floor:
+            walker.platform.platform = platform
+            if callable(callback) and not touched and walker.platform.touch_floor:
                 callback(entity)
                 break
                 

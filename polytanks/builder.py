@@ -24,7 +24,8 @@ tank = toyblock3.InstanceBuilder()
 tank.add("id", int)
 tank.add("tank", Tank)
 tank.add("player_input", PlayerInput)
-tank.add("platform", Platform.get_foot, width=)# Continue here
+tank.add("platform", Platform.get_foot, width=SIZE, height=SIZE/4.,
+    offset=(SIZE/-2., SIZE/-2.))
 tank.add("collision", Collision, type_=constant.TANK, width=SIZE,
     height=SIZE, offset=(SIZE/-2., SIZE/-2.))
 tank.add("body", Body, gravity=True, max_falling_speed=G/2., max_ascending_speed=G/2.)
@@ -37,6 +38,7 @@ bullet.add("collision", Collision, type_=constant.BULLET,
     collides_with=constant.PLATFORM | constant.TANK, offset=(-2., -2.))
 
 platform = toyblock3.InstanceBuilder()
+platform.add("body", Body)
 platform.add("collision", Collision, type_=constant.PLATFORM)
 platform.add("platform", Platform.get_platform)
 

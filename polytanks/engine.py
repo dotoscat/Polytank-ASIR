@@ -44,4 +44,5 @@ class Engine:
         update_tank_graphic()
 
     def touch_floor(self, entity):
+        print(entity, "touch floor")
         entity.player_input.reset_time_floating()
