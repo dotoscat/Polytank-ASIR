@@ -74,6 +74,8 @@ class Client(Scene):
             "jump", self.engine.jump)
         self.engine.float = assets.function_player(
             "float", self.engine.float, loop=True)
+        self.engine.player_shoots = assets.function_player(
+            "shoot", self.engine.player_shoots)
         
         system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,
