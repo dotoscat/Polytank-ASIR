@@ -14,8 +14,8 @@ Objetivo
 --------
 
 El objetivo es crear un juego multijugador en línea de hasta 4 jugadores.
-Los jugadores se registrarán en un servidor a través de un cliente de escritorio.
-Durante la partida los jugadores manejarán un tanque que disparan balas.
+Los jugadores se registrarán en un servidor a través de un cliente web de escritorio.
+Durante la partida los jugadores manejarán un tanque que dispara balas.
 Los jugadores tratarán de echar a los demás jugadores del resto del escenario.
 
 Bibliotecas usadas
@@ -27,6 +27,12 @@ Bibliotecas usadas
 * ogf4py3: Un framework basado en toyblock3 y pyglet que asiste en la 
     creación de juegos.
     
+Herramientas usadas
+-------------------
+
+* Sphinx: Para crear documentación a partir del proyecto.
+* sfxr: Para generar sonidos.
+
 Estructura
 ----------
 
@@ -45,17 +51,8 @@ tanto del servidor como del cliente.
 El sistema de entidad-componentes
 ---------------------------------
 
-Para el desarrollo de juegos es común el uso de la orientación a objetos.
-Por ejemplo, partiendo de las clase Entrada, Vida, y Salto, y con la herencia múltiple
-te puedes construir la clase Jugador. Lo mismo a partir de Vida y Salto te
-puedes construir un EnemigoSalto. Si necesitas un enemigo que no salta entonces
-te construyes la clase Enemigo a partir de Vida. ¿Y si necesitas un enemigo
-que se puede controlar con Entrada, o un Enemigo invencible sin Vida? Contando
-además que deberás de tratar cada uno de los tipos en el sistema de juego.
-Aquí ya es donde entra un sistema de entidad-componentes.
-
-Aquí, una entidad es simplemente un contenedor de cada uno de los componentes
-que se usa. Un componente es un conjunto de datos de los que va a manejar un sistema.
+Una entidad es simplemente un contenedor de cada uno de los componentes
+que se usa para un sistema. Un componente es un conjunto de datos de los que va a manejar un sistema.
 Y un sistema maneja como mínimo un componente de una entidad para una tarea específica.
 Así puede existir un sistema llamado *salto* que puede funcionar solamente si existe
 una entidad con al menos el componente Saltar. Puede existir otro sistemas que maneje
