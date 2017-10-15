@@ -68,6 +68,8 @@ class Client(Scene):
         super().__init__(5)
         
         self.engine = engine.Engine()
+        self.engine.touch_floor = assets.function_player(
+            "hit-platform", self.engine.touch_floor)
         
         system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,

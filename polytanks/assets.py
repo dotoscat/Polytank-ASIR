@@ -27,6 +27,12 @@ images = {
     if entry.name.endswith(".png")
 }
 
+sounds = {
+    entry.name.split('.')[0] : pyglet.resource.media(entry.name, streaming=False)
+    for entry in os.scandir(os.path.realpath(ASSETS_DIR))
+    if entry.name.endswith(".wav")
+}
+
 images["tank-base"].anchor_x = 8.
 images["tank-base"].anchor_y = 8.
 images["tank-cannon"].anchor_x = 0.
@@ -37,3 +43,11 @@ images["eyehole"].anchor_x = 8.
 images["eyehole"].anchor_y = 8.
 images["explosion"].anchor_x = 8.
 images["explosion"].anchor_y = 8.
+
+def function_player(sound_name, f):
+    sound = sounds[sound_name]
+    def _player(*args, **kwargs):
+        sound.play()
+        f(*args, **kwargs)
+    _player.__name__ = f.__name__
+    return _player

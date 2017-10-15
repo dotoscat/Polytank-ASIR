@@ -29,9 +29,6 @@ systems = [system.lifespan, update_user_input, system.collision,
     system_client_collision, update_tank_graphic]
 
 class Engine:
-    def __init__(self):
-        pass
-
     def update(self, dt):
         system.lifespan(dt)
         update_user_input(dt, self)
