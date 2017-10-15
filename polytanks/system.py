@@ -52,6 +52,6 @@ def update_user_input(self, entity, dt, engine):
     entity.tank_graphic.cannon.rotation = -degrees(angle)
     
     if player_input.shoots:
-        engine.player_shoots()
+        engine.shoot(entity)
         player_input.shoots = False
     

@@ -43,8 +43,19 @@ class Engine:
         print(entity, "touch floor")
         entity.player_input.reset_time_floating()
 
-    def player_shoots(self):
-        print("This is a replacement for shooting :/")
+    def shoot(self, entity):
+        print(entity)
+        return
+        x, y = self.tank.tank_graphic.cannon.position
+        power = self.player_input.time_power
+        self.player_input.time_power = 0.
+        angle = self.player_input.cannon_angle
+        force = G/2.
+        gravity = True
+        if power >= 1.:
+            force *= power
+        bullet = self._spawn_bullet(x, y, force, angle, gravity)
+        bullet.set("bullet", owner=self.tank, power=power)
 
     def jump(self, entity):
         entity.body.vel_y = G/2.
