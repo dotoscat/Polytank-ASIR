@@ -88,20 +88,19 @@ class Client(Scene):
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
             (0., 4.),)
         
-        self.tank_pool = toyblock3.build_Entity(4, builder.tank,
+        self.engine.tank_pool = toyblock3.build_Entity(4, builder.tank,
             *systems)
-        self.tank = self.tank_pool.get()
+        self.tank = self.engine.tank_pool.get()
         self.tank.set("body", x=200., y=100.)
         self.player_input = self.tank.input
         
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
                             batch=self.batch, group=self.group[2])
         
-        self.bullet_pool = toyblock3.build_Entity(
+        self.engine.bullet_pool = toyblock3.build_Entity(
             64, builder.bullet, *systems)
-        
-        self.bullet_pool.init(self.init_entity)
-        self.bullet_pool.clean(self.clean_entity)
+        self.engine.bullet_pool.init(self.init_entity)
+        self.engine.bullet_pool.clean(self.clean_entity)
         
         builder.platform.add("sprite", Sprite, assets.images["platform"],
             batch=self.batch, group=self.group[0])
@@ -136,19 +135,15 @@ class Client(Scene):
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
 
-    def touch_floor(self, entity):
-        entity.player_input.reset_time_floating()
-        logging.info("Touch floor")
-
     def clean_entity(self, entity):
-        if (isinstance(entity, self.bullet_pool)
+        if (isinstance(entity, self.engine.bullet_pool)
             or isinstance(entity, self.explosion_pool)):
             entity.sprite.visible = False
 
     def init_entity(self, entity):
         if isinstance(entity, self.platform_pool):
             self.platforms.append(entity)
-        elif (isinstance(entity, self.bullet_pool)
+        elif (isinstance(entity, self.engine.bullet_pool)
             or isinstance(entity, self.explosion_pool)):
             entity.sprite.visible = True
         logging.info("init", entity)
@@ -224,27 +219,6 @@ class Client(Scene):
         if not self.player_input.accumulate_power: return
         self.player_input.accumulate_power = False
         self.player_input.shoots = True
-
-    def player_shoots(self):
-        x, y = self.tank.tank_graphic.cannon.position
-        power = self.player_input.time_power
-        self.player_input.time_power = 0.
-        angle = self.player_input.cannon_angle
-        force = G/2.
-        gravity = True
-        if power >= 1.:
-            force *= power
-        bullet = self._spawn_bullet(x, y, force, angle, gravity)
-        bullet.set("bullet", owner=self.tank, power=power)
-
-    def _spawn_bullet(self, x, y, force, angle, gravity):
-        bullet = self.bullet_pool.get()
-        vel = magnitude_to_vector(force, angle)
-        vel_x = vel[0] + self.tank.body.vel_x
-        vel_y = vel[1] + self.tank.body.vel_y
-        bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
-        bullet.set("collision", width=4., height=4.)
-        return bullet
 
     def _spawn_explosion(self, x, y, damage, knockback=0):
         explosion = self.explosion_pool.get()

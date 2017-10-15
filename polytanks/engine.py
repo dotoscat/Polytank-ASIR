@@ -17,6 +17,7 @@ from .system import update_tank_graphic, update_user_input
 from .ogf4py3 import system
 from . import constant
 from .constant import G
+from .ogf4py3 import magnitude_to_vector
 
 system_alive_zone = system.AliveZone(0., 0.,
     constant.VWIDTH, constant.VHEIGHT)
@@ -44,7 +45,6 @@ class Engine:
         entity.input.reset_time_floating()
 
     def shoot(self, entity):
-        print(entity)
         x, y = entity.tank_graphic.cannon.position
         power = entity.input.time_power
         entity.input.time_power = 0.
@@ -54,9 +54,17 @@ class Engine:
         if power >= 1.:
             force *= power
         print(x, y, force, angle, gravity)
-        return
-        bullet = self._spawn_bullet(x, y, force, angle, gravity)
-        bullet.set("bullet", owner=self.tank, power=power)
+        bullet = self._spawn_bullet(entity, x, y, force, angle, gravity)
+        bullet.set("bullet", owner=entity, power=power)
+
+    def _spawn_bullet(self, entity, x, y, force, angle, gravity):
+        bullet = self.bullet_pool.get()
+        vel = magnitude_to_vector(force, angle)
+        vel_x = vel[0] + entity.body.vel_x
+        vel_y = vel[1] + entity.body.vel_y
+        bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
+        bullet.set("collision", width=4., height=4.)
+        return bullet
 
     def jump(self, entity):
         entity.body.vel_y = G/2.
