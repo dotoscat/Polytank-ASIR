@@ -41,7 +41,7 @@ class Engine:
 
     def touch_floor(self, entity):
         print(entity, "touch floor")
-        entity.player_input.reset_time_floating()
+        entity.input.reset_time_floating()
 
     def shoot(self, entity):
         print(entity)
@@ -59,8 +59,8 @@ class Engine:
 
     def jump(self, entity):
         entity.body.vel_y = G/2.
-        entity.player_input.do_jump = False
+        entity.input.do_jump = False
         
     def float(self, entity, dt):
-        entity.player_input.time_floating += dt
+        entity.input.time_floating += dt
         entity.body.apply_force(dt, y=G*1.5)

@@ -22,13 +22,13 @@ def update_tank_graphic(self, entity):
     body = entity.body
     entity.tank_graphic.set_position(body.x, body.y)
 
-@toyblock3.system("player_input", "body", "platform")
+@toyblock3.system("input", "body", "platform")
 def update_user_input(self, entity, dt, engine):
     """
     :obj:`engine` deberá tener como método :meth:`player_shoots`
     o el método :meth:`_spawn_bullet`.
     """
-    player_input = entity.player_input
+    player_input = entity.input
     player_body = entity.body
     player_body.vel_x = player_input.move*TANK_SPEED
     if player_input.do_jump and entity.platform.touch_floor:

@@ -23,7 +23,7 @@ from .constant import G, SIZE
 tank = toyblock3.InstanceBuilder()
 tank.add("id", int)
 tank.add("tank", Tank)
-tank.add("player_input", PlayerInput)
+tank.add("input", PlayerInput)
 tank.add("platform", Platform.get_foot, width=SIZE, height=SIZE/4.,
     offset=(SIZE/-2., SIZE/-2.))
 tank.add("collision", Collision, type_=constant.TANK, width=SIZE,

@@ -92,7 +92,7 @@ class Client(Scene):
             *systems)
         self.tank = self.tank_pool.get()
         self.tank.set("body", x=200., y=100.)
-        self.player_input = self.tank.player_input
+        self.player_input = self.tank.input
         
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
                             batch=self.batch, group=self.group[2])
