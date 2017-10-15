@@ -103,6 +103,7 @@ class PlatformCollision(toyblock3.System):
                 continue
             walker.body.gravity = True
             touched = walker.platform.touch_floor
+            print(touched)
             walker.platform.platform = None
             if not walker.platform.intersects(platform.platform):
                 continue
@@ -111,7 +112,7 @@ class PlatformCollision(toyblock3.System):
             walker.body.gravity = False
             walker.platform.platform = platform
             if callable(callback) and not touched and walker.platform.touch_floor:
-                callback(entity)
+                callback(walker)
                 break
                 
 @toyblock3.system("body", "floor_collision", "collision")
