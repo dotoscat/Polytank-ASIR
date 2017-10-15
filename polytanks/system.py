@@ -32,8 +32,7 @@ def update_user_input(self, entity, dt, engine):
     player_body = entity.body
     player_body.vel_x = player_input.move*TANK_SPEED
     if player_input.do_jump and entity.platform.touch_floor:
-        player_body.vel_y = G/2.
-        player_input.do_jump = False
+        engine.jump(entity)
     elif player_input.floats and player_input.do_jump and not entity.platform.touch_floor:
         player_input.time_floating += dt
         player_body.apply_force(dt, y=G*1.5)

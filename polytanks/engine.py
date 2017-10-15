@@ -45,3 +45,8 @@ class Engine:
 
     def player_shoots(self):
         print("This is a replacement for shooting :/")
+
+    def jump(self, entity):
+        entity.body.vel_y = G/2.
+        entity.player_input.do_jump = False
+        
