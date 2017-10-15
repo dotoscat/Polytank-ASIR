@@ -30,7 +30,7 @@ systems = [system.lifespan, update_user_input, system.collision,
 
 class Engine:
     def __init__(self):
-        self.platforms = []
+        pass
 
     def update(self, dt):
         system.lifespan(dt)
@@ -38,7 +38,6 @@ class Engine:
         system.collision()
         system_alive_zone()
         system.physics(dt, -G)
-        #  system.platform_collision(platforms, self.touch_floor)
         system_platform_collision(self.touch_floor)
         system_client_collision()
         update_tank_graphic()
@@ -46,3 +45,6 @@ class Engine:
     def touch_floor(self, entity):
         print(entity, "touch floor")
         entity.player_input.reset_time_floating()
+
+    def player_shoots(self):
+        print("This is a replacement for shooting :/")
