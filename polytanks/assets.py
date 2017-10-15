@@ -56,12 +56,9 @@ def function_player(sound_name, f, loop=False):
     else:
         sound = sounds[sound_name]
     def _player(*args, **kwargs):
-        if loop:
-            if not player.playing:
-                player.queue(sound)
-                player.play()
-            else:
-                player.play()
+        if loop and not player.playing:
+            player.queue(sound)
+            player.play()
         else:
             sound.play()
         f(*args, **kwargs)
