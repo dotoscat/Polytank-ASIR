@@ -85,6 +85,8 @@ class Engine:
         entity.input.do_jump = False
         
     def float(self, entity, dt):
+        if entity.body.vel_y < 0.:
+            entity.body.vel_y = 0.
         entity.input.time_floating += dt
         entity.body.apply_force(dt, y=G*1.5)
 
