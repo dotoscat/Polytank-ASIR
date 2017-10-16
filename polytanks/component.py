@@ -59,10 +59,12 @@ class Tank:
     def __init__(self):
         self.damage = 0
         self.hitstun = 0.
+        self.control = True
         
     def reset(self):
         self.damage = 0
         self.hitstun = 0.
+        self.control = True
 
 class Bullet:
     """

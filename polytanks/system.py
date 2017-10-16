@@ -31,7 +31,10 @@ def update_user_input(self, entity, dt, engine):
     player_input = entity.input
     player_body = entity.body
     if entity.tank.hitstun <= 0.:
-        player_body.vel_x = player_input.move*TANK_SPEED
+        if not entity.tank.control and player_input.move:
+            entity.tank.control = True
+        if entity.tank.control:
+            player_body.vel_x = player_input.move*TANK_SPEED
         if player_input.do_jump and entity.platform.touch_floor:
             engine.jump(entity)
         elif player_input.floats and player_input.do_jump and not entity.platform.touch_floor:

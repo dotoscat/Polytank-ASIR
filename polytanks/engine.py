@@ -52,6 +52,7 @@ class Engine:
     def touch_floor(self, entity):
         entity.input.reset_time_floating()
         entity.tank.hitstun = 0.
+        entity.tank.control = True
 
     def shoot(self, entity):
         x, y = entity.tank_graphic.cannon.position
@@ -109,3 +110,4 @@ class Engine:
         tank.body.vel_y = force[1]
         tank.tank.damage += explosion.explosion.damage
         tank.tank.hitstun = 1.
+        tank.tank.control = False
