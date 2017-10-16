@@ -32,8 +32,6 @@ from . import builder
 from . import engine
 from .component import TankGraphic
 
-system_client_collision = engine.system_client_collision
-
 systems = engine.systems
 systems.append(system.sprite)
 
@@ -78,13 +76,7 @@ class Client(Scene):
             "shoot", self.engine.shoot)
         self.engine._spawn_explosion = assets.function_player(
             "explosion", self.engine._spawn_explosion)
-        
-        system_client_collision.table.update({
-            (constant.BULLET, constant.PLATFORM): self.bullet_platform,
-            (constant.BULLET, constant.TANK): self.bullet_tank,
-            (constant.EXPLOSION, constant.TANK): self.explosion_tank
-        })
-        
+                
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
@@ -107,11 +99,10 @@ class Client(Scene):
         builder.platform.add("sprite", Sprite, assets.images["platform"],
             batch=self.batch, group=self.group[0])
         
-        self.platform_pool = toyblock3.build_Entity(
+        self.engine.platform_pool = toyblock3.build_Entity(
             64, builder.platform, *systems)
             
-        self.platforms = []
-        self.platform_pool.init(self.init_entity)
+        self.engine.platform_pool.init(self.init_entity)
         
         builder.explosion.add("sprite", Sprite, assets.images["explosion"],
             batch=self.batch, group=self.group[3])
@@ -121,7 +112,7 @@ class Client(Scene):
         self.engine.explosion_pool.init(self.init_entity)
         self.engine.explosion_pool.clean(self.clean_entity)
         
-        level.load_level(level.basic, self.platform_pool)
+        level.load_level(level.basic, self.engine.platform_pool)
         
         self.cursor_point = Client.Point()
         self.cursor = Sprite(assets.images["eyehole"], batch=self.batch, group=self.group[3])
@@ -142,39 +133,15 @@ class Client(Scene):
             entity.sprite.visible = False
 
     def init_entity(self, entity):
-        if isinstance(entity, self.platform_pool):
-            self.platforms.append(entity)
-        elif (isinstance(entity, self.engine.bullet_pool)
+        if (isinstance(entity, self.engine.bullet_pool)
             or isinstance(entity, self.engine.explosion_pool)):
             entity.sprite.visible = True
         logging.info("init", entity)
 
     def update(self, dt):
         self.engine.update(dt)
+        self.damage.value = self.tank.tank.damage
         system.sprite()
-
-    def bullet_platform(self, bullet, platform):
-        if bullet.body.vel_y < 0.:
-            x = bullet.body.x
-            y = bullet.body.y
-            bullet.free()
-            self.engine._spawn_explosion(x, y, 1)
-
-    def bullet_tank(self, bullet, tank):
-        if bullet.bullet.owner == self.tank: return
-        x = bullet.body.x
-        y = bullet.body.y
-        bullet.free()
-        self._spawn_explosion(x, y, 1)
-
-    def explosion_tank(self, explosion, tank):
-        tank.tank.damage += explosion.explosion.damage
-        self.damage.value = tank.tank.damage
-        angle = get_angle_from(explosion.body.x, explosion.body.y,
-            tank.body.x, tank.body.y)
-        force = magnitude_to_vector(G, angle)
-        tank.body.vel_x = force[0]
-        tank.body.vel_y = force[1]
 
     def on_key_press(self, symbol, modifier):
         if symbol in (key.A, key.LEFT):

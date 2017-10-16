@@ -17,7 +17,7 @@ from .system import update_tank_graphic, update_user_input
 from .ogf4py3 import system
 from . import constant
 from .constant import G
-from .ogf4py3 import magnitude_to_vector
+from .ogf4py3 import magnitude_to_vector, get_angle_from
 
 system_alive_zone = system.AliveZone(0., 0.,
     constant.VWIDTH, constant.VHEIGHT)
@@ -29,7 +29,16 @@ systems = [system.lifespan, update_user_input, system.collision,
     system_alive_zone, system.physics, system_platform_collision,
     system_client_collision, update_tank_graphic]
 
+
+
 class Engine:
+    
+    def __init__(self):
+        system_client_collision.table.update({
+            (constant.BULLET, constant.PLATFORM): self.bullet_platform,
+            (constant.BULLET, constant.TANK): self.bullet_tank,
+            (constant.EXPLOSION, constant.TANK): self.explosion_tank})
+    
     def update(self, dt):
         system.lifespan(dt)
         update_user_input(dt, self)
@@ -76,3 +85,25 @@ class Engine:
     def float(self, entity, dt):
         entity.input.time_floating += dt
         entity.body.apply_force(dt, y=G*1.5)
+
+    def bullet_platform(self, bullet, platform):
+        if bullet.body.vel_y < 0.:
+            x = bullet.body.x
+            y = bullet.body.y
+            bullet.free()
+            self._spawn_explosion(x, y, 1)
+
+    def bullet_tank(self, bullet, tank):
+        if bullet.bullet.owner == tank: return
+        x = bullet.body.x
+        y = bullet.body.y
+        bullet.free()
+        self._spawn_explosion(x, y, 1)
+
+    def explosion_tank(self, explosion, tank):
+        tank.tank.damage += explosion.explosion.damage
+        angle = get_angle_from(explosion.body.x, explosion.body.y,
+            tank.body.x, tank.body.y)
+        force = magnitude_to_vector(G, angle)
+        tank.body.vel_x = force[0]
+        tank.body.vel_y = force[1]
