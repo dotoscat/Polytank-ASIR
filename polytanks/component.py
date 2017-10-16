@@ -58,9 +58,11 @@ class PlayerInput:
 class Tank:
     def __init__(self):
         self.damage = 0
+        self.hitstun = 0.
         
     def reset(self):
         self.damage = 0
+        self.hitstun = 0.
 
 class Bullet:
     """

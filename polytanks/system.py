@@ -30,11 +30,14 @@ def update_user_input(self, entity, dt, engine):
     """
     player_input = entity.input
     player_body = entity.body
-    player_body.vel_x = player_input.move*TANK_SPEED
-    if player_input.do_jump and entity.platform.touch_floor:
-        engine.jump(entity)
-    elif player_input.floats and player_input.do_jump and not entity.platform.touch_floor:
-        engine.float(entity, dt)
+    if entity.tank.hitstun <= 0.:
+        player_body.vel_x = player_input.move*TANK_SPEED
+        if player_input.do_jump and entity.platform.touch_floor:
+            engine.jump(entity)
+        elif player_input.floats and player_input.do_jump and not entity.platform.touch_floor:
+            engine.float(entity, dt)
+    else:
+        entity.tank.hitstun -= dt
     
     if player_input.accumulate_power and not player_input.release_power:
         player_input.time_power += dt

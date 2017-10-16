@@ -42,15 +42,16 @@ class Engine:
     def update(self, dt):
         system.lifespan(dt)
         update_user_input(dt, self)
-        system.collision()
-        system_alive_zone()
         system.physics(dt, -G)
-        system_platform_collision(self.touch_floor)
+        system.collision()
         system_client_collision()
+        system_platform_collision(self.touch_floor)
+        system_alive_zone()
         update_tank_graphic()
 
     def touch_floor(self, entity):
         entity.input.reset_time_floating()
+        entity.tank.hitstun = 0.
 
     def shoot(self, entity):
         x, y = entity.tank_graphic.cannon.position
@@ -101,9 +102,10 @@ class Engine:
         self._spawn_explosion(x, y, 1)
 
     def explosion_tank(self, explosion, tank):
-        tank.tank.damage += explosion.explosion.damage
         angle = get_angle_from(explosion.body.x, explosion.body.y,
             tank.body.x, tank.body.y)
-        force = magnitude_to_vector(G, angle)
+        force = magnitude_to_vector(G/4.+tank.tank.damage, angle)
         tank.body.vel_x = force[0]
         tank.body.vel_y = force[1]
+        tank.tank.damage += explosion.explosion.damage
+        tank.tank.hitstun = 1.
