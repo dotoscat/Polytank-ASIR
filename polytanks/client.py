@@ -84,9 +84,9 @@ class Client(Scene):
         
         self.engine.tank_pool = toyblock3.build_Entity(4, builder.tank,
             *systems)
-        self.tank = self.engine.tank_pool.get()
-        self.tank.set("body", x=200., y=100.)
-        self.player_input = self.tank.input
+        self.engine.tank = self.engine.tank_pool.get()
+        self.engine.tank.set("body", x=200., y=100.)
+        self.player_input = self.engine.tank.input
         
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
                             batch=self.batch, group=self.group[2])
@@ -140,7 +140,7 @@ class Client(Scene):
 
     def update(self, dt):
         self.engine.update(dt)
-        self.damage.value = self.tank.tank.damage
+        self.damage.value = self.engine.tank.tank.damage
         system.sprite()
 
     def on_key_press(self, symbol, modifier):

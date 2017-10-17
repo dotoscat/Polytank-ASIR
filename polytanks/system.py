@@ -15,7 +15,7 @@
 
 from math import degrees
 from .ogf4py3 import toyblock3, get_angle_from
-from .constant import TANK_SPEED, VHEIGHT as G
+from .constant import TANK_SPEED, VHEIGHT as G, MAX_ASCENDING_SPEED
 
 @toyblock3.system("body", "tank_graphic")
 def update_tank_graphic(self, entity):
@@ -39,6 +39,7 @@ def update_user_input(self, entity, dt, engine):
             engine.jump(entity)
         elif player_input.floats and player_input.do_jump and not entity.platform.touch_floor:
             engine.float(entity, dt)
+            entity.body.max_ascending_speed = MAX_ASCENDING_SPEED
     else:
         entity.tank.hitstun -= dt
     

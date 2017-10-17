@@ -29,8 +29,6 @@ systems = [system.lifespan, update_user_input, system.collision,
     system_alive_zone, system.physics, system_platform_collision,
     system_client_collision, update_tank_graphic]
 
-
-
 class Engine:
     
     def __init__(self):
@@ -44,8 +42,8 @@ class Engine:
         update_user_input(dt, self)
         system.physics(dt, -G)
         system.collision()
-        system_client_collision()
         system_platform_collision(self.touch_floor)
+        system_client_collision()
         system_alive_zone()
         update_tank_graphic()
 
@@ -108,6 +106,7 @@ class Engine:
         angle = get_angle_from(explosion.body.x, explosion.body.y,
             tank.body.x, tank.body.y)
         force = magnitude_to_vector(G/4.+tank.tank.damage, angle)
+        tank.body.max_ascending_speed = 0.
         tank.body.vel_x = force[0]
         tank.body.vel_y = force[1]
         tank.tank.damage += explosion.explosion.damage
