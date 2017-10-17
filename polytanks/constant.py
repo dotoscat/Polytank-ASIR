@@ -17,6 +17,7 @@ TANK = 1
 PLATFORM = 1 << 1
 BULLET = 1 << 2
 EXPLOSION = 1 << 3
+POWERUP = 1 << 4
 TANK_DEF = ("player_input", "floor_collision", "body", "tank_graphic")
 PLATFORM_DEF = ("collision", "sprite")
 BULLET_DEF = ("body", "collision", "sprite")
