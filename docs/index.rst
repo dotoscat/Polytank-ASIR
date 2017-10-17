@@ -32,6 +32,7 @@ Herramientas usadas
 
 * Sphinx: Para crear la documentación a partir del proyecto.
 * sfxr: Para generar sonidos.
+* GIMP: Para crear los gráficos del juego.
 * git: Un sistema de control de versiones.
 
 Estructura
@@ -48,6 +49,9 @@ para poder jugar contra otros jugadores registrados.
 
 El proyecto consta además de un módulo propio *polytanks* con sistemas y tipos en común
 tanto del servidor como del cliente.
+
+En la carpeta *resources* es dónde están los archivos para ser editados.
+En la carpeta *assets* están los archivos que son usados por el juego.
 
 El sistema de entidad-componentes
 ---------------------------------
