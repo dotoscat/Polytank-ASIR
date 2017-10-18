@@ -16,7 +16,7 @@
 from pyglet.sprite import Sprite
 from .ogf4py3 import toyblock3
 from .ogf4py3.component import Body, Collision, Platform, Timer
-from .component import PlayerInput, Tank, Bullet, Explosion
+from .component import PlayerInput, Tank, Bullet, Explosion, PowerUp
 from . import constant
 from .constant import G, SIZE
 
@@ -50,3 +50,11 @@ explosion.add("collision", Collision,
     type_=constant.EXPLOSION, collides_with=constant.TANK,
     offset=(-4., -4.), width=16., height=16.)
 explosion.add("timer", Timer, 0.12)
+
+powerup = toyblock3.InstanceBuilder()
+powerup.add("id", int)
+powerup.add("body", Body)
+powerup.add("powerup", PowerUp)
+powerup.add("collision", Collision, type_=constant.POWERUP,
+    collides_with=constant.TANK, width=SIZE, height=SIZE,
+    offset=(SIZE/-2., SIZE/-2.))

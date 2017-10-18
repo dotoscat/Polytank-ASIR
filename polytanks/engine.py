@@ -112,3 +112,16 @@ class Engine:
         tank.tank.damage += explosion.explosion.damage
         tank.tank.hitstun = 1.
         tank.tank.control = False
+
+    def tank_powerup(self, tank, powerup):
+        powerup.powerup.action(tank)
+        powerup.free()
+
+    def _spawn_powerup(self, x, y, type_):
+        pass
+
+    @staticmethod
+    def heal_tank(tank):
+        tank.tank.damage -= 30
+        if tank.tank.damage < 0:
+            tank.tank.damage = 0

@@ -80,6 +80,13 @@ class Explosion:
         self.damage = 0
         self.knockback = 0
 
+class PowerUp:
+    def __init__(self):
+        self.action = None
+        
+    def __call__(self, *args, **kwargs):
+        self.action(*args, **kwargs)
+
 class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base

@@ -112,6 +112,11 @@ class Client(Scene):
         self.engine.explosion_pool.init(self.init_entity)
         self.engine.explosion_pool.clean(self.clean_entity)
         
+        builder.powerup.add("sprite", Sprite, assets.images["heal"],
+            batch=self.batch, group=self.group[3])
+        self.engine.powerup_pool = toyblock3.build_Entity(16, builder.powerup,
+            *systems)
+        
         level.load_level(level.basic, self.engine.platform_pool)
         
         self.cursor_point = Client.Point()

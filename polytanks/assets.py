@@ -43,6 +43,10 @@ images["eyehole"].anchor_x = 8.
 images["eyehole"].anchor_y = 8.
 images["explosion"].anchor_x = 8.
 images["explosion"].anchor_y = 8.
+images["heal"].anchor_x = 8.
+images["heal"].anchor_y = 8.
+images["power"].anchor_x = 8.
+images["power"].anchor_y = 8.
 
 def function_player(sound_name, f, loop=False):
     """
