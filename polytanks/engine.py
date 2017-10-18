@@ -114,7 +114,6 @@ class Engine:
         tank.tank.control = False
 
     def powerup_tank(self, powerup, tank):
-        print(powerup, tank)
         powerup.powerup.action(tank)
         powerup.free()
 

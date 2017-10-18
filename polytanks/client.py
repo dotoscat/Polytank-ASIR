@@ -77,6 +77,8 @@ class Client(Scene):
             "shoot", self.engine.shoot)
         self.engine._spawn_explosion = assets.function_player(
             "explosion", self.engine._spawn_explosion)
+        self.engine.powerup_tank = assets.function_player(
+            "powerup", self.engine.powerup_tank)
         
         engine.system_client_collision.table.update({
             (constant.POWERUP, constant.TANK): self.engine.powerup_tank
