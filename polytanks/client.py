@@ -14,6 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from random import choice
 import pyglet
 
 from pyglet.sprite import Sprite
@@ -76,7 +77,11 @@ class Client(Scene):
             "shoot", self.engine.shoot)
         self.engine._spawn_explosion = assets.function_player(
             "explosion", self.engine._spawn_explosion)
-                
+        
+        engine.system_client_collision.table.update({
+            (constant.POWERUP, constant.TANK): self.engine.powerup_tank
+        })
+        
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
@@ -116,6 +121,8 @@ class Client(Scene):
             batch=self.batch, group=self.group[3])
         self.engine.powerup_pool = toyblock3.build_Entity(16, builder.powerup,
             *systems)
+        self.engine.powerup_pool.init(self.init_entity)
+        self.engine.powerup_pool.clean(self.clean_entity)
         
         level.load_level(level.basic, self.engine.platform_pool)
         
@@ -127,6 +134,8 @@ class Client(Scene):
         self.damage.x = 32.
         self.damage.y = 8.
 
+        self.dt = 0.
+
     def init(self):
         self.director.set_exclusive_mouse(True)
         self.cursor_point.x = constant.VWIDTH/2.
@@ -134,16 +143,24 @@ class Client(Scene):
 
     def clean_entity(self, entity):
         if (isinstance(entity, self.engine.bullet_pool)
-            or isinstance(entity, self.engine.explosion_pool)):
+            or isinstance(entity, self.engine.explosion_pool)
+            or isinstance(entity, self.engine.powerup_pool)):
             entity.sprite.visible = False
 
     def init_entity(self, entity):
         if (isinstance(entity, self.engine.bullet_pool)
-            or isinstance(entity, self.engine.explosion_pool)):
+            or isinstance(entity, self.engine.explosion_pool)
+            or isinstance(entity, self.engine.powerup_pool)):
             entity.sprite.visible = True
         logging.info("init", entity)
 
     def update(self, dt):
+        self.dt += dt
+        if self.dt > 3.:
+            self.dt = 0.
+            if choice((True, False)):
+                powerup = self.engine._spawn_powerup(128., 128., "heal")
+                powerup.sprite.image = assets.images["heal"]
         self.engine.update(dt)
         self.damage.value = self.engine.tank.tank.damage
         system.sprite()

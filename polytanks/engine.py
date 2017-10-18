@@ -113,15 +113,26 @@ class Engine:
         tank.tank.hitstun = 1.
         tank.tank.control = False
 
-    def tank_powerup(self, tank, powerup):
+    def powerup_tank(self, powerup, tank):
+        print(powerup, tank)
         powerup.powerup.action(tank)
         powerup.free()
 
     def _spawn_powerup(self, x, y, type_):
-        pass
+        powerup = self.powerup_pool.get()
+        powerup.set("body", x=x, y=y)
+        if type_ == "heal":
+            powerup.powerup.action = self._heal_tank
+        else:
+            powerup.powerup.action = self._dummy
+        return powerup
 
     @staticmethod
-    def heal_tank(tank):
+    def _heal_tank(tank):
         tank.tank.damage -= 30
         if tank.tank.damage < 0:
             tank.tank.damage = 0
+
+    @staticmethod
+    def _dummy(tank):
+        print("Dummy!")
