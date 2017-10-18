@@ -53,6 +53,7 @@ explosion.add("timer", Timer, 0.12)
 
 powerup = toyblock3.InstanceBuilder()
 powerup.add("id", int)
+powerup.add("timer", Timer, 3.)
 powerup.add("body", Body)
 powerup.add("powerup", PowerUp)
 powerup.add("collision", Collision, type_=constant.POWERUP,
