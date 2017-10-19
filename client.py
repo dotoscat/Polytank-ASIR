@@ -19,16 +19,14 @@ import polytanks.ogf4py3 as ogf4py3
 from polytanks.client import Client
 from polytanks import constant
 
-if __name__ == "__main__":
+def run_client():
     director = ogf4py3.Director(
-        caption="Polytanks client",
-        width=constant.WIDTH,
-        height=constant.HEIGHT,
-        vwidth=constant.VWIDTH,
-        vheight=constant.VHEIGHT,
-        fullscreen=False
-        )
+        caption="Polytanks client", fullscreen=False,
+        width=constant.WIDTH, height=constant.HEIGHT,
+        vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
     director.set_background_color(0., 0., 0.)
     director.scene = Client()
-        
     pyglet.app.run()
+
+if __name__ == "__main__":
+    run_client()
