@@ -22,7 +22,6 @@ Bibliotecas usadas
 ------------------
 
 * pyglet: Un framework orientado al desarrollo de juegos.
-* twisted: Un framework de red asíncrona.
 * toyblock3: Un sistema de entidad-componentes.
 * ogf4py3: Un framework basado en toyblock3 y pyglet que asiste en la 
     creación de juegos.
@@ -50,8 +49,39 @@ para poder jugar contra otros jugadores registrados.
 El proyecto consta además de un módulo propio *polytanks* con sistemas y tipos en común
 tanto del servidor como del cliente.
 
-En la carpeta *resources* es dónde están los archivos para ser editados.
-En la carpeta *assets* están los archivos que son usados por el juego.
+En la carpeta *resources* es dónde están los archivos del juego para ser editados.
+
+En la carpeta *assets* están los archivos que son usados por el juego, generados
+a partir de los archivos de la carpeta *resources*.
+
+Jugabilidad
+-----------
+
+Cada jugador mueve su tanque con las teclas WASD, o con las teclas de dirección
+y apunta el cañón moviendo el ratón. Para disparar mantiene y suelta cualquier
+botón del ratón. Más tiempo presionado mayor fuerza de ataque.
+
+Un jugador podrá saltar una vez. En cualquier momento y mientras no toque el suelo
+el jugador podrá flotar por el aire durante unos segundos manteniendo pulsado
+el botón de salto (W o tecla de dirección ARRIBA). El jugador al ascender mientras flota mantiene la
+inercia, cosa que no mantiene mientras desciende y el jugador flota.
+
+Cada tanque del jugador tiene un medidor de daño. A más porcentaje, más posibilidades
+de salir fuera del escenario con las explosiones de las balas.
+El daño se aumenta recibiendo daño de las explosiones a partir de los
+disparos de otros jugadores. También las explosiones es la manera de causar
+que otros jugadores salgan volando.
+
+En condiciones normales los tanques tienen una velocidad máxima de ascenso y movimiento
+pero si reciben una explosión los jugadores pierden el control del tanque por unos momentos
+y no tienen velocidad máxima de ascenso. Pasado ese tiempo los tanques tienen inercia pero
+los jugadores pueden tener de nuevo el control del tanque. El control del tanque se recupera
+antes si toca el suelo también.
+
+Referencias
+-----------
+
+* `https://7webpages.com/blog/writing-online-multiplayer-game-with-python-asyncio-getting-asynchronous/`
 
 El sistema de entidad-componentes
 ---------------------------------
