@@ -15,46 +15,5 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor
-from polytanks.engine import Engine, Body
-import polytanks.protocol as protocol
-
-class Server(DatagramProtocol):
-    """
-    Esta clase sirve como puente o traductor para la clase Engine.
-    Enviar y recibe los datos a través de la red a todos los clientes
-    a partir de la interfaz de Engine.
-    """
-    def __init__(self):
-        import polytanks.protocol as protocol
-        super(Server, self).__init__()
-        self._engine = Engine()
-        self._action = {
-            protocol.CONNECT: self.__connect
-        }
-    
-    def datagramReceived(self, data, addr):
-        """Aquí el servidor recibe datos de los clientes y debe transformarlos
-        para que lo pueda manejar el motor.
-        """
-        command = protocol.get_command(data)
-        action = self._action.get(command)
-        if action is not None:
-            action(data, addr)
-        else:
-            print("paquete inválido".format(action, addr))
-
-    def __connect(self, data, addr):
-        """Qué hacer si alguien se conecta.
-        Enviar copia completa (snapshot) del motor.
-        """
-        entity, id_ = self._engine.create_tank(32, 32)
-        snapshot_buffer = protocol.get_snapshot_buffer(self._engine, id_)
-        self.transport.write(snapshot_buffer, addr)
-        print("Conectado!")
-        
-
 if __name__ == "__main__":
-    reactor.listenUDP(7777, Server())
-    reactor.run()
+    print("Hola mundo")
