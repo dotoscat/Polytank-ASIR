@@ -117,7 +117,7 @@ class PlatformCollision(toyblock3.System):
         if callable(callback) and not touched and entity.platform.touch_floor:
             callback(entity)
                 
-class AliveZone(toyblock3.System):
+class BoundaryTrigger(toyblock3.System):
     """This is a basic system where the entities are freed if they are out of bounds.
     
     The parameters are relative to left and bottom.
@@ -147,10 +147,14 @@ class AliveZone(toyblock3.System):
         self.x2 = x2
         self.y2 = y2
     
-    def _call(self, system, entity):
+    def _call(self, system, entity, call_):
         body = entity.body
-        if not (self.x1 <= body.x <= self.x2 and self.y1 <= body.y <= self.y2):
-            entity.free()
+        if self.x1 <= body.x <= self.x2 and self.y1 <= body.y <= self.y2:
+            return
+        if callable(call_):
+            call_(entity)
+        else:
+            raise TypeError("Pass a callable to this BoundaryTrigger. {} pass".format(type(call_)))
 
 @toyblock3.system("timer")
 def lifespan(system, entity, dt):

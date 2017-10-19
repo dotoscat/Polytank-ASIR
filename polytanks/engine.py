@@ -19,7 +19,7 @@ from . import constant
 from .constant import G
 from .ogf4py3 import magnitude_to_vector, get_angle_from
 
-system_alive_zone = system.AliveZone(0., 0.,
+system_alive_zone = system.BoundaryTrigger(0., 0.,
     constant.VWIDTH, constant.VHEIGHT)
 
 system_client_collision = system.CheckCollision()
@@ -44,7 +44,7 @@ class Engine:
         system.collision()
         system_platform_collision(self.touch_floor)
         system_client_collision()
-        system_alive_zone()
+        system_alive_zone(self._check_limit)
         update_tank_graphic()
 
     def touch_floor(self, entity):
@@ -125,6 +125,12 @@ class Engine:
         else:
             powerup.powerup.action = self._dummy
         return powerup
+
+    def _check_limit(self, entity):
+        if isinstance(entity, self.bullet_pool):
+            entity.free()
+        elif isinstance(entity, self.tank_pool):
+            print(entity, "KO!")
 
     @staticmethod
     def _heal_tank(tank):
