@@ -16,12 +16,17 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import signal
 import asyncio
+from functools import partial
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class ServerProtocol(asyncio.DatagramProtocol):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, time, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._past_time = time()
+        self.dt = 0.
+        self.secs = 0
+        self.clients = []
     
     def connection_made(self, transport):
         self.transport = transport
@@ -32,16 +37,39 @@ class ServerProtocol(asyncio.DatagramProtocol):
             self.transport.sendto("bye".encode(), addr)
             asyncio.get_event_loop().stop()
             return
-        message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
-        self.transport.sendto(message, addr)
+        elif data.decode() == "join":
+            self.clients.append(addr)
+            print("Client {} added".format(addr))
+        #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
+        #self.transport.sendto(message, addr)
 
+    @asyncio.coroutine
+    def tick(self, time):
+        while True:
+            dt = time() - self._past_time
+            self._past_time = time()
+            
+            self.dt += dt
+            if self.dt >= 1.0:
+                self.dt = 0.
+                self.secs += 1
+                print(self.secs)
+                message = "Secs {}".format(self.secs).encode()
+                for client in self.clients:
+                    self.transport.sendto(message, client)
+            yield
+        
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.set_debug(True)
     
-    listen = loop.create_datagram_endpoint(ServerProtocol,
+    server = ServerProtocol(loop.time)
+    
+    listen = loop.create_datagram_endpoint(lambda: server,
         local_addr=("127.0.0.1", 7777))
-    transport, protocol = loop.run_until_complete(listen)
+    #transport, protocol = loop.run_until_complete(listen)
+    asyncio.ensure_future(
+        asyncio.gather(listen, server.tick(loop.time)))
     try:
         loop.run_forever()
     except KeyboardInterrupt:

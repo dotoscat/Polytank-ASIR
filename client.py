@@ -14,6 +14,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
 import pyglet
 import polytanks.ogf4py3 as ogf4py3
 from polytanks.client import Client
@@ -32,13 +33,13 @@ ADDRESS = ("127.0.0.1", 7777)
 
 def listen(data, socket):
     print(data.decode())
-    socket.send("close".encode())
 
 if __name__ == "__main__":
     conn = ogf4py3.Connection(ADDRESS, listen)
-    conn.socket.send(b"Hello world")
+    conn.socket.send(b"join")
     try:
         while True:
             conn.tick()
+            time.sleep(0.1)
     except KeyboardInterrupt:
         pass
