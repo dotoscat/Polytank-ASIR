@@ -34,17 +34,26 @@ Herramientas usadas
 * GIMP: Para crear los gráficos del juego.
 * git: Un sistema de control de versiones.
 
-Estructura
-----------
+Estructura del proyecto
+-----------------------
 
 El proyecto consta del servidor y el cliente.
 
+Servidor
+++++++++
+
 El servidor es autoritativo. Para poder jugar en un servidor se deberá registrar
 primero a través de la web del servidor para poder acceder a jugar a través del
-cliente.
+cliente. Hace uso del módulo **asyncio** para atender a las conexiones de red y gestionar
+los eventos del juego.
+
+Cliente
++++++++
 
 El cliente es dónde el usuario se conectará a un servidor con su usuario y contraseña
-para poder jugar contra otros jugadores registrados.
+para poder jugar contra otros jugadores registrados. Hace uso del módulo **selectors**
+por tener un mayor control sobre los sockets que **asyncio** y con posibilidad
+de integrarse mejor con el bucle de eventos de **pyglet**.
 
 El proyecto consta además de un módulo propio *polytanks* con sistemas y tipos en común
 tanto del servidor como del cliente.
