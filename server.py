@@ -31,7 +31,10 @@ class ServerProtocol(asyncio.DatagramProtocol):
     def connection_made(self, transport):
         self.transport = transport
         print("Connection", transport)
-        
+    
+    def connection_lost(self, cls):
+        print("lost", cls)
+    
     def datagram_received(self, data, addr):
         if data.decode() == "close":
             self.transport.sendto("bye".encode(), addr)
@@ -40,6 +43,10 @@ class ServerProtocol(asyncio.DatagramProtocol):
         elif data.decode() == "join":
             self.clients.append(addr)
             print("Client {} added".format(addr))
+        elif data.decode() == "out":
+            self.clients.remove(addr)
+            print("Client {} removed", addr)
+            print(self.clients)
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
