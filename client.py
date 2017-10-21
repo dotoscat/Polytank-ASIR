@@ -14,6 +14,8 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import selectors
+import socket
 import pyglet
 import polytanks.ogf4py3 as ogf4py3
 from polytanks.client import Client
@@ -28,5 +30,47 @@ def run_client():
     director.scene = Client()
     pyglet.app.run()
 
+ADDRESS = ("127.0.0.1", 7777)
+
+def listen(data, socket):
+    print(data.decode())
+    socket.send("close".encode())
+
+class Connection:
+    def __init__(self, address, listener):
+        self._address = address
+        self._socket = socket.socket(type=socket.SOCK_DGRAM)
+        self._socket.connect(address)
+        self._socket.setblocking(False)
+        self._selector = selectors.DefaultSelector()
+        self._selector.register(self._socket, selectors.EVENT_READ,
+            listener)
+        self._selector_select = self._selector.select
+    
+    @property
+    def socket(self):
+        return self._socket
+    
+    def tick(self):
+        events = self._selector_select(0)
+        for key, mask in events:
+            try:
+                socket = key.fileobj
+                data = socket.recv(1024)
+                key.data(data, socket)
+            except ConnectionResetError:
+                print("No se ha podido conectar con el servidor")
+    
+    def __del__(self):
+        self._socket.close()
+        self._selector.close()
+
 if __name__ == "__main__":
-    run_client()
+    #print(my_socket.send(b"Hello world"))
+    conn = Connection(ADDRESS, listen)
+    conn.socket.send(b"hi")
+    try:
+        while True:
+            conn.tick()
+    except KeyboardInterrupt:
+        pass
