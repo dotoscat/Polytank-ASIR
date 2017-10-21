@@ -14,6 +14,38 @@
 
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import signal
+import asyncio
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+class ServerProtocol(asyncio.DatagramProtocol):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    def connection_made(self, transport):
+        self.transport = transport
+        print("Connection", transport)
+        
+    def datagram_received(self, data, addr):
+        if data.decode() == "close":
+            self.transport.sendto("bye".encode(), addr)
+            asyncio.get_event_loop().stop()
+            return
+        message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
+        self.transport.sendto(message, addr)
 
 if __name__ == "__main__":
-    print("Hola mundo")
+    loop = asyncio.get_event_loop()
+    loop.set_debug(True)
+    
+    listen = loop.create_datagram_endpoint(ServerProtocol,
+        local_addr=("127.0.0.1", 7777))
+    transport, protocol = loop.run_until_complete(listen)
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    
+    transport.close()
+    loop.close()

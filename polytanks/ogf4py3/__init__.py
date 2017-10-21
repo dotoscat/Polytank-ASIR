@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import selectors
+import socket
 from math import cos, sin, atan2
 from . import toyblock3
 
@@ -41,3 +43,50 @@ def get_angle_from(p1_x, p1_y, p2_x, p2_y):
         The angle, in radians.
     """
     return atan2(p2_y - p1_y, p2_x - p1_x)
+
+class Connection:
+    """Async UDP connection to a server.
+    
+    If you want to receive data from server say first a "hello" to the server.
+    
+    Parameters:
+        address ((host, port)):
+        listener (callable): It uses the next signature listener(data, socket).
+    
+    Returns:
+        An instance of this class.
+        
+    Raises:
+        TypeError: If listener is not a callable.
+    """
+    def __init__(self, address, listener):
+        if not callable(listener):
+            raise TypeError("listener is not a callable. {} passed".format(type(listener)))
+        self._address = address
+        self._socket = socket.socket(type=socket.SOCK_DGRAM)
+        self._socket.connect(address)
+        self._socket.setblocking(False)
+        self._selector = selectors.DefaultSelector()
+        self._selector.register(self._socket, selectors.EVENT_READ,
+            listener)
+        self._selector_select = self._selector.select
+    
+    @property
+    def socket(self):
+        """Outside of :meth:`tick` you can use the socket to send data."""
+        return self._socket
+    
+    def tick(self):
+        """Receive and process network events."""
+        events = self._selector_select(0)
+        for key, mask in events:
+            try:
+                socket = key.fileobj
+                data = socket.recv(1024)
+                key.data(data, socket)
+            except ConnectionResetError:
+                print("No se ha podido conectar con el servidor")
+    
+    def __del__(self):
+        self._socket.close()
+        self._selector.close()
