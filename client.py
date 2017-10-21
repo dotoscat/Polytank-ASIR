@@ -36,7 +36,7 @@ def listen(data, socket):
 
 if __name__ == "__main__":
     conn = ogf4py3.Connection(ADDRESS, listen)
-    #  conn.socket.send(b"Hello world")
+    conn.socket.send(b"Hello world")
     try:
         while True:
             conn.tick()

@@ -85,7 +85,7 @@ class Connection:
                 data = socket.recv(1024)
                 key.data(data, socket)
             except ConnectionResetError:
-                print("No se ha podido conectar con el servidor")
+                print("Could not connect to the server: {}".format(self._address))
     
     def __del__(self):
         self._socket.close()
