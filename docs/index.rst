@@ -105,6 +105,8 @@ Modelo cliente/servidor vs p2p (peer to peer)
 Protocolo
 +++++++++
 
+
+
 Referencias
 -----------
 

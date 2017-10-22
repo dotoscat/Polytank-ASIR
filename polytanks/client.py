@@ -32,6 +32,7 @@ from . import level
 from . import builder
 from . import engine
 from .component import TankGraphic
+from . import protocol
 
 systems = engine.systems
 systems.append(system.sprite)
@@ -67,6 +68,7 @@ class Client(Scene):
         super().__init__(5)
         
         self.conn = Connection(address, self.listen)
+        self._joined = False
         
         self.engine = engine.Engine()
         self.engine.touch_floor = assets.function_player(
@@ -171,6 +173,12 @@ class Client(Scene):
         system.sprite()
 
     def on_key_press(self, symbol, modifier):
+        if not self._joined and symbol == key.J:
+            self.conn.socket.send(protocol.mono.pack(protocol.JOIN))
+            self._joined = True
+        elif self._joined and symbol == key.L:
+            self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
+            self._joined = False
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
         elif symbol in (key.D, key.RIGHT):

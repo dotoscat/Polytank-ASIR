@@ -14,6 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
+from . import protocol
 
 class Server(asyncio.DatagramProtocol):
     def __init__(self, address, *args, debug=False, **kwargs):
@@ -41,17 +42,18 @@ class Server(asyncio.DatagramProtocol):
         print("lost", cls)
     
     def datagram_received(self, data, addr):
-        if data.decode() == "close":
-            self.transport.sendto("bye".encode(), addr)
-            asyncio.get_event_loop().stop()
-            return
-        elif data.decode() == "join":
-            self.clients.append(addr)
-            print("Client {} added".format(addr))
-        elif data.decode() == "out":
-            self.clients.remove(addr)
-            print("Client {} removed", addr)
-            print(self.clients)
+        data_len = len(data)
+        print("payload size", data_len)
+        if data_len == 4:
+            command = protocol.mono.unpack(data)[0]
+            print("command", command)
+            if command == protocol.JOIN:
+                self.clients.append(addr)
+                print("Client {} added".format(addr))
+            elif command == protocol.LOGOUT:
+                self.clients.remove(addr)
+                print("Client {} removed", addr)
+                print(self.clients)
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 

@@ -14,9 +14,16 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import struct
-from inspect import getargspec
-from . import engine
 
+JOIN = 1
+LOGOUT = 2
+
+JOINED = 3
+
+mono = struct.Struct("!i")
+tetra = struct.Struct("!iiff")
+
+"""
 #COMMANDS
 CONNECT = 0x0001
 DISCONNECT = 0x0002
@@ -108,3 +115,4 @@ def recreate_tank(id_, x, y):
 
 def get_recreate_tank(data):
     return _recreate_tank.unpack(data)
+"""
