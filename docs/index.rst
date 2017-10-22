@@ -96,6 +96,15 @@ y no tienen velocidad máxima de ascenso. Pasado ese tiempo los tanques tienen i
 los jugadores pueden tener de nuevo el control del tanque. El control del tanque se recupera
 antes si toca el suelo también.
 
+Red
+---
+
+Modelo cliente/servidor vs p2p (peer to peer)
++++++++++++++++++++++++++++++++++++++++++++++
+
+Protocolo
++++++++++
+
 Referencias
 -----------
 
