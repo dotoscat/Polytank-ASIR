@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import deque
 from .system import update_tank_graphic, update_user_input
 from .ogf4py3 import system
 from . import constant
@@ -35,8 +36,17 @@ class Engine:
         system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,
             (constant.BULLET, constant.TANK): self.bullet_tank,
-            (constant.EXPLOSION, constant.TANK): self.explosion_tank})
+            (constant.EXPLOSION, constant.TANK): self.explosion_tank,
+            (constant.POWERUP, constant.TANK): self.powerup_tank})
+        self._messages = deque()
+        self._add_message = self._messages.append
     
+    @property
+    def messages(self):
+        _messages = self._messages
+        while _messages:
+            yield _messages.pop()
+        
     def update(self, dt):
         system.lifespan(dt)
         update_user_input(dt, self)
@@ -51,6 +61,7 @@ class Engine:
         entity.input.reset_time_floating()
         entity.tank.hitstun = 0.
         entity.tank.control = True
+        self._add_message("touch-floor")
 
     def shoot(self, entity):
         x, y = entity.tank_graphic.cannon.position
@@ -63,6 +74,7 @@ class Engine:
             force *= power
         bullet = self._spawn_bullet(entity, x, y, force, angle, gravity)
         bullet.set("bullet", owner=entity, power=power)
+        self._add_message("shoot")
 
     def _spawn_bullet(self, entity, x, y, force, angle, gravity):
         bullet = self.bullet_pool.get()
@@ -77,16 +89,19 @@ class Engine:
         explosion = self.explosion_pool.get()
         explosion.set("body", x=x, y=y)
         explosion.set("explosion", damage=damage, knockback=knockback)
+        self._add_message("explosion")
 
     def jump(self, entity):
         entity.body.vel_y = G/2.
         entity.input.do_jump = False
+        self._add_message("jump")
         
     def float(self, entity, dt):
         if entity.body.vel_y < 0.:
             entity.body.vel_y = 0.
         entity.input.time_floating += dt
         entity.body.apply_force(dt, y=G*1.5)
+        self._add_message("float")
 
     def bullet_platform(self, bullet, platform):
         if bullet.body.vel_y < 0.:
@@ -116,6 +131,7 @@ class Engine:
     def powerup_tank(self, powerup, tank):
         powerup.powerup.action(tank)
         powerup.free()
+        self._add_message("powerup")
 
     def _spawn_powerup(self, x, y, type_):
         powerup = self.powerup_pool.get()

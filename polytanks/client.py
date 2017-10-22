@@ -71,22 +71,6 @@ class Client(Scene):
         self._joined = False
         
         self.engine = engine.Engine()
-        self.engine.touch_floor = assets.function_player(
-            "hit-platform", self.engine.touch_floor)
-        self.engine.jump = assets.function_player(
-            "jump", self.engine.jump)
-        self.engine.float = assets.function_player(
-            "float", self.engine.float, loop=True)
-        self.engine.shoot = assets.function_player(
-            "shoot", self.engine.shoot)
-        self.engine._spawn_explosion = assets.function_player(
-            "explosion", self.engine._spawn_explosion)
-        self.engine.powerup_tank = assets.function_player(
-            "powerup", self.engine.powerup_tank)
-        
-        engine.system_client_collision.table.update({
-            (constant.POWERUP, constant.TANK): self.engine.powerup_tank
-        })
         
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
@@ -171,6 +155,8 @@ class Client(Scene):
         self.engine.update(dt)
         self.damage.value = self.tank.tank.damage
         system.sprite()
+        for message in self.engine.messages:
+            print(message)
 
     def on_key_press(self, symbol, modifier):
         if not self._joined and symbol == key.J:
