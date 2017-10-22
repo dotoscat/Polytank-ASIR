@@ -95,9 +95,9 @@ class Client(Scene):
         
         self.engine.tank_pool = toyblock3.build_Entity(4, builder.tank,
             *systems)
-        self.engine.tank = self.engine.tank_pool.get()
-        self.engine.tank.set("body", x=200., y=100.)
-        self.player_input = self.engine.tank.input
+        self.tank = self.engine.tank_pool.get()
+        self.tank.set("body", x=200., y=100.)
+        self.player_input = self.tank.input
         
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
                             batch=self.batch, group=self.group[2])
@@ -169,7 +169,7 @@ class Client(Scene):
                 powerup.sprite.image = assets.images["heal"]
         self.conn.tick()
         self.engine.update(dt)
-        self.damage.value = self.engine.tank.tank.damage
+        self.damage.value = self.tank.tank.damage
         system.sprite()
 
     def on_key_press(self, symbol, modifier):
@@ -225,3 +225,10 @@ class Client(Scene):
 
     def listen(self, data, socket):
         print(self, data.decode())
+
+    def joined(self, id_, x, y):
+        self.tank = self.engine.tank_pool.get()
+        self.tank.id = id_
+        self.tank.set("body", x=x, y=x)
+        self.player_input = self.engine.tank.input
+        
