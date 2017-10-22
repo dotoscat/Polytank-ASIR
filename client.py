@@ -14,20 +14,10 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import time
 import pyglet
 import polytanks.ogf4py3 as ogf4py3
 from polytanks.client import Client
 from polytanks import constant
-
-def run_client():
-    director = ogf4py3.Director(
-        caption="Polytanks client", fullscreen=False,
-        width=constant.WIDTH, height=constant.HEIGHT,
-        vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
-    director.set_background_color(0., 0., 0.)
-    director.scene = Client()
-    pyglet.app.run()
 
 ADDRESS = ("127.0.0.1", 7777)
 
@@ -35,11 +25,15 @@ def listen(data, socket):
     print(data.decode())
 
 if __name__ == "__main__":
-    conn = ogf4py3.Connection(ADDRESS, listen)
-    conn.socket.send(b"join")
+    #conn = ogf4py3.Connection(ADDRESS, listen)
+    #conn.socket.send(b"join")
     try:
-        while True:
-            conn.tick()
-            time.sleep(0.01)
+        director = ogf4py3.Director(
+            caption="Polytanks client", fullscreen=False,
+            width=constant.WIDTH, height=constant.HEIGHT,
+            vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
+        director.set_background_color(0., 0., 0.)
+        director.scene = Client(ADDRESS)
+        pyglet.app.run()
     except KeyboardInterrupt:
-        conn.socket.send(b"out")
+        director.scene.socket.send(b"out")

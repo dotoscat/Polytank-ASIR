@@ -20,7 +20,7 @@ import pyglet
 from pyglet.sprite import Sprite
 from pyglet.window import key
 from .ogf4py3 import gui
-from .ogf4py3 import magnitude_to_vector, get_angle_from
+from .ogf4py3 import magnitude_to_vector, get_angle_from, Connection
 from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
 from .ogf4py3 import system
@@ -63,8 +63,10 @@ class Client(Scene):
             if i == 0: return self.x
             if i == 1: return self.y
      
-    def __init__(self):
+    def __init__(self, address):
         super().__init__(5)
+        
+        self.conn = Connection(address, self.listen)
         
         self.engine = engine.Engine()
         self.engine.touch_floor = assets.function_player(
@@ -163,6 +165,7 @@ class Client(Scene):
             if choice((True, False)):
                 powerup = self.engine._spawn_powerup(128., 128., "heal")
                 powerup.sprite.image = assets.images["heal"]
+        self.conn.tick()
         self.engine.update(dt)
         self.damage.value = self.engine.tank.tank.damage
         system.sprite()
@@ -211,3 +214,6 @@ class Client(Scene):
         if not self.player_input.accumulate_power: return
         self.player_input.accumulate_power = False
         self.player_input.shoots = True
+
+    def listen(self, data, socket):
+        print(self, data.decode())
