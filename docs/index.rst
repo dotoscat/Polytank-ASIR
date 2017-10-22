@@ -55,12 +55,21 @@ para poder jugar contra otros jugadores registrados. Hace uso del módulo **sele
 por tener un mayor control sobre los sockets que **asyncio** y con posibilidad
 de integrarse mejor con el bucle de eventos de **pyglet**.
 
-El proyecto consta además de un módulo propio *polytanks* con sistemas y tipos en común
+*polytanks*
++++++++++++
+
+Módulo del proyecto con sistemas, tipos en común y utilidades 
 tanto del servidor como del cliente.
 
-En la carpeta *resources* es dónde están los archivos del juego para ser editados.
+*resources*
++++++++++++
 
-En la carpeta *assets* están los archivos que son usados por el juego, generados
+Carpeta dónde están los archivos del juego para ser editados.
+
+*assets*
+++++++++
+
+Carpeta donde están los archivos que son usados por el juego, generados
 a partir de los archivos de la carpeta *resources*.
 
 Jugabilidad
