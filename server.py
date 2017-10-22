@@ -20,21 +20,11 @@ import polytanks.server
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
+ADDRESS = ("127.0.0.1", 7777)
+
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.set_debug(True)
-    
-    server = polytanks.server.Server(loop.time)
-    
-    listen = loop.create_datagram_endpoint(lambda: server,
-        local_addr=("127.0.0.1", 7777))
-    #transport, protocol = loop.run_until_complete(listen)
-    asyncio.ensure_future(
-        asyncio.gather(listen, server.tick(loop.time)))
+    server = polytanks.server.Server(ADDRESS, debug=True)
     try:
-        loop.run_forever()
+        server.run()
     except KeyboardInterrupt:
         pass
-    
-    transport.close()
-    loop.close()

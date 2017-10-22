@@ -16,13 +16,23 @@
 import asyncio
 
 class Server(asyncio.DatagramProtocol):
-    def __init__(self, time, *args, **kwargs):
+    def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
-        self._past_time = time()
+        self._address = address
+        self._loop = asyncio.get_event_loop()
+        self._loop.set_debug(debug)
+        self._past_time = 0.
+        self.transport = None
         self.dt = 0.
         self.secs = 0
         self.clients = []
-    
+        
+        listen = self._loop.create_datagram_endpoint(lambda: self,
+            local_addr=address)
+            
+        asyncio.ensure_future(
+            asyncio.gather(listen, self._tick(self._loop.time)))
+        
     def connection_made(self, transport):
         self.transport = transport
         print("Connection", transport)
@@ -45,8 +55,12 @@ class Server(asyncio.DatagramProtocol):
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
+    def run(self):
+        self._past_time = self._loop.time()
+        self._loop.run_forever()
+
     @asyncio.coroutine
-    def tick(self, time):
+    def _tick(self, time):
         while True:
             dt = time() - self._past_time
             self._past_time = time()
@@ -62,3 +76,8 @@ class Server(asyncio.DatagramProtocol):
         message = "Secs {}".format(self.secs).encode()
         for client in self.clients:
             self.transport.sendto(message, client)
+
+    def __del__(self):
+        if self.transport is not None:
+            self.transport.close()
+        self._loop.close()
