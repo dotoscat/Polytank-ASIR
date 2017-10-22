@@ -13,17 +13,12 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from itertools import count
 import asyncio
 from . import protocol
 
-def _number_generator():
-    i = 0
-    while True:
-        i += 1
-        yield i
-
 def get_number_generator():
-    gen = _number_generator()
+    gen = count(1)
     def _get_number():
         return next(gen)
     return _get_number
