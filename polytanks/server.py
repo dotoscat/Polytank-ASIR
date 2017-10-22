@@ -16,6 +16,18 @@
 import asyncio
 from . import protocol
 
+def _number_generator():
+    i = 0
+    while True:
+        i += 1
+        yield i
+
+def get_number_generator():
+    gen = _number_generator()
+    def _get_number():
+        return next(gen)
+    return _get_number
+
 class Server(asyncio.DatagramProtocol):
     def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,6 +45,11 @@ class Server(asyncio.DatagramProtocol):
             
         asyncio.ensure_future(
             asyncio.gather(listen, self._tick(self._loop.time)))
+        
+        id_gen = get_number_generator()
+        
+        for i in range(10):
+            print(i, id_gen())
         
     def connection_made(self, transport):
         self.transport = transport
