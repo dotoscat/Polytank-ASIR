@@ -55,17 +55,20 @@ class ServerProtocol(asyncio.DatagramProtocol):
         while True:
             dt = time() - self._past_time
             self._past_time = time()
-            
-            self.dt += dt
-            if self.dt >= 1.0:
-                self.dt = 0.
-                self.secs += 1
-                print(self.secs)
-                message = "Secs {}".format(self.secs).encode()
-                for client in self.clients:
-                    self.transport.sendto(message, client)
-            yield
+            self._send_seconds(dt)
+            yield from asyncio.sleep(0.01)
+    
+    def _send_seconds(self, dt):
+        self.dt += dt
+        if self.dt < 1.0: return
+        self.dt = 0.
+        self.secs += 1
+        print(self.secs, "dt: ", dt)
+        message = "Secs {}".format(self.secs).encode()
+        for client in self.clients:
+            self.transport.sendto(message, client)
         
+    
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.set_debug(True)

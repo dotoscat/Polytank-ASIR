@@ -40,6 +40,6 @@ if __name__ == "__main__":
     try:
         while True:
             conn.tick()
-            time.sleep(0.1)
+            time.sleep(0.01)
     except KeyboardInterrupt:
         conn.socket.send(b"out")
