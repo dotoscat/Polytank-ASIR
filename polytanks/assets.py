@@ -96,8 +96,8 @@ images["power"].anchor_y = 8.
 
 player = PlayerManager()
 player.add("explosion", sounds["explosion"])
-player.add("float", sounds["explosion"], repeat=True)
-player.add("hit-platform", sounds["hit-platform"])
+player.add("float", sounds["float"], repeat=True)
+player.add("touch-floor", sounds["hit-platform"])
 player.add("jump", sounds["jump"])
 player.add("powerup", sounds["powerup"])
 player.add("shoot", sounds["shoot"])
