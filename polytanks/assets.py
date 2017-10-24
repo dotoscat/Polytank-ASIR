@@ -15,27 +15,6 @@
 
 import os
 import pyglet
-from pyglet.media import Player as pyglet_Player
-
-def player(soundfile):
-    """
-    This function player allows you to reproduce a sound.
-    """
-    sound = pyglet.resource.media(soundfile, streaming=False)
-    if loop:
-        player = pyglet.media.Player()
-        player.queue(sound)
-
-    def _player(loop=False):
-        if loop:
-            if not player.playing:
-                player.queue(sound)
-                player.play()
-        else:
-            sound.play()
-            
-    return _player
-
 
 class PlayerManager:
     def __init__(self):
