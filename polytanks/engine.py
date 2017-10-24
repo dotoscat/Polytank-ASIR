@@ -19,6 +19,8 @@ from .ogf4py3 import system
 from . import constant
 from .constant import G
 from .ogf4py3 import magnitude_to_vector, get_angle_from
+from . import builder
+from .ogf4py3 import toyblock3
 
 system_alive_zone = system.BoundaryTrigger(0., 0.,
     constant.VWIDTH, constant.VHEIGHT)
@@ -32,7 +34,10 @@ systems = [system.lifespan, update_user_input, system.collision,
 
 class Engine:
     
-    def __init__(self):
+    def __init__(self, tank_builder=builder.tank, bullet_builder=builder.bullet,
+                platform_builder=builder.platform, explosion_builder=builder.explosion,
+                powerup_builder=builder.powerup, systems=systems):
+                    
         system_client_collision.table.update({
             (constant.BULLET, constant.PLATFORM): self.bullet_platform,
             (constant.BULLET, constant.TANK): self.bullet_tank,
@@ -40,6 +45,16 @@ class Engine:
             (constant.POWERUP, constant.TANK): self.powerup_tank})
         self._messages = deque()
         self._add_message = self._messages.append
+        self.tank_pool = toyblock3.build_Entity(4, tank_builder,
+            *systems)
+        self.bullet_pool = toyblock3.build_Entity(64, bullet_builder,
+            *systems)
+        self.platform_pool = toyblock3.build_Entity(64, platform_builder,
+            *systems)
+        self.explosion_pool = toyblock3.build_Entity(64, explosion_builder,
+            *systems)
+        self.powerup_pool = toyblock3.build_Entity(16, powerup_builder,
+            *systems)
     
     @property
     def messages(self):

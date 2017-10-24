@@ -70,47 +70,30 @@ class Client(Scene):
         self.conn = Connection(address, self.listen)
         self._joined = False
         
-        self.engine = engine.Engine()
-        
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
             Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
             (0., 4.),)
+        builder.bullet.add("sprite", Sprite, assets.images["bullet"],
+            batch=self.batch, group=self.group[2])
+        builder.platform.add("sprite", Sprite, assets.images["platform"],
+            batch=self.batch, group=self.group[0])
+        builder.explosion.add("sprite", Sprite, assets.images["explosion"],
+            batch=self.batch, group=self.group[3])
+        builder.powerup.add("sprite", Sprite, assets.images["heal"],
+            batch=self.batch, group=self.group[3])
         
-        self.engine.tank_pool = toyblock3.build_Entity(4, builder.tank,
-            *systems)
+        self.engine = engine.Engine()
+        
         self.tank = self.engine.tank_pool.get()
         self.tank.set("body", x=200., y=100.)
         self.player_input = self.tank.input
-        
-        builder.bullet.add("sprite", Sprite, assets.images["bullet"],
-                            batch=self.batch, group=self.group[2])
-        
-        self.engine.bullet_pool = toyblock3.build_Entity(
-            64, builder.bullet, *systems)
+
         self.engine.bullet_pool.init(self.init_entity)
         self.engine.bullet_pool.clean(self.clean_entity)
-        
-        builder.platform.add("sprite", Sprite, assets.images["platform"],
-            batch=self.batch, group=self.group[0])
-        
-        self.engine.platform_pool = toyblock3.build_Entity(
-            64, builder.platform, *systems)
-            
         self.engine.platform_pool.init(self.init_entity)
-        
-        builder.explosion.add("sprite", Sprite, assets.images["explosion"],
-            batch=self.batch, group=self.group[3])
-        
-        self.engine.explosion_pool = toyblock3.build_Entity(64, builder.explosion,
-            *systems)
         self.engine.explosion_pool.init(self.init_entity)
         self.engine.explosion_pool.clean(self.clean_entity)
-        
-        builder.powerup.add("sprite", Sprite, assets.images["heal"],
-            batch=self.batch, group=self.group[3])
-        self.engine.powerup_pool = toyblock3.build_Entity(16, builder.powerup,
-            *systems)
         self.engine.powerup_pool.init(self.init_entity)
         self.engine.powerup_pool.clean(self.clean_entity)
         
