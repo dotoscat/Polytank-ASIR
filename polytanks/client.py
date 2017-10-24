@@ -156,7 +156,8 @@ class Client(Scene):
         self.damage.value = self.tank.tank.damage
         system.sprite()
         for message in self.engine.messages:
-            print(message)
+            if message in assets.player:
+                assets.player.play(message)
 
     def on_key_press(self, symbol, modifier):
         if not self._joined and symbol == key.J:

@@ -15,6 +15,52 @@
 
 import os
 import pyglet
+from pyglet.media import Player as pyglet_Player
+
+def player(soundfile):
+    """
+    This function player allows you to reproduce a sound.
+    """
+    sound = pyglet.resource.media(soundfile, streaming=False)
+    if loop:
+        player = pyglet.media.Player()
+        player.queue(sound)
+
+    def _player(loop=False):
+        if loop:
+            if not player.playing:
+                player.queue(sound)
+                player.play()
+        else:
+            sound.play()
+            
+    return _player
+
+
+class PlayerManager:
+    def __init__(self):
+        self.voices = {}
+        
+    def add(self, name, source, repeat=False):
+        if repeat:
+            voice = pyglet.media.Player()
+            voice.queue(source)
+            self.voices[name] = (voice, source)
+        else:
+            self.voices[name] = source
+        
+    def play(self, name):
+        voice = self.voices[name]
+        if isinstance(voice, tuple):
+            if not voice[0].playing:
+                voice[0].queue(voice[1])
+                voice[0].play()
+                return voice[0]
+        else:
+            return voice.play()
+
+    def __contains__(self, name):
+        return name in self.voices
 
 ASSETS_DIR = "assets"
 
@@ -48,24 +94,10 @@ images["heal"].anchor_y = 8.
 images["power"].anchor_x = 8.
 images["power"].anchor_y = 8.
 
-def function_player(sound_name, f, loop=False):
-    """
-    This function player allows you to reproduce a sound and do
-    a call.
-    """
-    sound = sounds[sound_name]
-    if loop:
-        player = pyglet.media.Player()
-        player.queue(sound)
-    else:
-        sound = sounds[sound_name]
-    def _player(*args, **kwargs):
-        if loop:
-            if not player.playing:
-                player.queue(sound)
-                player.play()
-        else:
-            sound.play()
-        f(*args, **kwargs)
-    _player.__name__ = f.__name__
-    return _player
+player = PlayerManager()
+player.add("explosion", sounds["explosion"])
+player.add("float", sounds["explosion"], repeat=True)
+player.add("hit-platform", sounds["hit-platform"])
+player.add("jump", sounds["jump"])
+player.add("powerup", sounds["powerup"])
+player.add("shoot", sounds["shoot"])
