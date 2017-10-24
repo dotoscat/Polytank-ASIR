@@ -196,7 +196,11 @@ class Client(Scene):
         self.player_input.shoots = True
 
     def listen(self, data, socket):
-        print(self, data.decode())
+        data_len = len(data)
+        if data_len == 4:
+            command, id_, v1, v2 = protocol.tetra.unpack(data)
+            if command == protocol.JOINED:
+                self.joined(id_, v1, v2)
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)

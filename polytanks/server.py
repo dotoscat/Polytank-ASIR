@@ -50,8 +50,7 @@ class Server(asyncio.DatagramProtocol):
             command = protocol.mono.unpack(data)[0]
             print("command", command)
             if command == protocol.JOIN:
-                self.clients.append(addr)
-                print("Client {} added".format(addr))
+                self._join(addr)
             elif command == protocol.LOGOUT:
                 self.clients.remove(addr)
                 print("Client {} removed", addr)
@@ -60,9 +59,11 @@ class Server(asyncio.DatagramProtocol):
         #self.transport.sendto(message, addr)
 
     def _join(self, addr):
-        self.clients[addr] = None
-        self.clients.append(addr)
-        print("Client {} added".format(addr))
+        tank = self.engine.tank_pool.get()
+        self.clients[addr] = tank
+        print("Client {} added".format(addr), tank, tank.id)
+        message = protocol.tetra.pack(protocol.JOINED, tank.id, 128., 128.)
+        self.transport.sendto(message, addr)
 
     def run(self):
         self._past_time = self._loop.time()
