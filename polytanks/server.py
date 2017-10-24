@@ -13,15 +13,8 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from itertools import count
 import asyncio
 from . import protocol
-
-def get_number_generator():
-    gen = count(1)
-    def _get_number():
-        return next(gen)
-    return _get_number
 
 class Server(asyncio.DatagramProtocol):
     def __init__(self, address, *args, debug=False, **kwargs):
@@ -40,11 +33,6 @@ class Server(asyncio.DatagramProtocol):
             
         asyncio.ensure_future(
             asyncio.gather(listen, self._tick(self._loop.time)))
-        
-        id_gen = get_number_generator()
-        
-        for i in range(10):
-            print(i, id_gen())
         
     def connection_made(self, transport):
         self.transport = transport

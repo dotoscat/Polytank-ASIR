@@ -141,12 +141,10 @@ class Client(Scene):
     def on_key_press(self, symbol, modifier):
         if not self._joined and symbol == key.J:
             self.conn.socket.send(protocol.mono.pack(protocol.JOIN))
-            self._joined = True
         elif not self._joined:
             return
         elif self._joined and symbol == key.L:
             self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
-            self._joined = False
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
         elif symbol in (key.D, key.RIGHT):
