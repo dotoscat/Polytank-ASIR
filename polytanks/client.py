@@ -36,6 +36,7 @@ from . import protocol
 
 systems = engine.systems
 systems.append(system.sprite)
+systems.append(update_tank_graphic)
 
 class Client(Scene):
     
@@ -133,6 +134,7 @@ class Client(Scene):
         self.engine.update(dt)
         if self._joined:
             self.damage.value = self.tank.tank.damage
+        update_tank_graphic()
         system.sprite()
         for message in self.engine.messages:
             if message in assets.player:

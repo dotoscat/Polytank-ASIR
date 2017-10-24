@@ -14,7 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import deque
-from .system import update_tank_graphic, update_user_input
+from .system import update_user_input
 from .ogf4py3 import system
 from . import constant
 from .constant import G
@@ -30,7 +30,7 @@ system_platform_collision = system.PlatformCollision()
 
 systems = [system.lifespan, update_user_input, system.collision,
     system_alive_zone, system.physics, system_platform_collision,
-    system_client_collision, update_tank_graphic]
+    system_client_collision]
 
 class Engine:
     
@@ -70,7 +70,6 @@ class Engine:
         system_platform_collision(self.touch_floor)
         system_client_collision()
         system_alive_zone(self._check_limit)
-        update_tank_graphic()
 
     def touch_floor(self, entity):
         entity.input.reset_time_floating()

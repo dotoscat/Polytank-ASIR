@@ -15,10 +15,12 @@
 
 import asyncio
 from . import protocol
+from . import engine
 
 class Server(asyncio.DatagramProtocol):
     def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
+        self.engine = engine.Engine()
         self._address = address
         self._loop = asyncio.get_event_loop()
         self._loop.set_debug(debug)
@@ -26,7 +28,7 @@ class Server(asyncio.DatagramProtocol):
         self.transport = None
         self.dt = 0.
         self.secs = 0
-        self.clients = []
+        self.clients = {}
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -57,6 +59,11 @@ class Server(asyncio.DatagramProtocol):
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
+    def _join(self, addr):
+        self.clients[addr] = None
+        self.clients.append(addr)
+        print("Client {} added".format(addr))
+
     def run(self):
         self._past_time = self._loop.time()
         self._loop.run_forever()
@@ -65,6 +72,7 @@ class Server(asyncio.DatagramProtocol):
     def _tick(self, time):
         while True:
             dt = time() - self._past_time
+            self.engine.update(dt)
             self._past_time = time()
             self._send_seconds(dt)
             yield from asyncio.sleep(0.01)
