@@ -24,7 +24,7 @@ from .constant import G, SIZE
 def _id_generator():
     c = count(1)
     def _get_id(*args, **kwargs):
-        return next(count)
+        return next(c)
     return _get_id
 
 get_id = _id_generator()
