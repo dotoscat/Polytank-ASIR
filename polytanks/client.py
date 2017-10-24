@@ -84,10 +84,7 @@ class Client(Scene):
             batch=self.batch, group=self.group[3])
         
         self.engine = engine.Engine()
-        
-        self.tank = self.engine.tank_pool.get()
-        self.tank.set("body", x=200., y=100.)
-        self.player_input = self.tank.input
+        level.load_level(level.basic, self.engine.platform_pool)
 
         self.engine.bullet_pool.init(self.init_entity)
         self.engine.bullet_pool.clean(self.clean_entity)
@@ -96,8 +93,6 @@ class Client(Scene):
         self.engine.explosion_pool.clean(self.clean_entity)
         self.engine.powerup_pool.init(self.init_entity)
         self.engine.powerup_pool.clean(self.clean_entity)
-        
-        level.load_level(level.basic, self.engine.platform_pool)
         
         self.cursor_point = Client.Point()
         self.cursor = Sprite(assets.images["eyehole"], batch=self.batch, group=self.group[3])
@@ -136,7 +131,8 @@ class Client(Scene):
                 powerup.sprite.image = assets.images["heal"]
         self.conn.tick()
         self.engine.update(dt)
-        self.damage.value = self.tank.tank.damage
+        if self._joined:
+            self.damage.value = self.tank.tank.damage
         system.sprite()
         for message in self.engine.messages:
             if message in assets.player:
@@ -146,6 +142,8 @@ class Client(Scene):
         if not self._joined and symbol == key.J:
             self.conn.socket.send(protocol.mono.pack(protocol.JOIN))
             self._joined = True
+        elif not self._joined:
+            return
         elif self._joined and symbol == key.L:
             self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
             self._joined = False
@@ -157,6 +155,7 @@ class Client(Scene):
             self.player_input.jump()
 
     def on_key_release(self, symbol, modifier):
+        if not self._joined: return
         if symbol in (key.A, key.D, key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
         if symbol in (key.UP, key.W) and self.player_input.do_jump:
@@ -182,13 +181,16 @@ class Client(Scene):
             self.cursor_point.y = 0.
         elif self.cursor_point.y > constant.VHEIGHT:
             self.cursor_point.y = constant.VHEIGHT
+        if not self._joined: return 
         self.player_input.aim_pointer = self.cursor_point
         self.cursor.position = self.cursor_point.point
 
     def on_mouse_press(self, x, y, button, modifiers):
+        if not self._joined: return
         self.player_input.accumulate_power = True
         
     def on_mouse_release(self, x, y, button, modifiers):
+        if not self._joined: return
         if not self.player_input.accumulate_power: return
         self.player_input.accumulate_power = False
         self.player_input.shoots = True
@@ -197,8 +199,10 @@ class Client(Scene):
         print(self, data.decode())
 
     def joined(self, id_, x, y):
+        print("Joined with id", id_, x, y)
         self.tank = self.engine.tank_pool.get()
         self.tank.id = id_
         self.tank.set("body", x=x, y=x)
-        self.player_input = self.engine.tank.input
+        self.player_input = self.tank.input
+        self._joined = True
         
