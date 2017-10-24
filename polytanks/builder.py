@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from itertools import count
 from pyglet.sprite import Sprite
 from .ogf4py3 import toyblock3
 from .ogf4py3.component import Body, Collision, Platform, Timer
@@ -20,8 +21,16 @@ from .component import PlayerInput, Tank, Bullet, Explosion, PowerUp
 from . import constant
 from .constant import G, SIZE
 
+def _id_generator():
+    c = count(1)
+    def _get_id(*args, **kwargs):
+        return next(count)
+    return _get_id
+
+get_id = _id_generator()
+
 tank = toyblock3.InstanceBuilder()
-tank.add("id", int)
+tank.add("id", get_id)
 tank.add("tank", Tank)
 tank.add("input", PlayerInput)
 tank.add("platform", Platform.get_foot, width=SIZE, height=1.,
@@ -31,7 +40,7 @@ tank.add("collision", Collision, type_=constant.TANK, width=SIZE,
 tank.add("body", Body, gravity=True, max_falling_speed=G/2., max_ascending_speed=G/2.)
 
 bullet = toyblock3.InstanceBuilder()
-bullet.add("id", int)
+bullet.add("id", get_id)
 bullet.add("bullet", Bullet)
 bullet.add("body", Body, gravity=True)
 bullet.add("collision", Collision, type_=constant.BULLET,
@@ -43,7 +52,7 @@ platform.add("collision", Collision, type_=constant.PLATFORM)
 platform.add("platform", Platform.get_platform)
 
 explosion = toyblock3.InstanceBuilder()
-explosion.add("id", int)
+explosion.add("id", get_id)
 explosion.add("explosion", Explosion)
 explosion.add("body", Body)
 explosion.add("collision", Collision,
@@ -52,7 +61,7 @@ explosion.add("collision", Collision,
 explosion.add("timer", Timer, 0.12)
 
 powerup = toyblock3.InstanceBuilder()
-powerup.add("id", int)
+powerup.add("id", get_id)
 powerup.add("timer", Timer, 3.)
 powerup.add("body", Body)
 powerup.add("powerup", PowerUp)
