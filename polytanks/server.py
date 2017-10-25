@@ -13,14 +13,16 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from pprint import pprint
 import asyncio
 from . import protocol
-from . import engine
+from . import engine, level
 
 class Server(asyncio.DatagramProtocol):
     def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.engine = engine.Engine()
+        level.load_level(level.basic, self.engine.platform_pool)
         self._address = address
         self._loop = asyncio.get_event_loop()
         self._loop.set_debug(debug)
@@ -74,6 +76,8 @@ class Server(asyncio.DatagramProtocol):
     def _tick(self, time):
         while True:
             dt = time() - self._past_time
+            #for k in self.clients:
+             #   print(self.clients[k].body.x, self.clients[k].body.y)
             self.engine.update(dt)
             self._past_time = time()
             self._send_seconds(dt)

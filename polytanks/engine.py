@@ -161,7 +161,6 @@ class Engine:
             entity.free()
         elif isinstance(entity, self.tank_pool):
             pass
-            print(entity.body.x, entity.body.y, "KO!")
 
     @staticmethod
     def _heal_tank(tank):

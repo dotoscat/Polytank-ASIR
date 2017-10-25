@@ -91,7 +91,6 @@ class Client(Scene):
 
         self.engine.bullet_pool.init(self.init_entity)
         self.engine.bullet_pool.clean(self.clean_entity)
-        self.engine.platform_pool.init(self.init_entity)
         self.engine.explosion_pool.init(self.init_entity)
         self.engine.explosion_pool.clean(self.clean_entity)
         self.engine.powerup_pool.init(self.init_entity)

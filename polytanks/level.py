@@ -37,7 +37,6 @@ def load_level(level, pool):
             print(tile, end='')
             if tile == '_':
                 platform = pool.get()
-                platform.set("sprite", x=x, y=y)
                 collision_attrs = {
                     "x": x,
                     "y": y,
