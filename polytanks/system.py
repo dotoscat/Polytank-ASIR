@@ -50,14 +50,7 @@ def update_user_input(self, entity, dt, engine):
     if player_input.accumulate_power and player_input.release_power:
         player_input.accumulate_power = False
         player_input.shoots = True
-    
-    aim_pointer = player_input.aim_pointer
-    cannon_position = entity.tank_graphic.cannon.position
-    angle = get_angle_from(*cannon_position, *aim_pointer)
-    #  angle = atan2(aim_pointer[1] - cannon_position[1], aim_pointer[0] - cannon_position[0])
-    player_input.cannon_angle = angle
-    entity.tank_graphic.cannon.rotation = -degrees(angle)
-    
+        
     if player_input.shoots:
         engine.shoot(entity)
         player_input.shoots = False

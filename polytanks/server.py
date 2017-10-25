@@ -61,8 +61,9 @@ class Server(asyncio.DatagramProtocol):
     def _join(self, addr):
         tank = self.engine.tank_pool.get()
         self.clients[addr] = tank
-        print("Client {} added".format(addr), tank, tank.id)
-        message = protocol.tetra.pack(protocol.JOINED, tank.id, 128., 128.)
+        tank.set("body", x=128., y=128.)
+        print("Client {} added".format(addr), tank, tank.id, tank.body.x, tank.body.y)
+        message = protocol.tetra.pack(protocol.JOINED, tank.id, tank.body.x, tank.body.y)
         self.transport.sendto(message, addr)
 
     def run(self):

@@ -15,6 +15,7 @@
 
 import logging
 from random import choice
+from math import degrees
 import pyglet
 
 from pyglet.sprite import Sprite
@@ -70,6 +71,7 @@ class Client(Scene):
         
         self.conn = Connection(address, self.listen)
         self._joined = False
+        self.tank = None
         
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
@@ -135,10 +137,19 @@ class Client(Scene):
         if self._joined:
             self.damage.value = self.tank.tank.damage
         update_tank_graphic()
+        self._upgrade_pointer()
         system.sprite()
         for message in self.engine.messages:
             if message in assets.player:
                 assets.player.play(message)
+
+    def _upgrade_pointer(self):
+        if not self._joined: return
+        aim_pointer = self.player_input.aim_pointer
+        cannon_position = self.tank.tank_graphic.cannon.position
+        angle = get_angle_from(*cannon_position, *aim_pointer)
+        self.player_input.cannon_angle = angle
+        self.tank.tank_graphic.cannon.rotation = -degrees(angle)
 
     def on_key_press(self, symbol, modifier):
         if not self._joined and symbol == key.J:
@@ -197,7 +208,8 @@ class Client(Scene):
 
     def listen(self, data, socket):
         data_len = len(data)
-        if data_len == 4:
+        print(data, data_len)
+        if data_len == protocol.tetra.size:
             command, id_, v1, v2 = protocol.tetra.unpack(data)
             if command == protocol.JOINED:
                 self.joined(id_, v1, v2)
