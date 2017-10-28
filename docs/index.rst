@@ -105,7 +105,33 @@ Modelo cliente/servidor vs p2p (peer to peer)
 Protocolo
 +++++++++
 
+Mensajes desde el cliente
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
+======= ========== ===========
+Comando Parámetros Descripción
+======= ========== ===========
+JOIN               Unirse al servidor
+======= ========== ===========
+
+Mensajes desde el servidor
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+======= ========== ===========
+Comando Parámetros Descripción
+======= ========== ===========
+JOINED  [id, x, y] Posición del jugador al unirse         
+======= ========== ===========
+
+Orden del intercambio de mensajes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=================== =================== ==============================  ===========
+Cliente -> Servidor Servidor -> Cliente Servidor -> Todos los clientes  Comentarios
+=================== =================== ==============================  ===========
+JOIN                -                   -                               Petición del unirse al servidor
+-                   JOINED              -                               Aceptado, empezar juego
+=================== =================== ==============================  ===========
 
 Referencias
 -----------
