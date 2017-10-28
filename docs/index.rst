@@ -99,6 +99,12 @@ antes si toca el suelo también.
 Red
 ---
 
+Se ha elegido el protocolo UDP para el intercambio de mensajes entre cliente y servidor.
+UDP permite construir fácilmente un protocolo de red según lo que se necesite
+y no ser lento como TCP, la velocidad es importante en los juegos.
+La fiabilidad de la conexión se tiene que implementar, cosa que TCP ya tiene
+incorportado.
+
 Modelo cliente/servidor vs p2p (peer to peer)
 +++++++++++++++++++++++++++++++++++++++++++++
 
