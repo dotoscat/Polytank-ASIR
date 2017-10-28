@@ -102,6 +102,21 @@ Red
 Modelo cliente/servidor vs p2p (peer to peer)
 +++++++++++++++++++++++++++++++++++++++++++++
 
+El juego usa el modelo de cliente/servidor.
+
+Ventajas
+~~~~~~~~
+
+* Separación de asuntos.
+* Sencillo de desarrollar.
+* Sencillo de escalar.
+* Es complicado hacer trampas (el servidor es autoritativo).
+
+Inconvenientes
+~~~~~~~~~~~~~~
+
+* Más complicado de ponerlo en marcha para el público.
+
 Protocolo
 +++++++++
 
@@ -120,7 +135,7 @@ Mensajes desde el servidor
 ======= ========== ===========
 Comando Parámetros Descripción
 ======= ========== ===========
-JOINED  [id, x, y] Posición del jugador al unirse         
+JOINED  [id, x, y] Id y posición del jugador al unirse         
 ======= ========== ===========
 
 Orden del intercambio de mensajes
@@ -137,6 +152,7 @@ Referencias
 -----------
 
 * `https://7webpages.com/blog/writing-online-multiplayer-game-with-python-asyncio-getting-asynchronous/`
+* `https://gamedev.stackexchange.com/questions/67738/limitations-of-p2p-multiplayer-games-vs-client-server`
 
 El sistema de entidad-componentes
 ---------------------------------
