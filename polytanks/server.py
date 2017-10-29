@@ -13,6 +13,8 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import math
+from math import degrees
 from pprint import pprint
 import asyncio
 from . import protocol
@@ -62,6 +64,8 @@ class Server(asyncio.DatagramProtocol):
                     print("El jugador {} se para".format(addr))
                 else:
                     print("El jugador {} se mueve: {}".format(addr, v1))
+            elif command == protocol.AIM:
+                print("El jugador {} apunta hacia {}".format(addr, degrees(v1)))
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 

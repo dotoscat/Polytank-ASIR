@@ -72,6 +72,7 @@ class Client(Scene):
         self.conn = Connection(address, self.listen)
         self._joined = False
         self.tank = None
+        self._send_cannon_rotation = False
         
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
@@ -149,6 +150,9 @@ class Client(Scene):
         angle = get_angle_from(*cannon_position, *aim_pointer)
         self.player_input.cannon_angle = angle
         self.tank.tank_graphic.cannon.rotation = -degrees(angle)
+        if self._send_cannon_rotation:
+            self.conn.socket.send(protocol.di.pack(protocol.AIM, angle))
+            self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
         if not self._joined and symbol == key.J:
@@ -198,6 +202,7 @@ class Client(Scene):
         if not self._joined: return 
         self.player_input.aim_pointer = self.cursor_point
         self.cursor.position = self.cursor_point.point
+        self._send_cannon_rotation = True
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not self._joined: return

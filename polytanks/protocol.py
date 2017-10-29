@@ -22,6 +22,7 @@ JOINED = 3
 DONE = 4
 
 MOVE = 5
+AIM = 6
 
 mono = struct.Struct("!i")
 di = struct.Struct("!if")
