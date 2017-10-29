@@ -21,7 +21,10 @@ LOGOUT = 2
 JOINED = 3
 DONE = 4
 
+MOVE = 5
+
 mono = struct.Struct("!i")
+di = struct.Struct("!if")
 tetra = struct.Struct("!iiff")
 
 """
