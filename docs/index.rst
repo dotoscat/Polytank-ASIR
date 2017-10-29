@@ -129,13 +129,13 @@ Protocolo
 Mensajes desde el cliente
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-======= ==========  ===========
-Comando Parámetros  Descripción
-======= ==========  ===========
-JOIN                Unirse al servidor
-LOGOUT              Desconectarse de un servidor
-MOVE    (-1.|0.|1.) Dirección del movimiento
-======= ==========  ===========
+======= ===========  ===========
+Comando Parámetros   Descripción
+======= ===========  ===========
+JOIN                 Unirse al servidor
+LOGOUT               Desconectarse de un servidor
+MOVE    (-1.|0.|1.)  Dirección del movimiento
+======= ===========  ===========
 
 Mensajes desde el servidor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
