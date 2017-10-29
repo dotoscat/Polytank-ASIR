@@ -133,6 +133,7 @@ Mensajes desde el cliente
 Comando Parámetros Descripción
 ======= ========== ===========
 JOIN               Unirse al servidor
+LOGOUT             Desconectarse de un servidor
 ======= ========== ===========
 
 Mensajes desde el servidor
@@ -141,7 +142,8 @@ Mensajes desde el servidor
 ======= ========== ===========
 Comando Parámetros Descripción
 ======= ========== ===========
-JOINED  [id, x, y] Id y posición del jugador al unirse         
+JOINED  [id, x, y] Id y posición del jugador al unirse
+DONE               El cliente se ha desconectado        
 ======= ========== ===========
 
 Orden del intercambio de mensajes
@@ -152,6 +154,8 @@ Cliente -> Servidor Servidor -> Cliente Servidor -> Todos los clientes  Comentar
 =================== =================== ==============================  ===========
 JOIN                -                   -                               Petición del unirse al servidor
 -                   JOINED              -                               Aceptado, empezar juego
+LOGOUT              -                   -                               Petición de desconectarse del servidor
+-                   DONE                                                Aceptada la petición del cliente de desconectarse
 =================== =================== ==============================  ===========
 
 Referencias
