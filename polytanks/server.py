@@ -70,7 +70,7 @@ class Server(asyncio.DatagramProtocol):
         print("logout", self.clients)
         self.clients[addr].free()
         del self.clients[addr]
-        self.transport.sendto(addr, protocol.mono.pack(protocol.DONE))
+        self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
         print("Client {} removed", addr)
         print(self.clients)
 

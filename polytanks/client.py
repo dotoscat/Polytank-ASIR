@@ -153,10 +153,11 @@ class Client(Scene):
     def on_key_press(self, symbol, modifier):
         if not self._joined and symbol == key.J:
             self.conn.socket.send(protocol.mono.pack(protocol.JOIN))
-        elif not self._joined:
-            return
         elif self._joined and symbol == key.L:
+            print("logout pressed")
             self.logout()
+        if not self._joined:
+            return
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
         elif symbol in (key.D, key.RIGHT):
@@ -226,6 +227,7 @@ class Client(Scene):
         self._joined = True
     
     def logout(self):
+        print("logout", self._joined)
         if not self._joined: return
         self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
 
