@@ -156,7 +156,7 @@ class Client(Scene):
         elif not self._joined:
             return
         elif self._joined and symbol == key.L:
-            self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
+            self.logout()
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
         elif symbol in (key.D, key.RIGHT):
@@ -208,7 +208,11 @@ class Client(Scene):
     def listen(self, data, socket):
         data_len = len(data)
         print(data, data_len)
-        if data_len == protocol.tetra.size:
+        if data_len == protocol.mono.size:
+            command = protocol.mono.unpack(data)[0]
+            if command == protocol.DONE:
+                self._done()
+        elif data_len == protocol.tetra.size:
             command, id_, v1, v2 = protocol.tetra.unpack(data)
             if command == protocol.JOINED:
                 self.joined(id_, v1, v2)
@@ -220,4 +224,13 @@ class Client(Scene):
         self.tank.set("body", x=x, y=x)
         self.player_input = self.tank.input
         self._joined = True
-        
+    
+    def logout(self):
+        if not self._joined: return
+        self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
+
+    def _done(self):
+        self.tank.free()
+        self.tank = None
+        self.player_input = None
+        self._joined = False

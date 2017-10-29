@@ -48,15 +48,13 @@ class Server(asyncio.DatagramProtocol):
     def datagram_received(self, data, addr):
         data_len = len(data)
         print("payload size", data_len)
-        if data_len == 4:
+        if data_len == protocol.mono.size:
             command = protocol.mono.unpack(data)[0]
             print("command", command)
             if command == protocol.JOIN:
                 self._join(addr)
             elif command == protocol.LOGOUT:
-                self.clients.remove(addr)
-                print("Client {} removed", addr)
-                print(self.clients)
+                self._logout(addr)
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
@@ -67,6 +65,14 @@ class Server(asyncio.DatagramProtocol):
         print("Client {} added".format(addr), tank, tank.id, tank.body.x, tank.body.y)
         message = protocol.tetra.pack(protocol.JOINED, tank.id, tank.body.x, tank.body.y)
         self.transport.sendto(message, addr)
+
+    def _logout(self, addr):
+        print("logout", self.clients)
+        self.clients[addr].free()
+        del self.clients[addr]
+        self.transport.sendto(addr, protocol.mono.pack(protocol.DONE))
+        print("Client {} removed", addr)
+        print(self.clients)
 
     def run(self):
         self._past_time = self._loop.time()

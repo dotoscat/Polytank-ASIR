@@ -19,6 +19,7 @@ JOIN = 1
 LOGOUT = 2
 
 JOINED = 3
+DONE = 4
 
 mono = struct.Struct("!i")
 tetra = struct.Struct("!iiff")

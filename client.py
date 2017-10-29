@@ -17,7 +17,7 @@
 import pyglet
 import polytanks.ogf4py3 as ogf4py3
 from polytanks.client import Client
-from polytanks import constant
+from polytanks import constant, protocol
 
 ADDRESS = ("127.0.0.1", 7777)
 
@@ -33,7 +33,9 @@ if __name__ == "__main__":
             width=constant.WIDTH, height=constant.HEIGHT,
             vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
         director.set_background_color(0., 0., 0.)
-        director.scene = Client(ADDRESS)
+        client = Client(ADDRESS)
+        director.scene = client
         pyglet.app.run()
     except KeyboardInterrupt:
-        director.scene.socket.send(b"out")
+        pass
+    client.logout()
