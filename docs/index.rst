@@ -165,6 +165,7 @@ Referencias
 
 * `https://7webpages.com/blog/writing-online-multiplayer-game-with-python-asyncio-getting-asynchronous/`
 * `https://gamedev.stackexchange.com/questions/67738/limitations-of-p2p-multiplayer-games-vs-client-server`
+* `https://en.wikipedia.org/wiki/Handshaking`
 
 El sistema de entidad-componentes
 ---------------------------------
