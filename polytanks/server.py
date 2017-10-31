@@ -36,12 +36,13 @@ class Server(asyncio.DatagramProtocol):
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
-            
-        asyncio.ensure_future(
-            asyncio.gather(listen, self._tick(self._loop.time)))
-        
+
+        asyncio.ensure_future(listen)
+        asyncio.ensure_future(self._tick(self._loop.time))
+
     def connection_made(self, transport):
         self.transport = transport
+        asyncio.ensure_future(self._send_snapshot())
         print("Connection", transport)
     
     def connection_lost(self, cls):
@@ -99,6 +100,30 @@ class Server(asyncio.DatagramProtocol):
             self._past_time = time()
             self._send_seconds(dt)
             yield from asyncio.sleep(0.01)
+    
+    @asyncio.coroutine
+    def _send_snapshot(self):
+        FRAMERATE = 1./30.
+        snapshot_buffer = bytearray()
+        clients = self.clients
+        print("FRAMERATE", FRAMERATE)
+        while True:
+            snapshot_buffer.clear()
+            snapshot_buffer += protocol.mono.pack(protocol.SNAPSHOT)
+            n_players = len(clients)
+            snapshot_buffer += protocol.mono.pack(n_players)
+            for client in clients:
+                tank = clients[client]
+                id_ = tank.id
+                x = tank.body.x
+                y = tank.body.y
+                mov = tank.input.move
+                canon = tank.input.cannon_angle
+                snapshot_buffer += protocol.tank.pack(id_, x, y, mov, canon)
+            print("send this", len(snapshot_buffer))
+            for client in clients:
+                self.transport.sendto(snapshot_buffer, client)
+            yield from asyncio.sleep(FRAMERATE)
     
     def _send_seconds(self, dt):
         self.dt += dt

@@ -24,9 +24,12 @@ DONE = 4
 MOVE = 5
 AIM = 6
 
+SNAPSHOT = 7
+
 mono = struct.Struct("!i")
 di = struct.Struct("!if")
 tetra = struct.Struct("!iiff")
+tank = struct.Struct("!iffff")
 
 """
 #COMMANDS
