@@ -168,6 +168,8 @@ Referencias
 * `https://7webpages.com/blog/writing-online-multiplayer-game-with-python-asyncio-getting-asynchronous/`
 * `https://gamedev.stackexchange.com/questions/67738/limitations-of-p2p-multiplayer-games-vs-client-server`
 * `https://en.wikipedia.org/wiki/Handshaking`
+* `https://gamedev.stackexchange.com/questions/22815/how-can-i-alleviate-network-lag-issues-with-players-from-other-countries`
+* `https://www.gamedev.net/forums/topic/375992-lag-over-the-internet/`
 
 El sistema de entidad-componentes
 ---------------------------------
