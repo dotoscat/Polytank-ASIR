@@ -135,6 +135,7 @@ JOIN                    Unirse al servidor
 LOGOUT                  Desconectarse de un servidor
 MOVE    [(-1.|0.|1.)]   Dirección del movimiento
 AIM     [angulo]        Dirección del cañón en radianes
+JUMP    [(1.|0.)]       Salto presionado o no
 ======= =============   ===========
 
 Mensajes desde el servidor
@@ -156,6 +157,7 @@ Cliente -> Servidor Servidor -> Cliente Servidor -> Todos los clientes  Comentar
 JOIN                -                   -                               Petición del unirse al servidor
 -                   JOINED              -                               Aceptado, empezar juego
 MOVE                -                   -                               -
+JUMP                                                                    El cliente tiene presionado el boton de salto
 AIM                                                                     Enviar hacia dónde apunta el cañón
 LOGOUT              -                   -                               Petición de desconectarse del servidor
 -                   DONE                                                Aceptada la petición del cliente de desconectarse

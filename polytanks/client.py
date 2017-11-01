@@ -170,6 +170,7 @@ class Client(Scene):
             self.conn.socket.send(protocol.di.pack(protocol.MOVE, 1.))
         elif symbol in (key.W, key.UP):
             self.player_input.jump()
+            self.conn.socket.send(protocol.di.pack(protocol.JUMP, 1.))
 
     def on_key_release(self, symbol, modifier):
         if not self._joined: return
@@ -178,6 +179,7 @@ class Client(Scene):
             self.conn.socket.send(protocol.di.pack(protocol.MOVE, 0.))
         if symbol in (key.UP, key.W) and self.player_input.do_jump:
             self.player_input.not_jump()
+            self.conn.socket.send(protocol.di.pack(protocol.JUMP, 0.))
 
     def on_mouse_motion(self, x, y, dx, dy):
         #  print("mouse motion", x, y, dx, dy)

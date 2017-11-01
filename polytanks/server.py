@@ -60,12 +60,16 @@ class Server(asyncio.DatagramProtocol):
                 self._logout(addr)
         elif data_len == protocol.di.size:
             command, v1 = protocol.di.unpack(data)
+            tank = self.clients[addr]
             if command == protocol.MOVE:
-                tank = self.clients[addr]
                 tank.input.move = v1
             elif command == protocol.AIM:
-                tank = self.clients[addr]
                 tank.input.cannon_angle = v1
+            elif command == protocol.JUMP:
+                if v1 == 1.:
+                    tank.input.jump()
+                else:
+                    tank.input.not_jump()
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
