@@ -216,7 +216,7 @@ class Client(Scene):
 
     def listen(self, data, socket):
         data_len = len(data)
-        print(data, data_len)
+        #print(data, data_len)
         if data_len == protocol.mono.size:
             command = protocol.mono.unpack(data)[0]
             if command == protocol.DONE:
@@ -236,7 +236,11 @@ class Client(Scene):
         offset += protocol.mono.size
         players_data = data[offset:offset+n_players*protocol.tank.size]
         for id_, x, y, mov, cannon_angle in protocol.tank.iter_unpack(players_data):
-            print(id_, x, y, mov, cannon_angle)
+            if id_ == self.tank.id:
+                self.tank.body.x = x
+                self.tank.body.y = y
+                self.tank.input.cannon_angle = cannon_angle
+            #print(id_, x, y, mov, cannon_angle)
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)
