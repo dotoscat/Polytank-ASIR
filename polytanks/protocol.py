@@ -24,8 +24,9 @@ DONE = 4
 MOVE = 5
 AIM = 6
 JUMP = 7
+SHOOT = 8
 
-SNAPSHOT = 8
+SNAPSHOT = 9
 
 mono = struct.Struct("!i")
 di = struct.Struct("!if")

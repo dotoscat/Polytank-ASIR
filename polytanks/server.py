@@ -70,6 +70,12 @@ class Server(asyncio.DatagramProtocol):
                     tank.input.jump()
                 else:
                     tank.input.not_jump()
+            elif command == protocol.SHOOT:
+                if v1 == 1.:
+                    tank.input.accumulate_power = True
+                else:
+                    tank.input.accumulate_power = False
+                    tank.input.shoots = True
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
@@ -102,6 +108,8 @@ class Server(asyncio.DatagramProtocol):
             self.engine.update(dt)
             self._past_time = time()
             self._send_seconds(dt)
+            for message in self.engine.messages:
+                print(message)
             yield from asyncio.sleep(0.01)
     
     @asyncio.coroutine
@@ -133,7 +141,7 @@ class Server(asyncio.DatagramProtocol):
         if self.dt < 1.0: return
         self.dt = 0.
         self.secs += 1
-        print(self.secs, "dt: ", dt)
+        #print(self.secs, "dt: ", dt)
         message = "Secs {}".format(self.secs).encode()
         for client in self.clients:
             self.transport.sendto(message, client)

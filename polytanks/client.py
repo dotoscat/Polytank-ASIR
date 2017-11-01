@@ -209,12 +209,14 @@ class Client(Scene):
     def on_mouse_press(self, x, y, button, modifiers):
         if not self._joined: return
         self.player_input.accumulate_power = True
+        self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 1.))
         
     def on_mouse_release(self, x, y, button, modifiers):
         if not self._joined: return
         if not self.player_input.accumulate_power: return
         self.player_input.accumulate_power = False
         self.player_input.shoots = True
+        self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 0.))
 
     def listen(self, data, socket):
         data_len = len(data)
