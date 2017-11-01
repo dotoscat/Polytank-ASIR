@@ -120,7 +120,7 @@ class Server(asyncio.DatagramProtocol):
                 mov = tank.input.move
                 canon = tank.input.cannon_angle
                 snapshot_buffer += protocol.tank.pack(id_, x, y, mov, canon)
-            print("send this", len(snapshot_buffer))
+            #print("send this", len(snapshot_buffer))
             for client in clients:
                 self.transport.sendto(snapshot_buffer, client)
             yield from asyncio.sleep(FRAMERATE)

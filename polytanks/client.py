@@ -231,7 +231,12 @@ class Client(Scene):
     def _snapshot(self, data):
         command = protocol.mono.unpack_from(data)[0]
         if command != protocol.SNAPSHOT: return
-        print("snapshot", data)
+        offset = protocol.mono.size
+        n_players = protocol.mono.unpack_from(data, offset)[0]
+        offset += protocol.mono.size
+        players_data = data[offset:offset+n_players*protocol.tank.size]
+        for id_, x, y, mov, cannon_angle in protocol.tank.iter_unpack(players_data):
+            print(id_, x, y, mov, cannon_angle)
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)
