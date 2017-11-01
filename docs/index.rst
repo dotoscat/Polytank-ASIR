@@ -129,24 +129,24 @@ Protocolo
 Mensajes desde el cliente
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-======= ===========  ===========
-Comando Parámetros   Descripción
-======= ===========  ===========
-JOIN                 Unirse al servidor
-LOGOUT               Desconectarse de un servidor
-MOVE    (-1.|0.|1.)  Dirección del movimiento
-AIM     angulo       Dirección del cañón en radianes
-======= ===========  ===========
+======= =============   ===========
+Comando Parámetros      Descripción
+======= =============   ===========
+JOIN                    Unirse al servidor
+LOGOUT                  Desconectarse de un servidor
+MOVE    [(-1.|0.|1.)]   Dirección del movimiento
+AIM     [angulo]        Dirección del cañón en radianes
+======= =============   ===========
 
 Mensajes desde el servidor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-======= ========== ===========
-Comando Parámetros Descripción
-======= ========== ===========
-JOINED  [id, x, y] Id y posición del jugador al unirse
-DONE               El cliente se ha desconectado        
-======= ========== ===========
+========    ========== ===========
+Comando     Parámetros Descripción
+========    ========== ===========
+JOINED      [id, x, y] Id y posición del jugador al unirse
+DONE                   El cliente se ha desconectado          
+========    ========== ===========
 
 Orden del intercambio de mensajes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
