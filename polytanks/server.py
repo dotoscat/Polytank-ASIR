@@ -61,12 +61,11 @@ class Server(asyncio.DatagramProtocol):
         elif data_len == protocol.di.size:
             command, v1 = protocol.di.unpack(data)
             if command == protocol.MOVE:
-                if v1 == 0:
-                    print("El jugador {} se para".format(addr))
-                else:
-                    print("El jugador {} se mueve: {}".format(addr, v1))
+                tank = self.clients[addr]
+                tank.input.move = v1
             elif command == protocol.AIM:
-                print("El jugador {} apunta hacia {}".format(addr, degrees(v1)))
+                tank = self.clients[addr]
+                tank.input.cannon_angle = v1
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
