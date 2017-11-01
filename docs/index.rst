@@ -113,7 +113,6 @@ El juego usa el modelo de cliente/servidor.
 Ventajas
 ~~~~~~~~
 
-* Separación de asuntos.
 * Sencillo de desarrollar.
 * Sencillo de escalar.
 * Es complicado hacer trampas (el servidor es autoritativo).
