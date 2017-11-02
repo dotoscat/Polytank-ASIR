@@ -78,7 +78,8 @@ class Engine:
         self._add_message("touch-floor")
 
     def shoot(self, entity):
-        x, y = entity.tank_graphic.cannon.position
+        x = entity.tank.cannon_x
+        y = entity.tank.cannon_y
         power = entity.input.time_power
         entity.input.time_power = 0.
         angle = entity.input.cannon_angle

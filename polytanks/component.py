@@ -56,16 +56,23 @@ class PlayerInput:
         self.do_jump = False
 
 class Tank:
-    def __init__(self):
+    def __init__(self, cannon_anchor):
         self.damage = 0
         self.hitstun = 0.
         self.control = True
+        self.cannon_x = 0.
+        self.cannon_y = 0.
+        self.cannon_anchor = cannon_anchor
         
     def reset(self):
         self.damage = 0
         self.hitstun = 0.
         self.control = True
 
+    def update(self, x, y):
+        self.cannon_x = self.cannon_anchor[0] + x
+        self.cannon_y = self.cannon_anchor[1] + y
+        
 class Bullet:
     """
     Attributes:
@@ -91,7 +98,6 @@ class TankGraphic:
     def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
         self.base = base
         self.cannon = cannon
-        self.cannon_anchor = cannon_anchor
         
     def set_position(self, x, y):
         self.base.set_position(x, y)

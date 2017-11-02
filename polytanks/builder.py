@@ -31,7 +31,7 @@ get_id = _id_generator()
 
 tank = toyblock3.InstanceBuilder()
 tank.add("id", get_id)
-tank.add("tank", Tank)
+tank.add("tank", Tank, (0., 4.))
 tank.add("input", PlayerInput)
 tank.add("platform", Platform.get_foot, width=SIZE, height=1.,
     offset=(SIZE/-2., SIZE/-2.))

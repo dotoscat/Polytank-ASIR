@@ -76,8 +76,7 @@ class Client(Scene):
         
         builder.tank.add("tank_graphic", TankGraphic,
             Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
-            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]),
-            (0., 4.),)
+            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]))
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
             batch=self.batch, group=self.group[2])
         builder.platform.add("sprite", Sprite, assets.images["platform"],

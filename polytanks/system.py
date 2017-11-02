@@ -20,7 +20,10 @@ from .constant import TANK_SPEED, VHEIGHT as G, MAX_ASCENDING_SPEED
 @toyblock3.system("body", "tank_graphic")
 def update_tank_graphic(self, entity):
     body = entity.body
-    entity.tank_graphic.set_position(body.x, body.y)
+    tank = entity.tank
+    tank.update(body.x, body.y)
+    entity.tank_graphic.base.set_position(body.x, body.y)
+    entity.tank_graphic.cannon.set_position(tank.cannon_x, tank.cannon_y)
 
 @toyblock3.system("input", "body", "platform")
 def update_user_input(self, entity, dt, engine):
@@ -42,6 +45,9 @@ def update_user_input(self, entity, dt, engine):
             entity.body.max_ascending_speed = MAX_ASCENDING_SPEED
     else:
         entity.tank.hitstun -= dt
+    
+    tank = entity.tank
+    tank.update(player_body.x, player_body.y)
     
     if player_input.accumulate_power and not player_input.release_power:
         player_input.time_power += dt
