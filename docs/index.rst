@@ -136,6 +136,7 @@ LOGOUT                  Desconectarse de un servidor
 MOVE    [(-1.|0.|1.)]   Dirección del movimiento
 AIM     [angulo]        Dirección del cañón en radianes
 JUMP    [(1.|0.)]       Salto presionado o no
+SHOOT   [(1.|0.)]       Disparo presionado o no
 ======= =============   ===========
 
 Mensajes desde el servidor
@@ -145,7 +146,8 @@ Mensajes desde el servidor
 Comando     Parámetros Descripción
 ========    ========== ===========
 JOINED      [id, x, y] Id y posición del jugador al unirse
-DONE                   El cliente se ha desconectado          
+DONE                   El cliente se ha desconectado
+SHOOTED     [id]       Quién dispara
 ========    ========== ===========
 
 Orden del intercambio de mensajes
@@ -159,6 +161,8 @@ JOIN                -                   -                               Petició
 MOVE                -                   -                               -
 JUMP                                                                    El cliente tiene presionado el boton de salto
 AIM                                                                     Enviar hacia dónde apunta el cañón
+SHOOT                                                                   Cliente dispara
+                                        SHOOTED                         Enviar quién dispara
 LOGOUT              -                   -                               Petición de desconectarse del servidor
 -                   DONE                                                Aceptada la petición del cliente de desconectarse
 =================== =================== ==============================  ===========
