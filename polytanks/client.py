@@ -213,9 +213,13 @@ class Client(Scene):
     def on_mouse_release(self, x, y, button, modifiers):
         if not self._joined: return
         if not self.player_input.accumulate_power: return
-        self.player_input.accumulate_power = False
-        self.player_input.shoots = True
         self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 0.))
+
+    def _shoot(self, id_):
+        entity = self.engine.entities[id_]
+        if entity is None: return
+        entity.input.accumulate_power = False
+        entity.input.shoots = True
 
     def listen(self, data, socket):
         data_len = len(data)
@@ -224,6 +228,11 @@ class Client(Scene):
             command = protocol.mono.unpack(data)[0]
             if command == protocol.DONE:
                 self._done()
+        elif data_len == protocol.di.size:
+            command, id_ = protocol.di_i.unpack(data)
+            if command == protocol.SHOOTED:
+                # How to identify entity, pass id to shoot
+                self._shoot(id_)
         elif data_len == protocol.tetra.size:
             command, id_, v1, v2 = protocol.tetra.unpack(data)
             if command == protocol.JOINED:
@@ -247,8 +256,7 @@ class Client(Scene):
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)
-        self.tank = self.engine.tank_pool.get()
-        self.tank.id = id_
+        self.tank = self.engine.create_tank(id_)
         self.tank.set("body", x=x, y=x)
         self.player_input = self.tank.input
         self._joined = True

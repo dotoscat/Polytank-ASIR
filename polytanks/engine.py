@@ -55,6 +55,8 @@ class Engine:
             *systems)
         self.powerup_pool = toyblock3.build_Entity(16, powerup_builder,
             *systems)
+            
+        self.entities = {}
     
     @property
     def messages(self):
@@ -90,6 +92,12 @@ class Engine:
         bullet = self._spawn_bullet(entity, x, y, force, angle, gravity)
         bullet.set("bullet", owner=entity, power=power)
         self._add_message("shoot")
+
+    def create_tank(self, id_):
+        tank = self.tank_pool.get()
+        tank.id = id_
+        self.entities[id_] = tank
+        return tank
 
     def _spawn_bullet(self, entity, x, y, force, angle, gravity):
         bullet = self.bullet_pool.get()

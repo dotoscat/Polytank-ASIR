@@ -25,10 +25,13 @@ MOVE = 5
 AIM = 6
 JUMP = 7
 SHOOT = 8
+SHOOTED = 9
 
-SNAPSHOT = 9
+SNAPSHOT = 10
 
 mono = struct.Struct("!i")
 di = struct.Struct("!if")
+di_i = struct.Struct("!ii")
 tetra = struct.Struct("!iiff")
 tank = struct.Struct("!iffff")
+bullet = struct.Struct("!iffif")

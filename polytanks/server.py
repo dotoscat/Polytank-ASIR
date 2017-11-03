@@ -71,13 +71,20 @@ class Server(asyncio.DatagramProtocol):
                 else:
                     tank.input.not_jump()
             elif command == protocol.SHOOT:
-                if v1 == 1.:
-                    tank.input.accumulate_power = True
-                else:
-                    tank.input.accumulate_power = False
-                    tank.input.shoots = True
+                self._shoot(addr, v1)
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
+
+    def _shoot(self, addr, release):
+        tank = self.clients[addr]
+        if release == 1.:
+            tank.input.accumulate_power = True
+        else:
+            tank.input.accumulate_power = False
+            tank.input.shoots = True
+            data = protocol.di_i.pack(protocol.SHOOTED, self.clients[addr].id)
+            for client in self.clients:
+                self.transport.sendto(data, client)
 
     def _join(self, addr):
         tank = self.engine.tank_pool.get()
@@ -117,6 +124,7 @@ class Server(asyncio.DatagramProtocol):
         FRAMERATE = 1./30.
         snapshot_buffer = bytearray()
         clients = self.clients
+        bullets = self.engine.bullet_pool._used
         print("FRAMERATE", FRAMERATE)
         while True:
             snapshot_buffer.clear()
@@ -131,7 +139,8 @@ class Server(asyncio.DatagramProtocol):
                 mov = tank.input.move
                 canon = tank.input.cannon_angle
                 snapshot_buffer += protocol.tank.pack(id_, x, y, mov, canon)
-            #print("send this", len(snapshot_buffer))
+            for bullet in bullets:
+                print(bullet)
             for client in clients:
                 self.transport.sendto(snapshot_buffer, client)
             yield from asyncio.sleep(FRAMERATE)
