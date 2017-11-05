@@ -260,6 +260,7 @@ class Client(Scene):
         self.tank.set("body", x=x, y=x)
         self.player_input = self.tank.input
         self._joined = True
+        self.conn.socket.send(protocol.mono.pack(protocol.JOINED))
     
     def logout(self):
         print("logout", self._joined)

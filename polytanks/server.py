@@ -79,6 +79,8 @@ class Server(asyncio.DatagramProtocol):
                 self._join(addr)
             elif command == protocol.LOGOUT:
                 self._logout(addr)
+            elif command == protocol.JOINED:
+                print("send info about the game")
         elif data_len == protocol.di.size:
             command, v1 = protocol.di.unpack(data)
             tank = self.clients[addr]
