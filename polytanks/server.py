@@ -43,7 +43,7 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
         
-        self.add_bot(bot.jumper)
+        #self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
         for i, id_ in enumerate(self.players):
@@ -139,8 +139,12 @@ class Server(asyncio.DatagramProtocol):
 
     def _logout(self, addr):
         print("logout", self.clients)
-        self.clients[addr].free()
+        tank = self.clients[addr]
+        del self.engine.entities[tank.id]
         del self.clients[addr]
+        self.players = [0 if tank.id == id_ else id_ for id_ in self.players]
+        print(self.players)
+        tank.free()
         self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
         print("Client {} removed", addr)
         print(self.clients)
