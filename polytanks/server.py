@@ -80,7 +80,7 @@ class Server(asyncio.DatagramProtocol):
             elif command == protocol.LOGOUT:
                 self._logout(addr)
             elif command == protocol.JOINED:
-                print("send info about the game")
+                self._start_game(addr)
         elif data_len == protocol.di.size:
             command, v1 = protocol.di.unpack(data)
             tank = self.clients[addr]
@@ -95,6 +95,21 @@ class Server(asyncio.DatagramProtocol):
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 
+    def _start_game(self, addr):
+        data_size = protocol.mono.size + len(self.players)*protocol.tri.size
+        data = bytearray(data_size)
+        protocol.mono.pack_into(data, 0, protocol.START_GAME)
+        offset = protocol.mono.size
+        entities = self.engine.entities
+        for id_ in self.players:
+            if id_ == 0:
+                protocol.tri.pack_into(data, offset, 0, 0., 0.)
+            else:
+                body = entities[id_].body
+                protocol.tri.pack_into(data, offset, id_, body.x, body.y)
+            offset += protocol.tri.size
+        self.transport.sendto(data, addr)
+        
     def _jump(self, addr, pressed):
         tank = self.clients[addr]
         if pressed == 1.:

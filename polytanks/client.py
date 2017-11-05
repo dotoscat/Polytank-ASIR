@@ -238,7 +238,11 @@ class Client(Scene):
             if command == protocol.JOINED:
                 self.joined(id_, v1, v2)
         else:
-            self._snapshot(data)
+            command = protocol.mono.unpack_from(data)[0]
+            if command == protocol.SNAPSHOT:
+                self._snapshot(data)
+            elif command == protocol.START_GAME:
+                self.start_game(data)
             
     def _snapshot(self, data):
         command = protocol.mono.unpack_from(data)[0]
@@ -253,6 +257,9 @@ class Client(Scene):
                 self.tank.body.y = y
                 self.tank.input.cannon_angle = cannon_angle
             #print(id_, x, y, mov, cannon_angle)
+
+    def start_game(self, data):
+        print("Start game!", len(data))
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)

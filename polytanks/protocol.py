@@ -28,10 +28,12 @@ SHOOT = 8
 SHOOTED = 9
 
 SNAPSHOT = 10
+START_GAME = 11
 
 mono = struct.Struct("!i")
 di = struct.Struct("!if")
 di_i = struct.Struct("!ii")
+tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
 tank = struct.Struct("!iffff")
 bullet = struct.Struct("!iffif")
