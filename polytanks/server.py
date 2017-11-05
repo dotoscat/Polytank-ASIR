@@ -44,7 +44,7 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(self._tick(self._loop.time))
 
     def add_bot(self, bot):
-        for i in range(self.players):
+        for i in range(len(self.players)):
             if i != 0: continue
             tank = self.engine.tank_pool.get()
             tank.set("body", x=200., y=100.)
@@ -53,8 +53,8 @@ class Server(asyncio.DatagramProtocol):
             return True
         return False
     
-    def add_player(tank):
-        for i in range(self.players):
+    def add_player(self, tank):
+        for i in range(len(self.players)):
             if i != 0: continue
             self.players[i] = tank.id
             break
