@@ -259,7 +259,13 @@ class Client(Scene):
             #print(id_, x, y, mov, cannon_angle)
 
     def start_game(self, data):
-        print("Start game!", len(data))
+        offset = protocol.mono.size
+        players = 0
+        tanks = data[protocol.mono.size:]
+        for id_, x, y in protocol.tri.iter_unpack(tanks):
+            if id_ == 0: continue
+            players += 1
+            print(id_, x, y)
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)

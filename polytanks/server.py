@@ -46,18 +46,18 @@ class Server(asyncio.DatagramProtocol):
         self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
-        for i in range(len(self.players)):
-            if i != 0: continue
-            tank = self.engine.tank_pool.get()
+        for i, id_ in enumerate(self.players):
+            if id_ != 0: continue
+            tank = self.engine.create_tank()
             tank.set("body", x=200., y=100.)
             self.players[i] = tank.id
             self.bots[i] = partial(bot, tank)
-            return True
-        return False
+            return
+        raise Exception("Assure enough slots, players, for bots")
     
     def add_player(self, tank):
-        for i in range(len(self.players)):
-            if i != 0: continue
+        for i, id_ in enumerate(self.players):
+            if id_ != 0: continue
             self.players[i] = tank.id
             break
     
