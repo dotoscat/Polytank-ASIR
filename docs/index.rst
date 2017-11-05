@@ -96,6 +96,23 @@ y no tienen velocidad máxima de ascenso. Pasado ese tiempo los tanques tienen i
 los jugadores pueden tener de nuevo el control del tanque. El control del tanque se recupera
 antes si toca el suelo también.
 
+Bots
+~~~~
+
+Los bots se han añadido principalmente por motivos de pruebas pero pueden
+servir perfectamente como jugadores del servidor.
+
+Un bot recive una entrada, un mapa del mundo y su entidad asociada.
+Su salidad es el input de su entidad asociada. Los bots es cualquier *callable*
+(puede ser una clase que implemente __call__)
+
+    .. code-block:: python
+        
+        #  Un bot que salta nada más tocar suelo.
+        def jumper(world, entity):
+            if entity.platform.touch_floor:
+                entity.input.jump()
+
 Red
 ---
 
@@ -183,6 +200,7 @@ Referencias
 * `https://en.wikipedia.org/wiki/Handshaking`
 * `https://gamedev.stackexchange.com/questions/22815/how-can-i-alleviate-network-lag-issues-with-players-from-other-countries`
 * `https://www.gamedev.net/forums/topic/375992-lag-over-the-internet/`
+* `https://www.youtube.com/watch?v=qv6UVOQ0F44`
 
 El sistema de entidad-componentes
 ---------------------------------
