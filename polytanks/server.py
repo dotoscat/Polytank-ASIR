@@ -19,7 +19,7 @@ from math import degrees
 from pprint import pprint
 import asyncio
 from . import protocol
-from . import engine, level
+from . import engine, level, bot
 
 class Server(asyncio.DatagramProtocol):
     def __init__(self, address, *args, debug=False, **kwargs):
@@ -42,6 +42,8 @@ class Server(asyncio.DatagramProtocol):
 
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
+        
+        self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
         for i in range(len(self.players)):
