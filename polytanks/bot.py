@@ -16,13 +16,13 @@
 """
     Bots are callables with the following signature
     
-    brain(world, entity) -> None:
+    brain(entity, world) -> None:
     
     World and part of entity is an input.
     entity.input is the output.
     A bot can do nothing
 """
 
-def jumper(world, entity):
+def jumper(entity, world):
     if entity.platform.touch_floor:
         entity.input.jump()

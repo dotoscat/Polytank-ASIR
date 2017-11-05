@@ -109,7 +109,7 @@ Su salida es el input de su entidad asociada. Los bots es cualquier *callable*
     .. code-block:: python
         
         #  Un bot que salta nada más tocar suelo.
-        def jumper(world, entity):
+        def jumper(entity, world):
             if entity.platform.touch_floor:
                 entity.input.jump()
 
