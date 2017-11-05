@@ -97,13 +97,13 @@ los jugadores pueden tener de nuevo el control del tanque. El control del tanque
 antes si toca el suelo también.
 
 Bots
-~~~~
+++++
 
 Los bots se han añadido principalmente por motivos de pruebas pero pueden
 servir perfectamente como jugadores del servidor.
 
 Un bot recive una entrada, un mapa del mundo y su entidad asociada.
-Su salidad es el input de su entidad asociada. Los bots es cualquier *callable*
+Su salida es el input de su entidad asociada. Los bots es cualquier *callable*
 (puede ser una clase que implemente __call__)
 
     .. code-block:: python
