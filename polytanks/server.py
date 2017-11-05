@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import partial
 import math
 from math import degrees
 from pprint import pprint
@@ -33,6 +34,8 @@ class Server(asyncio.DatagramProtocol):
         self.dt = 0.
         self.secs = 0
         self.clients = {}
+        self.players = [0]*4
+        self.bots = [None]*4
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -40,6 +43,22 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
 
+    def add_bot(self, bot):
+        for i in range(self.players):
+            if i != 0: continue
+            tank = self.engine.tank_pool.get()
+            tank.set("body", x=200., y=100.)
+            self.players[i] = tank.id
+            self.bots[i] = partial(bot, tank)
+            return True
+        return False
+    
+    def add_player(tank):
+        for i in range(self.players):
+            if i != 0: continue
+            self.players[i] = tank.id
+            break
+    
     def connection_made(self, transport):
         self.transport = transport
         asyncio.ensure_future(self._send_snapshot())
@@ -90,6 +109,7 @@ class Server(asyncio.DatagramProtocol):
         tank = self.engine.tank_pool.get()
         self.clients[addr] = tank
         tank.set("body", x=128., y=128.)
+        self.add_player(tank)
         print("Client {} added".format(addr), tank, tank.id, tank.body.x, tank.body.y)
         message = protocol.tetra.pack(protocol.JOINED, tank.id, tank.body.x, tank.body.y)
         self.transport.sendto(message, addr)
