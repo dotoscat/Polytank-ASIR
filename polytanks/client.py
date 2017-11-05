@@ -252,6 +252,7 @@ class Client(Scene):
         offset += protocol.mono.size
         players_data = data[offset:offset+n_players*protocol.tank.size]
         for id_, x, y, mov, cannon_angle in protocol.tank.iter_unpack(players_data):
+            print("snapshot", id_, x, y, mov, cannon_angle)
             if id_ == self.tank.id:
                 self.tank.body.x = x
                 self.tank.body.y = y

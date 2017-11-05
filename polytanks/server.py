@@ -43,7 +43,7 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
         
-        #self.add_bot(bot.jumper)
+        self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
         for i, id_ in enumerate(self.players):
@@ -84,6 +84,7 @@ class Server(asyncio.DatagramProtocol):
         elif data_len == protocol.di.size:
             command, v1 = protocol.di.unpack(data)
             tank = self.clients[addr]
+            print("player input {} {}".format(addr, tank.id))
             if command == protocol.MOVE:
                 tank.input.move = v1
             elif command == protocol.AIM:
@@ -101,7 +102,7 @@ class Server(asyncio.DatagramProtocol):
         protocol.mono.pack_into(data, 0, protocol.START_GAME)
         offset = protocol.mono.size
         entities = self.engine.entities
-        for id_ in self.players:
+        for i, id_ in enumerate(self.players):
             if id_ == 0:
                 protocol.tri.pack_into(data, offset, 0, 0., 0.)
             else:
@@ -133,7 +134,8 @@ class Server(asyncio.DatagramProtocol):
         self.clients[addr] = tank
         tank.set("body", x=128., y=128.)
         self.add_player(tank)
-        print("Client {} added".format(addr), tank, tank.id, tank.body.x, tank.body.y)
+        print("Client {} {} added".format(addr, tank.id))
+        print(self.players)
         message = protocol.tetra.pack(protocol.JOINED, tank.id, tank.body.x, tank.body.y)
         self.transport.sendto(message, addr)
 
@@ -166,7 +168,8 @@ class Server(asyncio.DatagramProtocol):
             self._past_time = time()
             self._send_seconds(dt)
             for message in self.engine.messages:
-                print(message)
+                pass
+                #print(message)
             yield from asyncio.sleep(0.01)
     
     @asyncio.coroutine
@@ -183,6 +186,7 @@ class Server(asyncio.DatagramProtocol):
             snapshot_buffer += protocol.mono.pack(n_players)
             for client in clients:
                 tank = clients[client]
+                print("snapshot", tank.id)
                 id_ = tank.id
                 x = tank.body.x
                 y = tank.body.y
@@ -190,7 +194,8 @@ class Server(asyncio.DatagramProtocol):
                 canon = tank.input.cannon_angle
                 snapshot_buffer += protocol.tank.pack(id_, x, y, mov, canon)
             for bullet in bullets:
-                print(bullet)
+                pass
+                #print(bullet)
             for client in clients:
                 self.transport.sendto(snapshot_buffer, client)
             yield from asyncio.sleep(FRAMERATE)
