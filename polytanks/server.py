@@ -134,6 +134,9 @@ class Server(asyncio.DatagramProtocol):
             dt = time() - self._past_time
             #for k in self.clients:
              #   print(self.clients[k].body.x, self.clients[k].body.y)
+            for bot in self.bots:
+                if bot is None: continue
+                bot(None)
             self.engine.update(dt)
             self._past_time = time()
             self._send_seconds(dt)
