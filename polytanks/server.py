@@ -87,14 +87,17 @@ class Server(asyncio.DatagramProtocol):
             elif command == protocol.AIM:
                 tank.input.cannon_angle = v1
             elif command == protocol.JUMP:
-                if v1 == 1.:
-                    tank.input.jump()
-                else:
-                    tank.input.not_jump()
+                self._jump(v1)
             elif command == protocol.SHOOT:
                 self._shoot(addr, v1)
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
+
+    def _jump(self, pressed):
+        if v1 == 1.:
+            tank.input.jump()
+        else:
+            tank.input.not_jump()
 
     def _shoot(self, addr, release):
         tank = self.clients[addr]
