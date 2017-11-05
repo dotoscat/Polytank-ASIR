@@ -93,9 +93,12 @@ class Engine:
         bullet.set("bullet", owner=entity, power=power)
         self._add_message("shoot")
 
-    def create_tank(self, id_):
+    def create_tank(self, id_=None):
         tank = self.tank_pool.get()
-        tank.id = id_
+        if id_ is not None:
+            tank.id = id_
+        else:
+            id_ = tank.id
         self.entities[id_] = tank
         return tank
 

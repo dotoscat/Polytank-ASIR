@@ -129,7 +129,7 @@ class Server(asyncio.DatagramProtocol):
                 self.transport.sendto(data, client)
 
     def _join(self, addr):
-        tank = self.engine.tank_pool.get()
+        tank = self.engine.create_tank()
         self.clients[addr] = tank
         tank.set("body", x=128., y=128.)
         self.add_player(tank)
