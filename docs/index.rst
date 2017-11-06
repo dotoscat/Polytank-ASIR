@@ -160,13 +160,14 @@ JOINED                  El cliente se ha unido
 Mensajes desde el servidor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-========    ========== ===========
-Comando     Parámetros Descripción
-========    ========== ===========
-JOINED      [id, x, y] Id y posición del jugador al unirse
-DONE                   El cliente se ha desconectado
-SHOOTED     [id]       Quién dispara
-========    ========== ===========
+==========  =================== ===========
+Comando     Parámetros          Descripción
+==========  =================== ===========
+JOINED      [id, x, y]          Id y posición del jugador al unirse
+DONE                            El cliente se ha desconectado
+SHOOTED     [id]                Quién dispara
+START_GAME  [[[id, x, y], ...]] Empieza el juego con los jugadores y su posición actual
+==========  =================== ===========
 
 Orden del intercambio de mensajes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,6 +180,8 @@ Orden del intercambio de mensajes
 |-                  |JOINED             |-                             | Aceptado, empezar juego                            |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
 |JOINED             |                   |                              | Reconocimiento de haberse unido (ACK)              |
++-------------------+-------------------+------------------------------+----------------------------------------------------+
+|                   |START_GAME         |                              | Empieza el juego indicando los jugadores           |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
 |MOVE               |-                  |-                             | -                                                  |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
