@@ -17,14 +17,6 @@ from math import degrees
 from .ogf4py3 import toyblock3, get_angle_from
 from .constant import TANK_SPEED, VHEIGHT as G, MAX_ASCENDING_SPEED
 
-@toyblock3.system("body", "tank_graphic")
-def update_tank_graphic(self, entity):
-    body = entity.body
-    tank = entity.tank
-    tank.update(body.x, body.y)
-    entity.tank_graphic.base.set_position(body.x, body.y)
-    entity.tank_graphic.cannon.set_position(tank.cannon_x, tank.cannon_y)
-
 @toyblock3.system("input", "body", "platform")
 def update_user_input(self, entity, dt, engine):
     """

@@ -93,12 +93,3 @@ class PowerUp:
         
     def __call__(self, *args, **kwargs):
         self.action(*args, **kwargs)
-
-class TankGraphic:
-    def __init__(self, base, cannon, cannon_anchor=(0., 0.)):
-        self.base = base
-        self.cannon = cannon
-        
-    def set_position(self, x, y):
-        self.base.set_position(x, y)
-        self.cannon.set_position(self.cannon_anchor[0] + x, self.cannon_anchor[1] + y)

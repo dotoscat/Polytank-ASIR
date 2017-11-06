@@ -26,14 +26,26 @@ from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
 from .ogf4py3 import system
 from . import assets
-from .system import update_tank_graphic, update_user_input
+from .system import update_user_input
 from . import constant
 from .constant import G
 from . import level
 from . import builder
 from . import engine
-from .component import TankGraphic
 from . import protocol
+
+class TankGraphic:
+    def __init__(self, batch, group):
+        self.base = Sprite(assets.images["tank-base"], batch=batch, group=group[2])
+        self.cannon = Sprite(assets.images["tank-cannon"], batch=batch, group=group[1])
+        
+@toyblock3.system("body", "tank_graphic")
+def update_tank_graphic(self, entity):
+    body = entity.body
+    tank = entity.tank
+    tank.update(body.x, body.y)
+    entity.tank_graphic.base.set_position(body.x, body.y)
+    entity.tank_graphic.cannon.set_position(tank.cannon_x, tank.cannon_y)
 
 systems = engine.systems
 systems.append(system.sprite)
@@ -74,9 +86,7 @@ class Client(Scene):
         self.tank = None
         self._send_cannon_rotation = False
         
-        builder.tank.add("tank_graphic", TankGraphic,
-            Sprite(assets.images["tank-base"], batch=self.batch, group=self.group[2]),
-            Sprite(assets.images["tank-cannon"], batch=self.batch, group=self.group[1]))
+        builder.tank.add("tank_graphic", TankGraphic, self.batch, self.group)
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
             batch=self.batch, group=self.group[2])
         builder.platform.add("sprite", Sprite, assets.images["platform"],
@@ -240,7 +250,8 @@ class Client(Scene):
         else:
             command = protocol.mono.unpack_from(data)[0]
             if command == protocol.SNAPSHOT:
-                self._snapshot(data)
+                pass
+                #self._snapshot(data)
             elif command == protocol.START_GAME:
                 self.start_game(data)
             
