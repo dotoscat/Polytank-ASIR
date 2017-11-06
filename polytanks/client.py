@@ -109,11 +109,7 @@ class Client(Scene):
         self.cursor_point = Client.Point()
         self.cursor = Sprite(assets.images["eyehole"], batch=self.batch, group=self.group[3])
         
-        self.damage = gui.NumberLabel("%", batch=self.batch, group=self.group[4])
-        self.damage.value = 0
-        self.damage.x = 32.
-        self.damage.y = 8.
-
+        self.damage = []
         self.dt = 0.
 
     def init(self):
@@ -144,7 +140,10 @@ class Client(Scene):
         self.conn.tick()
         self.engine.update(dt)
         if self._joined:
-            self.damage.value = self.tank.tank.damage
+            for damage in self.damage:
+                id_ = self.damage[damage]
+                tank = self.engine.entities[id_]
+                damage.value = tank.tank.damage
         update_tank_graphic()
         self._upgrade_pointer()
         system.sprite()
@@ -274,17 +273,21 @@ class Client(Scene):
         offset = protocol.mono.size
         players = 0
         tanks = data[protocol.mono.size:]
-        print("start")
+        self.damage = {}
         for id_, x, y in protocol.tri.iter_unpack(tanks):
             if id_ == 0: continue
             players += 1
             print("player", self.tank.id, id_)
+            label = gui.NumberLabel("%", batch=self.batch, group=self.group[4])
+            self.damage[label] = id_
+            label.value = 0
+            label.y = 8.
+            label.x = x
             if id_ == self.tank.id:
                 continue
             print(id_, x, y)
             tank = self.engine.create_tank(id_)
             tank.set("body", x=x, y=y)
-        print("end")
 
     def joined(self, id_, x, y):
         print("Joined with id", id_, x, y)
