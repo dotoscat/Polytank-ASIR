@@ -110,7 +110,12 @@ class Server(asyncio.DatagramProtocol):
                 protocol.tri.pack_into(data, offset, id_, body.x, body.y)
             offset += protocol.tri.size
         self.transport.sendto(data, addr)
-        
+
+    def _send_action_to_clients(self, command, id_):
+        data = protocol.di_i.pack(command, id_)
+        for client in self.clients:
+            self.transport.sendto(data, client)
+
     def _jump(self, addr, pressed):
         tank = self.clients[addr]
         if pressed == 1.:
@@ -167,9 +172,10 @@ class Server(asyncio.DatagramProtocol):
             self.engine.update(dt)
             self._past_time = time()
             self._send_seconds(dt)
-            for message in self.engine.messages:
-                print(message)
-            yield from asyncio.sleep(0.01)
+            for message, entity in self.engine.messages:
+                if message == "jump":
+                    self._send_action_to_clients(protocol.JUMP, entity.id)
+            yield from asyncio.sleep(0.001)
     
     @asyncio.coroutine
     def _send_snapshot(self):
@@ -185,7 +191,6 @@ class Server(asyncio.DatagramProtocol):
             snapshot_buffer += protocol.mono.pack(n_players)
             for client in clients:
                 tank = clients[client]
-                print("snapshot", tank.id)
                 id_ = tank.id
                 x = tank.body.x
                 y = tank.body.y

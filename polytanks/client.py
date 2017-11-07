@@ -247,6 +247,8 @@ class Client(Scene):
             if command == protocol.SHOOTED:
                 # How to identify entity, pass id to shoot
                 self._shoot(id_)
+            elif command == protocol.JUMP:
+                self.engine.entities[id_].input.jump()
         elif data_len == protocol.tetra.size:
             command, id_, v1, v2 = protocol.tetra.unpack(data)
             if command == protocol.JOINED:
