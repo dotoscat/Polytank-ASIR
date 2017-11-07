@@ -135,12 +135,13 @@ class Client(Scene):
         logging.info("init", entity)
 
     def update(self, dt):
-        self.dt += dt
-        if self.dt > 3.:
-            self.dt = 0.
-            if choice((True, False)):
-                powerup = self.engine._spawn_powerup(128., 128., "heal")
-                powerup.sprite.image = assets.images["heal"]
+        # This comented part is a server thing (game mode) 
+        #self.dt += dt
+        #if self.dt > 3.:
+        #    self.dt = 0.
+        #    if choice((True, False)):
+        #        powerup = self.engine._spawn_powerup(128., 128., "heal")
+        #        powerup.sprite.image = assets.images["heal"]
         self.conn.tick()
         self.engine.update(dt)
         if self._joined:
