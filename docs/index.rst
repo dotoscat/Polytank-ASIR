@@ -205,6 +205,7 @@ Referencias
 * `https://gamedev.stackexchange.com/questions/67738/limitations-of-p2p-multiplayer-games-vs-client-server`
 * `https://en.wikipedia.org/wiki/Handshaking`
 * `https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking`
+* `http://fabiensanglard.net/quake3/network.php`
 * `https://gamedev.stackexchange.com/questions/22815/how-can-i-alleviate-network-lag-issues-with-players-from-other-countries`
 * `https://www.gamedev.net/forums/topic/375992-lag-over-the-internet/`
 * `https://www.youtube.com/watch?v=qv6UVOQ0F44`
