@@ -50,6 +50,10 @@ def update_tank_graphic(self, entity):
 systems = engine.systems
 systems.append(system.sprite)
 systems.append(update_tank_graphic)
+# Remove systems from client that can alter game state
+systems.remove(engine.system_alive_zone)
+systems.remove(system.lifespan)
+systems.remove(engine.system_client_collision)
 
 class Client(Scene):
     

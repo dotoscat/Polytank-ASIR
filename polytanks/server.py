@@ -174,7 +174,7 @@ class Server(asyncio.DatagramProtocol):
     
     @asyncio.coroutine
     def _send_snapshot(self):
-        FRAMERATE = 1./30.
+        FRAMERATE = 1./10.
         snapshot_buffer = bytearray()
         clients = self.clients
         bullets = self.engine.bullet_pool._used
