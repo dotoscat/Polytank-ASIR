@@ -152,7 +152,7 @@ class Client(Scene):
         update_tank_graphic()
         self._upgrade_pointer()
         system.sprite()
-        for message in self.engine.messages:
+        for message, entity in self.engine.messages:
             if message in assets.player:
                 assets.player.play(message)
 

@@ -168,8 +168,7 @@ class Server(asyncio.DatagramProtocol):
             self._past_time = time()
             self._send_seconds(dt)
             for message in self.engine.messages:
-                pass
-                #print(message)
+                print(message)
             yield from asyncio.sleep(0.01)
     
     @asyncio.coroutine
