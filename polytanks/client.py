@@ -93,17 +93,20 @@ class Client(Scene):
             self.input_deque = deque()
             
         def __iadd__(self, value):
-            self.input_deque.push((self.tick, self.tick_input))
+            self.input_deque.append((self.tick, self.tick_input))
             self.tick += value
             self.input_deque = deque()
-        
-        def __lshift__(self, command):
-            self.tick_input.push(command)
             return self
         
-        def __bytes__(self):
+        def __lshift__(self, command):
+            self.tick_input.append(command)
+            return self
+        
+        def digest(self):
+            data = bytearray()
             data.append(protocol.CLIENT_INPUT)
-            data.append(seld.tick)
+            data.append(self.tick)
+            input_deque = self.input_deque
             while input_deque:
                 data.append(input_deque.popleft())
             #print("send_input", len(data))
@@ -149,16 +152,16 @@ class Client(Scene):
         
         self.damage = []
         self.dt = 0.
-        self.input = Input()
+        self.input = Client.Input()
         
-    def send_input(self):
-        input_deque = self.input_deque
-        data = bytearray()
+    def send_input(self, dt):
+        print("send this", self.input.digest())
 
     def init(self):
         self.director.set_exclusive_mouse(True)
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
+        pyglet.clock.schedule_interval(self.send_input, 1./Client.SEND_INPUT_RATE)
 
     def clean_entity(self, entity):
         if (isinstance(entity, self.engine.bullet_pool)
@@ -194,7 +197,7 @@ class Client(Scene):
         for message, entity in self.engine.messages:
             if message in assets.player:
                 assets.player.play(message)
-        self.tick += 1
+        self.input += 1
 
     def _upgrade_pointer(self):
         if not self._joined: return
