@@ -95,7 +95,7 @@ class Client(Scene):
         def __iadd__(self, value):
             self.input_deque.append((self.tick, self.tick_input))
             self.tick += value
-            self.input_deque = deque()
+            self.tick_input = deque()
             return self
         
         def __lshift__(self, command):
@@ -105,10 +105,12 @@ class Client(Scene):
         def digest(self):
             data = bytearray()
             data.append(protocol.CLIENT_INPUT)
-            data.append(self.tick)
-            input_deque = self.input_deque
-            while input_deque:
-                data.append(input_deque.popleft())
+            data += int.to_bytes(self.tick, 4, 'big')
+            #input_deque = self.input_deque
+            #while input_deque:
+                #pass
+                #data.append(input_deque.popleft())
+            print(len(self.input_deque))
             #print("send_input", len(data))
             data = b'Wola!:D'
             print("send_input", data, len(data))
@@ -220,9 +222,11 @@ class Client(Scene):
             return
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
+            self.input << protocol.MOVE_LEFT
             #self.conn.socket.send(protocol.di.pack(protocol.MOVE, -1.))
         elif symbol in (key.D, key.RIGHT):
             self.player_input.move_right()
+            self.input << protocol.MOVE_RIGHT
             #self.conn.socket.send(protocol.di.pack(protocol.MOVE, 1.))
         elif symbol in (key.W, key.UP):
             self.player_input.jump()
@@ -232,6 +236,7 @@ class Client(Scene):
         if not self._joined: return
         if symbol in (key.A, key.D, key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
+            self.input << protocol.STOP
             #self.conn.socket.send(protocol.di.pack(protocol.MOVE, 0.))
         if symbol in (key.UP, key.W) and self.player_input.do_jump:
             self.player_input.not_jump()
