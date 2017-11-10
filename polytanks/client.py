@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 from collections import deque
 import logging
 from random import choice
@@ -83,7 +84,37 @@ class Client(Scene):
             if i == 0: return self.x
             if i == 1: return self.y
     
-    SEND_INPUT_RATE = 30
+    SEND_INPUT_RATE = 20
+    
+    class Input:
+        def __init__(self):
+            self.tick = 0
+            self.tick_input = deque()
+            self.input_deque = deque()
+            
+        def __iadd__(self, value):
+            self.input_deque.push((self.tick, self.tick_input))
+            self.tick += value
+            self.input_deque = deque()
+        
+        def __lshift__(self, command):
+            self.tick_input.push(command)
+            return self
+        
+        def __bytes__(self):
+            data.append(protocol.CLIENT_INPUT)
+            data.append(seld.tick)
+            while input_deque:
+                data.append(input_deque.popleft())
+            #print("send_input", len(data))
+            data = b'Wola!:D'
+            print("send_input", data, len(data))
+            return data
+        
+        def reset(self):
+            self.tick = 0
+            self.tick_input = deque()
+            self.input_deque = deque()
     
     def __init__(self, address):
         super().__init__(5)
@@ -118,14 +149,11 @@ class Client(Scene):
         
         self.damage = []
         self.dt = 0.
-        self.input_deque = deque()
-        self.tick = 0
-
+        self.input = Input()
+        
     def send_input(self):
         input_deque = self.input_deque
         data = bytearray()
-        while input_deque:
-            aninput = input_deque.pop()
 
     def init(self):
         self.director.set_exclusive_mouse(True)
