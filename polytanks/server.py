@@ -43,7 +43,7 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
         
-        self.add_bot(bot.jumper)
+        #self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
         for i, id_ in enumerate(self.players):

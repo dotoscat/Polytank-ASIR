@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import deque
 import logging
 from random import choice
 from math import degrees
@@ -81,7 +82,9 @@ class Client(Scene):
                 raise TypeError("Use an integer for indexing")
             if i == 0: return self.x
             if i == 1: return self.y
-     
+    
+    SEND_INPUT_RATE = 30
+    
     def __init__(self, address):
         super().__init__(5)
         
@@ -115,6 +118,14 @@ class Client(Scene):
         
         self.damage = []
         self.dt = 0.
+        self.input_deque = deque()
+        self.tick = 0
+
+    def send_input(self):
+        input_deque = self.input_deque
+        data = bytearray()
+        while input_deque:
+            aninput = input_deque.pop()
 
     def init(self):
         self.director.set_exclusive_mouse(True)
@@ -155,6 +166,7 @@ class Client(Scene):
         for message, entity in self.engine.messages:
             if message in assets.player:
                 assets.player.play(message)
+        self.tick += 1
 
     def _upgrade_pointer(self):
         if not self._joined: return
@@ -177,22 +189,22 @@ class Client(Scene):
             return
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
-            self.conn.socket.send(protocol.di.pack(protocol.MOVE, -1.))
+            #self.conn.socket.send(protocol.di.pack(protocol.MOVE, -1.))
         elif symbol in (key.D, key.RIGHT):
             self.player_input.move_right()
-            self.conn.socket.send(protocol.di.pack(protocol.MOVE, 1.))
+            #self.conn.socket.send(protocol.di.pack(protocol.MOVE, 1.))
         elif symbol in (key.W, key.UP):
             self.player_input.jump()
-            self.conn.socket.send(protocol.di.pack(protocol.JUMP, 1.))
+            #self.conn.socket.send(protocol.di.pack(protocol.JUMP, 1.))
 
     def on_key_release(self, symbol, modifier):
         if not self._joined: return
         if symbol in (key.A, key.D, key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
-            self.conn.socket.send(protocol.di.pack(protocol.MOVE, 0.))
+            #self.conn.socket.send(protocol.di.pack(protocol.MOVE, 0.))
         if symbol in (key.UP, key.W) and self.player_input.do_jump:
             self.player_input.not_jump()
-            self.conn.socket.send(protocol.di.pack(protocol.JUMP, 0.))
+            #self.conn.socket.send(protocol.di.pack(protocol.JUMP, 0.))
 
     def on_mouse_motion(self, x, y, dx, dy):
         #  print("mouse motion", x, y, dx, dy)
@@ -221,13 +233,13 @@ class Client(Scene):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not self._joined: return
-        self.player_input.accumulate_power = True
-        self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 1.))
+        #self.player_input.accumulate_power = True
+        #self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 1.))
         
     def on_mouse_release(self, x, y, button, modifiers):
         if not self._joined: return
-        if not self.player_input.accumulate_power: return
-        self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 0.))
+        #if not self.player_input.accumulate_power: return
+        #self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 0.))
 
     def _shoot(self, id_):
         entity = self.engine.entities[id_]
