@@ -83,20 +83,6 @@ class Server(asyncio.DatagramProtocol):
             self._start_game(addr)
         elif command == protocol.CLIENT_INPUT:
             print("client input", addr, len(data))
-        #elif data_len == protocol.di.size:
-        #    command, v1 = protocol.di.unpack(data)
-        #    tank = self.clients[addr]
-        #    print("player input {} {}".format(addr, tank.id))
-        #    if command == protocol.MOVE:
-        #        tank.input.move = v1
-        #    elif command == protocol.AIM:
-        #        tank.input.cannon_angle = v1
-        #    elif command == protocol.JUMP:
-        #        self._jump(addr, v1)
-        #    elif command == protocol.SHOOT:
-        #        self._shoot(addr, v1)
-        #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
-        #self.transport.sendto(message, addr)
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
