@@ -145,17 +145,14 @@ Protocolo
 Mensajes desde el cliente
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-======= =============   ===========
-Comando Parámetros      Descripción
-======= =============   ===========
-JOIN                    Unirse al servidor
-LOGOUT                  Desconectarse de un servidor
-MOVE    [(-1.|0.|1.)]   Dirección del movimiento
-AIM     [angulo]        Dirección del cañón en radianes
-JUMP    [(1.|0.)]       Salto presionado o no
-SHOOT   [(1.|0.)]       Disparo presionado o no
-JOINED                  El cliente se ha unido
-======= =============   ===========
+============    =============================================   ===========
+Comando         Parámetros                                      Descripción
+============    =============================================   ===========
+JOIN                                                            Unirse al servidor
+LOGOUT                                                          Desconectarse de un servidor
+CLIENT_INPUT    [[tick, n_input, [input1, input2, ...], ...]]   Entradas almacenadas en ticks
+JOINED                                                          El cliente se ha unido
+============    =============================================   ===========
 
 Mensajes desde el servidor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,13 +180,7 @@ Orden del intercambio de mensajes
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
 |                   |START_GAME         |                              | Empieza el juego indicando los jugadores           |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
-|MOVE               |-                  |-                             | -                                                  |
-+-------------------+-------------------+------------------------------+----------------------------------------------------+
-|JUMP               |                   |                              | El cliente tiene presionado el boton de salto      |
-+-------------------+-------------------+------------------------------+----------------------------------------------------+
-|AIM                |                   |                              | Enviar hacia dónde apunta el cañón                 |
-+-------------------+-------------------+------------------------------+----------------------------------------------------+
-|SHOOT              |                   |                              | Cliente dispara                                    |
+|CLIENT_INPUT       |                   |                              | Envía las entradas acumuladas desde el cliente     |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
 |                   |                   |SHOOTED                       | Enviar quién dispara                               |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
