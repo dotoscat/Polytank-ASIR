@@ -74,7 +74,7 @@ class Server(asyncio.DatagramProtocol):
     
     def datagram_received(self, data, addr):
         command = protocol.mono.unpack_from(data)[0]
-        print("command", command)
+        #print("command", command)
         if command == protocol.JOIN:
             self._join(addr)
         elif command == protocol.LOGOUT:
@@ -83,7 +83,7 @@ class Server(asyncio.DatagramProtocol):
             self._start_game(addr)
         elif command == protocol.CLIENT_INPUT:
             self.client_input(data)
-            print("client input", addr, len(data))
+            #print("client input", addr, len(data))
 
     def client_input(self, data):
         input_buffer = data[protocol.mono.size:]
@@ -93,9 +93,20 @@ class Server(asyncio.DatagramProtocol):
             if tick is None: break
             tick = tick[0]
             n_input = next(data_iterator)[0]
+            if n_input:
+                print("tick", tick)
             for i in range(n_input):
-                next(data_iterator)[0]
-            print("input", tick, n_input)
+                command = next(data_iterator)[0]
+                if command == protocol.MOVE_LEFT:
+                    print("mover izquierda")
+                elif command == protocol.MOVE_RIGHT:
+                    print("mover derecha")
+                elif command == protocol.STOP:
+                    print("parar")
+                elif command == protocol.JUMP:
+                    print("saltar")
+                elif command == protocol.NO_JUMP:
+                    print("no saltar") 
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
