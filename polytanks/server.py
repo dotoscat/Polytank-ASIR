@@ -73,29 +73,28 @@ class Server(asyncio.DatagramProtocol):
         print("lost", cls)
     
     def datagram_received(self, data, addr):
-        data_len = len(data)
-        print("payload size", data_len)
-        if data_len == protocol.mono.size:
-            command = protocol.mono.unpack(data)[0]
-            print("command", command)
-            if command == protocol.JOIN:
-                self._join(addr)
-            elif command == protocol.LOGOUT:
-                self._logout(addr)
-            elif command == protocol.JOINED:
-                self._start_game(addr)
-        elif data_len == protocol.di.size:
-            command, v1 = protocol.di.unpack(data)
-            tank = self.clients[addr]
-            print("player input {} {}".format(addr, tank.id))
-            if command == protocol.MOVE:
-                tank.input.move = v1
-            elif command == protocol.AIM:
-                tank.input.cannon_angle = v1
-            elif command == protocol.JUMP:
-                self._jump(addr, v1)
-            elif command == protocol.SHOOT:
-                self._shoot(addr, v1)
+        command = protocol.mono.unpack_from(data)[0]
+        print("command", command)
+        if command == protocol.JOIN:
+            self._join(addr)
+        elif command == protocol.LOGOUT:
+            self._logout(addr)
+        elif command == protocol.JOINED:
+            self._start_game(addr)
+        elif command == protocol.CLIENT_INPUT:
+            print("client input", addr, len(data))
+        #elif data_len == protocol.di.size:
+        #    command, v1 = protocol.di.unpack(data)
+        #    tank = self.clients[addr]
+        #    print("player input {} {}".format(addr, tank.id))
+        #    if command == protocol.MOVE:
+        #        tank.input.move = v1
+        #    elif command == protocol.AIM:
+        #        tank.input.cannon_angle = v1
+        #    elif command == protocol.JUMP:
+        #        self._jump(addr, v1)
+        #    elif command == protocol.SHOOT:
+        #        self._shoot(addr, v1)
         #message = "echo from {}: {}".format(str(data, "utf8"), addr).encode()
         #self.transport.sendto(message, addr)
 

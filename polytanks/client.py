@@ -104,14 +104,14 @@ class Client(Scene):
         
         def digest(self):
             data = bytearray()
-            data.append(protocol.CLIENT_INPUT)
+            data += int.to_bytes(protocol.CLIENT_INPUT, 4, 'big')
             while self.input_deque:
                 tick, an_input_deque = self.input_deque.popleft()
                 data += int.to_bytes(tick, 4, 'big')
                 data += int.to_bytes(len(an_input_deque), 4, 'big')
                 while an_input_deque:
                     command = an_input_deque.popleft()
-                    data.append(command)
+                    data += int.to_bytes(command, 4, 'big')
             return data
         
         def reset(self):
@@ -156,7 +156,7 @@ class Client(Scene):
         
     def send_input(self, dt):
         data = self.input.digest()
-        print("send this", len(data))
+        self.conn.socket.send(data)
 
     def init(self):
         self.director.set_exclusive_mouse(True)
@@ -208,7 +208,7 @@ class Client(Scene):
         self.player_input.cannon_angle = angle
         self.tank.tank_graphic.cannon.rotation = -degrees(angle)
         if self._send_cannon_rotation:
-            self.conn.socket.send(protocol.di.pack(protocol.AIM, angle))
+            #self.conn.socket.send(protocol.di.pack(protocol.AIM, angle))
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
