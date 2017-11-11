@@ -156,7 +156,7 @@ class Client(Scene):
         
     def send_input(self, dt):
         data = self.input.digest()
-        print("send this", len(data), data)
+        print("send this", len(data))
 
     def init(self):
         self.director.set_exclusive_mouse(True)
@@ -229,6 +229,7 @@ class Client(Scene):
             #self.conn.socket.send(protocol.di.pack(protocol.MOVE, 1.))
         elif symbol in (key.W, key.UP):
             self.player_input.jump()
+            self.input << protocol.JUMP
             #self.conn.socket.send(protocol.di.pack(protocol.JUMP, 1.))
 
     def on_key_release(self, symbol, modifier):
@@ -239,6 +240,7 @@ class Client(Scene):
             #self.conn.socket.send(protocol.di.pack(protocol.MOVE, 0.))
         if symbol in (key.UP, key.W) and self.player_input.do_jump:
             self.player_input.not_jump()
+            self.input << protocol.NO_JUMP
             #self.conn.socket.send(protocol.di.pack(protocol.JUMP, 0.))
 
     def on_mouse_motion(self, x, y, dx, dy):
