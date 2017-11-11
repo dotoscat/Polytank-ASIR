@@ -105,15 +105,13 @@ class Client(Scene):
         def digest(self):
             data = bytearray()
             data.append(protocol.CLIENT_INPUT)
-            data += int.to_bytes(self.tick, 4, 'big')
-            #input_deque = self.input_deque
-            #while input_deque:
-                #pass
-                #data.append(input_deque.popleft())
-            print(len(self.input_deque))
-            #print("send_input", len(data))
-            data = b'Wola!:D'
-            print("send_input", data, len(data))
+            while self.input_deque:
+                tick, an_input_deque = self.input_deque.popleft()
+                data += int.to_bytes(tick, 4, 'big')
+                data += int.to_bytes(len(an_input_deque), 4, 'big')
+                while an_input_deque:
+                    command = an_input_deque.popleft()
+                    data.append(command)
             return data
         
         def reset(self):
@@ -157,7 +155,8 @@ class Client(Scene):
         self.input = Client.Input()
         
     def send_input(self, dt):
-        print("send this", self.input.digest())
+        data = self.input.digest()
+        print("send this", len(data), data)
 
     def init(self):
         self.director.set_exclusive_mouse(True)
