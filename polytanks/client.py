@@ -111,6 +111,11 @@ class Client(Scene):
                 data += int.to_bytes(len(an_input_deque), 4, 'big')
                 while an_input_deque:
                     command = an_input_deque.popleft()
+                    if isinstance(command, tuple):
+                        command, value = command
+                        data += int.to_bytes(command, 4, 'big')
+                        data += protocol.mono_f.pack(value)
+                        continue
                     data += int.to_bytes(command, 4, 'big')
             return data
         
@@ -208,6 +213,7 @@ class Client(Scene):
         self.player_input.cannon_angle = angle
         self.tank.tank_graphic.cannon.rotation = -degrees(angle)
         if self._send_cannon_rotation:
+            self.input << (protocol.AIM, angle)
             #self.conn.socket.send(protocol.di.pack(protocol.AIM, angle))
             self._send_cannon_rotation = False
 

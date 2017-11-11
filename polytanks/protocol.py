@@ -30,11 +30,13 @@ JUMP = 9
 NO_JUMP = 10
 SHOOT = 11
 NO_SHOOT = 12
+AIM = 13
 
 SNAPSHOT = 10
 START_GAME = 11
 
 mono = struct.Struct("!i")
+mono_f = struct.Struct("!f")
 di = struct.Struct("!if")
 di_i = struct.Struct("!ii")
 tri = struct.Struct("!iff")

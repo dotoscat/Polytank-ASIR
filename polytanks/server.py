@@ -112,6 +112,10 @@ class Server(asyncio.DatagramProtocol):
                     print("disparar")
                 elif command == protocol.NO_SHOOT:
                     print("no disparar")
+                elif command == protocol.AIM:
+                    value = next(fdata_iterator)[0]
+                    next(idata_iterator)
+                    print("apuntar", -degrees(value))
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
