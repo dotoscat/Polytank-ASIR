@@ -24,6 +24,7 @@ from . import engine, level, bot
 class Server(asyncio.DatagramProtocol):
     
     TICKRATE = 60
+    SNAPSHOT_RATE = 30
     
     def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
@@ -187,6 +188,7 @@ class Server(asyncio.DatagramProtocol):
         print("sleep for", TIME)
         while True:
             dt = time() - self._past_time
+            print(dt)
             #for k in self.clients:
              #   print(self.clients[k].body.x, self.clients[k].body.y)
             for bot in self.bots:
@@ -194,7 +196,6 @@ class Server(asyncio.DatagramProtocol):
                 bot(None)
             self.engine.update(dt)
             self._past_time = time()
-            self._send_seconds(dt)
             for message, entity in self.engine.messages:
                 if message == "jump":
                     self._send_action_to_clients(protocol.JUMP, entity.id)
@@ -202,11 +203,11 @@ class Server(asyncio.DatagramProtocol):
     
     @asyncio.coroutine
     def _send_snapshot(self):
-        FRAMERATE = 1./10.
+        TIME = 1./Server.SNAPSHOT_RATE
         snapshot_buffer = bytearray()
         clients = self.clients
         bullets = self.engine.bullet_pool._used
-        print("FRAMERATE", FRAMERATE)
+        print("send snapshot rate", TIME)
         while True:
             snapshot_buffer.clear()
             snapshot_buffer += protocol.mono.pack(protocol.SNAPSHOT)
@@ -225,17 +226,7 @@ class Server(asyncio.DatagramProtocol):
                 #print(bullet)
             for client in clients:
                 self.transport.sendto(snapshot_buffer, client)
-            yield from asyncio.sleep(FRAMERATE)
-    
-    def _send_seconds(self, dt):
-        self.dt += dt
-        if self.dt < 1.0: return
-        self.dt = 0.
-        self.secs += 1
-        #print(self.secs, "dt: ", dt)
-        message = "Secs {}".format(self.secs).encode()
-        for client in self.clients:
-            self.transport.sendto(message, client)
+            yield from asyncio.sleep(TIME)
 
     def __del__(self):
         if self.transport is not None:
