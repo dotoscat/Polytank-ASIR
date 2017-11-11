@@ -270,11 +270,13 @@ class Client(Scene):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not self._joined: return
+        self.input << protocol.SHOOT
         #self.player_input.accumulate_power = True
         #self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 1.))
         
     def on_mouse_release(self, x, y, button, modifiers):
         if not self._joined: return
+        self.input << protocol.NO_SHOOT
         #if not self.player_input.accumulate_power: return
         #self.conn.socket.send(protocol.di.pack(protocol.SHOOT, 0.))
 
@@ -293,11 +295,11 @@ class Client(Scene):
                 self._done()
         elif data_len == protocol.di.size:
             command, id_ = protocol.di_i.unpack(data)
-            if command == protocol.SHOOTED:
+            #if command == protocol.SHOOTED:
                 # How to identify entity, pass id to shoot
-                self._shoot(id_)
-            elif command == protocol.JUMP:
-                self.engine.entities[id_].input.jump()
+               # self._shoot(id_)
+            #elif command == protocol.JUMP:
+             #   self.engine.entities[id_].input.jump()
         elif data_len == protocol.tetra.size:
             command, id_, v1, v2 = protocol.tetra.unpack(data)
             if command == protocol.JOINED:

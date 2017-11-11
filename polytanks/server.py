@@ -107,7 +107,11 @@ class Server(asyncio.DatagramProtocol):
                 elif command == protocol.JUMP:
                     print("saltar")
                 elif command == protocol.NO_JUMP:
-                    print("no saltar") 
+                    print("no saltar")
+                elif command == protocol.SHOOT:
+                    print("disparar")
+                elif command == protocol.NO_SHOOT:
+                    print("no disparar")
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
