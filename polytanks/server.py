@@ -82,7 +82,20 @@ class Server(asyncio.DatagramProtocol):
         elif command == protocol.JOINED:
             self._start_game(addr)
         elif command == protocol.CLIENT_INPUT:
+            self.client_input(data)
             print("client input", addr, len(data))
+
+    def client_input(self, data):
+        input_buffer = data[protocol.mono.size:]
+        data_iterator = protocol.mono.iter_unpack(input_buffer)
+        while True:
+            tick = next(data_iterator, None)
+            if tick is None: break
+            tick = tick[0]
+            n_input = next(data_iterator)[0]
+            for i in range(n_input):
+                next(data_iterator)[0]
+            print("input", tick, n_input)
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
