@@ -87,16 +87,17 @@ class Server(asyncio.DatagramProtocol):
 
     def client_input(self, data):
         input_buffer = data[protocol.mono.size:]
-        data_iterator = protocol.mono.iter_unpack(input_buffer)
-        while True:
-            tick = next(data_iterator, None)
-            if tick is None: break
-            tick = tick[0]
-            n_input = next(data_iterator)[0]
+        fdata_iterator = protocol.struct.iter_unpack("!f", input_buffer)
+        idata_iterator = protocol.struct.iter_unpack("!i", input_buffer)
+        for idata, fdata in zip(idata_iterator, fdata_iterator):
+            tick = idata[0]
+            n_input = next(idata_iterator)[0]
+            next(fdata_iterator)
             if n_input:
                 print("tick", tick)
             for i in range(n_input):
-                command = next(data_iterator)[0]
+                command = next(idata_iterator)[0]
+                next(fdata_iterator)
                 if command == protocol.MOVE_LEFT:
                     print("mover izquierda")
                 elif command == protocol.MOVE_RIGHT:
