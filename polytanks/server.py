@@ -22,6 +22,9 @@ from . import protocol
 from . import engine, level, bot
 
 class Server(asyncio.DatagramProtocol):
+    
+    TICKRATE = 60
+    
     def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.engine = engine.Engine()
@@ -162,6 +165,8 @@ class Server(asyncio.DatagramProtocol):
 
     @asyncio.coroutine
     def _tick(self, time):
+        TIME = 1./Server.TICKRATE
+        print("sleep for", TIME)
         while True:
             dt = time() - self._past_time
             #for k in self.clients:
@@ -175,7 +180,7 @@ class Server(asyncio.DatagramProtocol):
             for message, entity in self.engine.messages:
                 if message == "jump":
                     self._send_action_to_clients(protocol.JUMP, entity.id)
-            yield from asyncio.sleep(0.001)
+            yield from asyncio.sleep(TIME)
     
     @asyncio.coroutine
     def _send_snapshot(self):
