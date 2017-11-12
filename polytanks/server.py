@@ -21,12 +21,12 @@ from math import degrees
 from pprint import pprint
 import asyncio
 from . import protocol
-from . import engine, level, bot
+from . import engine, level, bot, snapshot
 
 class Server(asyncio.DatagramProtocol):
     
     TICKRATE = 60
-    SNAPSHOT_RATE = 30
+    SNAPSHOT_RATE = 1
     
     class Repeater:
         """Basic repeater. Only calls the function each *secs*."""
@@ -54,11 +54,8 @@ class Server(asyncio.DatagramProtocol):
         self.clients = {}
         self.players = [0]*4
         self.bots = [None]*4
-        
-        def ss_hola():
-            print("Hola cada segundo")
-        
-        self.rep = Server.Repeater(ss_hola, 1.)
+        self.snapshot = snapshot.Snapshot(self.engine)
+        self._send_snapshot = Server.Repeater(self._send_snapshot, 1.)
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -201,7 +198,7 @@ class Server(asyncio.DatagramProtocol):
         dt = TIME
         print("sleep for", TIME)
         while True:
-            self.rep()
+            self._send_snapshot()
             #print(dt)
             #for k in self.clients:
              #   print(self.clients[k].body.x, self.clients[k].body.y)
@@ -214,30 +211,12 @@ class Server(asyncio.DatagramProtocol):
             yield from asyncio.sleep(TIME)
         
     def _send_snapshot(self):
-        TIME = 1./Server.SNAPSHOT_RATE
-        snapshot_buffer = bytearray()
+        self.snapshot += 1
+        data = self.snapshot.digest()
+        print("send snapshot", data)
         clients = self.clients
-        bullets = self.engine.bullet_pool._used
-        print("send snapshot rate", TIME)
-        while True:
-            snapshot_buffer.clear()
-            snapshot_buffer += protocol.mono.pack(protocol.SNAPSHOT)
-            n_players = len(clients)
-            snapshot_buffer += protocol.mono.pack(n_players)
-            for client in clients:
-                tank = clients[client]
-                id_ = tank.id
-                x = tank.body.x
-                y = tank.body.y
-                mov = tank.input.move
-                canon = tank.input.cannon_angle
-                snapshot_buffer += protocol.tank.pack(id_, x, y, mov, canon)
-            for bullet in bullets:
-                pass
-                #print(bullet)
-            for client in clients:
-                self.transport.sendto(snapshot_buffer, client)
-            yield
+        for client in clients:
+            self.transport.sendto(data, client)
 
     def __del__(self):
         if self.transport is not None:
