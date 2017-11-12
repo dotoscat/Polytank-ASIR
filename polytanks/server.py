@@ -151,11 +151,6 @@ class Server(asyncio.DatagramProtocol):
             offset += protocol.tri.size
         self.transport.sendto(data, addr)
 
-    def _send_action_to_clients(self, command, id_):
-        data = protocol.di_i.pack(command, id_)
-        for client in self.clients:
-            self.transport.sendto(data, client)
-
     def _jump(self, addr, pressed):
         tank = self.clients[addr]
         if pressed == 1.:
