@@ -293,31 +293,20 @@ class Client(Scene):
         entity.input.shoots = True
 
     def listen(self, data, socket):
-        data_len = len(data)
-        #print(data, data_len)
-        if data_len == protocol.mono.size:
-            command = protocol.mono.unpack(data)[0]
-            if command == protocol.DONE:
-                self._done()
-        elif data_len == protocol.di.size:
-            command, id_ = protocol.di_i.unpack(data)
-            #if command == protocol.SHOOTED:
-                # How to identify entity, pass id to shoot
-               # self._shoot(id_)
-            #elif command == protocol.JUMP:
-             #   self.engine.entities[id_].input.jump()
-        elif data_len == protocol.tetra.size:
+        command = protocol.mono.unpack_from(data)[0]
+        
+        if command == protocol.DONE:
+            self._done()
+        elif command == protocol.JOINED:
             command, id_, v1, v2 = protocol.tetra.unpack(data)
-            if command == protocol.JOINED:
-                self.joined(id_, v1, v2)
-        else:
+            self.joined(id_, v1, v2)
+        elif command == protocol.START_GAME:
+            self.start_game(data)
             command = protocol.mono.unpack_from(data)[0]
-            if command == protocol.SNAPSHOT:
-                pass
-                #self._snapshot(data)
-            elif command == protocol.START_GAME:
-                self.start_game(data)
-            
+        elif command == protocol.SNAPSHOT:
+            #self._snapshot(data)
+            print("receive snapshot")
+
     def _snapshot(self, data):
         command = protocol.mono.unpack_from(data)[0]
         if command != protocol.SNAPSHOT: return
