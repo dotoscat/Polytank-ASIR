@@ -22,8 +22,8 @@ BULLET = 2
 EXPLOSION = 3
 POWERUP = 4
 
-tank = namedtuple("tank", "type id x y")
-tank_struct = struct.Struct("!iiff")
+tank = namedtuple("tank", "id x y")
+tank_struct = struct.Struct("!iff")
 
 class Snapshot:
     """To make snapshots is better pass the engine (and forget it)."""
@@ -39,11 +39,13 @@ class Snapshot:
         return self
 
     def make(self):
-        snapshot = deque()
+        snapshot = {}
+        tanks = deque()
         used_tanks = self._engine.tank_pool._used
         for atank in used_tanks:
-            tank_snapshot = tank(TANK, atank.id, atank.body.x, atank.body.y)
-            snapshot.append(tank_snapshot)
+            tank_snapshot = tank(atank.id, atank.body.x, atank.body.y)
+            tanks.append(tank_snapshot)
+        snapshot["tanks"] = tanks
         return snapshot
         
     def digest(self):
@@ -53,7 +55,12 @@ class Snapshot:
         data = bytearray()
         tick, current = self.snapshots[0]
         data += protocol.di_i.pack(protocol.SNAPSHOT, tick)
-        for netobject in current:
-            if netobject.type == TANK:
-                data += tank_struct.pack(*netobject)
+        data += protocol.mono.pack(len(current["tanks"]))
+        for tank in current["tanks"]:
+            data += tank_struct.pack(*tank)
         return data
+
+    def restore(self, data):
+        """Restore engine from the data."""
+        protocol, tick = protocol.di_i.unpack_from(data)
+        pass
