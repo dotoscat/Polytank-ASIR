@@ -34,7 +34,7 @@ class Snapshot:
     
     def __iadd__(self, value):
         snapshot = self.make()
-        self.snapshots.append((self.tick, snapshot))
+        self.snapshots.appendleft((self.tick, snapshot))
         self.tick += value
         return self
 
