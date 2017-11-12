@@ -68,5 +68,10 @@ class Snapshot:
         offset = protocol.di_i.size + protocol.mono.size
         tanks_data = data[offset:offset + n_tanks*tank_struct.size]
         for id_, x, y in tank_struct.iter_unpack(tanks_data):
-            print(id_, x, y)
+            tank = self._engine.entities.get(id_)
+            if tank is None:
+                print("tank {} does not exist.".format(id_))
+                continue
+            tank.body.x = x
+            tank.body.y = y
         
