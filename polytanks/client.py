@@ -33,8 +33,7 @@ from . import constant
 from .constant import G
 from . import level
 from . import builder
-from . import engine
-from . import protocol
+from . import engine, protocol, snapshot
 
 class TankGraphic:
     def __init__(self, batch, group):
@@ -158,6 +157,7 @@ class Client(Scene):
         self.damage = []
         self.dt = 0.
         self.input = Client.Input()
+        self.snapshot = snapshot.Snapshot(self.engine)
         
     def send_input(self, dt):
         data = self.input.digest()
@@ -304,23 +304,7 @@ class Client(Scene):
             self.start_game(data)
             command = protocol.mono.unpack_from(data)[0]
         elif command == protocol.SNAPSHOT:
-            #self._snapshot(data)
-            print("receive snapshot")
-
-    def _snapshot(self, data):
-        command = protocol.mono.unpack_from(data)[0]
-        if command != protocol.SNAPSHOT: return
-        offset = protocol.mono.size
-        n_players = protocol.mono.unpack_from(data, offset)[0]
-        offset += protocol.mono.size
-        players_data = data[offset:offset+n_players*protocol.tank.size]
-        for id_, x, y, mov, cannon_angle in protocol.tank.iter_unpack(players_data):
-            print("snapshot", id_, x, y, mov, cannon_angle)
-            if id_ == self.tank.id:
-                self.tank.body.x = x
-                self.tank.body.y = y
-                self.tank.input.cannon_angle = cannon_angle
-            #print(id_, x, y, mov, cannon_angle)
+            self.snapshot.restore(data)
 
     def start_game(self, data):
         offset = protocol.mono.size
