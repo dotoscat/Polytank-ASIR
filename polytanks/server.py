@@ -14,6 +14,8 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from functools import partial
+import time
+from time import perf_counter
 import math
 from math import degrees
 from pprint import pprint
@@ -26,6 +28,19 @@ class Server(asyncio.DatagramProtocol):
     TICKRATE = 60
     SNAPSHOT_RATE = 30
     
+    class Repeater:
+        """Basic repeater. Only calls the function each *secs*."""
+        def __init__(self, f, secs):
+            self._f = f
+            self.last = perf_counter()
+            self.secs = secs
+                
+        def __call__(self, *args, **kwargs):
+            now = perf_counter()
+            if now - self.last >= self.secs:
+                self.last = now
+                self._f(*args, **kwargs)
+
     def __init__(self, address, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.engine = engine.Engine()
@@ -39,6 +54,11 @@ class Server(asyncio.DatagramProtocol):
         self.clients = {}
         self.players = [0]*4
         self.bots = [None]*4
+        
+        def ss_hola():
+            print("Hola cada segundo")
+        
+        self.rep = Server.Repeater(ss_hola, 1.)
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -186,7 +206,8 @@ class Server(asyncio.DatagramProtocol):
         dt = TIME
         print("sleep for", TIME)
         while True:
-            print(dt)
+            self.rep()
+            #print(dt)
             #for k in self.clients:
              #   print(self.clients[k].body.x, self.clients[k].body.y)
             for bot in self.bots:
@@ -196,7 +217,7 @@ class Server(asyncio.DatagramProtocol):
             for message, entity in self.engine.messages:
                 pass
             yield from asyncio.sleep(TIME)
-    
+        
     def _send_snapshot(self):
         TIME = 1./Server.SNAPSHOT_RATE
         snapshot_buffer = bytearray()
