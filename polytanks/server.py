@@ -33,7 +33,6 @@ class Server(asyncio.DatagramProtocol):
         self._address = address
         self._loop = asyncio.get_event_loop()
         self._loop.set_debug(debug)
-        self._past_time = 0.
         self.transport = None
         self.dt = 0.
         self.secs = 0
@@ -67,7 +66,6 @@ class Server(asyncio.DatagramProtocol):
     
     def connection_made(self, transport):
         self.transport = transport
-        asyncio.ensure_future(self._send_snapshot())
         print("Connection", transport)
     
     def connection_lost(self, cls):
@@ -185,9 +183,9 @@ class Server(asyncio.DatagramProtocol):
     @asyncio.coroutine
     def _tick(self, time):
         TIME = 1./Server.TICKRATE
+        dt = TIME
         print("sleep for", TIME)
         while True:
-            dt = time() - self._past_time
             print(dt)
             #for k in self.clients:
              #   print(self.clients[k].body.x, self.clients[k].body.y)
@@ -195,13 +193,10 @@ class Server(asyncio.DatagramProtocol):
                 if bot is None: continue
                 bot(None)
             self.engine.update(dt)
-            self._past_time = time()
             for message, entity in self.engine.messages:
-                if message == "jump":
-                    self._send_action_to_clients(protocol.JUMP, entity.id)
+                pass
             yield from asyncio.sleep(TIME)
     
-    @asyncio.coroutine
     def _send_snapshot(self):
         TIME = 1./Server.SNAPSHOT_RATE
         snapshot_buffer = bytearray()
@@ -226,7 +221,7 @@ class Server(asyncio.DatagramProtocol):
                 #print(bullet)
             for client in clients:
                 self.transport.sendto(snapshot_buffer, client)
-            yield from asyncio.sleep(TIME)
+            yield
 
     def __del__(self):
         if self.transport is not None:
