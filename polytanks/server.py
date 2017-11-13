@@ -99,10 +99,13 @@ class Server(asyncio.DatagramProtocol):
         elif command == protocol.JOINED:
             self._start_game(addr)
         elif command == protocol.CLIENT_INPUT:
-            self.client_input(data)
+            self.client_input(data, addr)
             #print("client input", addr, len(data))
 
-    def client_input(self, data):
+    def client_input(self, data, addr):
+        tank = self.clients.get(addr)
+        if tank is None: return
+        print(tank)
         input_buffer = data[protocol.mono.size:]
         fdata_iterator = protocol.struct.iter_unpack("!f", input_buffer)
         idata_iterator = protocol.struct.iter_unpack("!i", input_buffer)
@@ -116,22 +119,30 @@ class Server(asyncio.DatagramProtocol):
                 command = next(idata_iterator)[0]
                 next(fdata_iterator)
                 if command == protocol.MOVE_LEFT:
+                    tank.input.move_left()
                     print("mover izquierda")
                 elif command == protocol.MOVE_RIGHT:
+                    tank.input.move_right()
                     print("mover derecha")
                 elif command == protocol.STOP:
+                    tank.input.stop_moving()
                     print("parar")
                 elif command == protocol.JUMP:
+                    tank.input.jump()
                     print("saltar")
                 elif command == protocol.NO_JUMP:
+                    tank.input.not_jump()
                     print("no saltar")
                 elif command == protocol.SHOOT:
+                    tank.input.accumulate_power = True
                     print("disparar")
                 elif command == protocol.NO_SHOOT:
+                    tank.input.accumulate_power = False
                     print("no disparar")
                 elif command == protocol.AIM:
                     value = next(fdata_iterator)[0]
                     next(idata_iterator)
+                    tank.input.cannon_angle = value
                     print("apuntar", -degrees(value))
 
     def _start_game(self, addr):
@@ -214,7 +225,7 @@ class Server(asyncio.DatagramProtocol):
     def _send_snapshot(self):
         self.snapshot += 1
         data = self.snapshot.digest()
-        print("send snapshot", len(data))
+        #print("send snapshot", len(data))
         clients = self.clients
         for client in clients:
             self.transport.sendto(data, client)
