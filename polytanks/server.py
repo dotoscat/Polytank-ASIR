@@ -23,6 +23,10 @@ import asyncio
 from . import protocol
 from . import engine, level, bot, snapshot
 
+class Player:
+    def __init__(self, tank):
+        self.tank = tank
+
 class Server(asyncio.DatagramProtocol):
     
     TICKRATE = 60
@@ -51,8 +55,7 @@ class Server(asyncio.DatagramProtocol):
         self.transport = None
         self.tick = 0
         self.clients = {}
-        self.players = [0]*4
-        self.bots = [None]*4
+        self.players = [None]*4
         self.snapshot = snapshot.Snapshot(self.engine)
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1.)
         
@@ -65,20 +68,20 @@ class Server(asyncio.DatagramProtocol):
         #self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
-        for i, id_ in enumerate(self.players):
-            if id_ != 0: continue
+        for i, player in enumerate(self.players):
+            if player is None: continue
             tank = self.engine.create_tank()
             tank.set("body", x=200., y=100.)
-            self.players[i] = tank.id
-            self.bots[i] = partial(bot, tank)
+            self.players[i] = partial(bot, tank)
             return
         raise Exception("Assure enough slots, players, for bots")
     
     def add_player(self, tank):
-        for i, id_ in enumerate(self.players):
-            if id_ != 0: continue
-            self.players[i] = tank.id
-            break
+        for i, player in enumerate(self.players):
+            if player is None: continue
+            player = Player(tank)
+            self.players[i] = player
+            return player
     
     def connection_made(self, transport):
         self.transport = transport
@@ -101,9 +104,9 @@ class Server(asyncio.DatagramProtocol):
             #print("client input", addr, len(data))
 
     def client_input(self, data, addr):
-        tank = self.clients.get(addr)
-        if tank is None: return
-        print(tank)
+        player = self.clients.get(addr)
+        if player is None: return
+        tank = player.tank
         input_buffer = data[protocol.mono.size:]
         fdata_iterator = protocol.struct.iter_unpack("!f", input_buffer)
         idata_iterator = protocol.struct.iter_unpack("!i", input_buffer)
@@ -111,8 +114,8 @@ class Server(asyncio.DatagramProtocol):
             tick = idata[0]
             n_input = next(idata_iterator)[0]
             next(fdata_iterator)
-            if n_input:
-                print("tick", tick)
+            #if n_input:
+            #    print("tick", tick)
             for i in range(n_input):
                 command = next(idata_iterator)[0]
                 next(fdata_iterator)
@@ -141,7 +144,7 @@ class Server(asyncio.DatagramProtocol):
                     value = next(fdata_iterator)[0]
                     next(idata_iterator)
                     tank.input.cannon_angle = value
-                    print("apuntar", -degrees(value))
+                    #print("apuntar", -degrees(value))
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
@@ -178,9 +181,9 @@ class Server(asyncio.DatagramProtocol):
 
     def _join(self, addr):
         tank = self.engine.create_tank()
-        self.clients[addr] = tank
+        player = self.add_player(tank)
+        self.clients[addr] = player
         tank.set("body", x=128., y=128.)
-        self.add_player(tank)
         print("Client {} {} added".format(addr, tank.id))
         print(self.players)
         message = protocol.tetra.pack(protocol.JOINED, tank.id, tank.body.x, tank.body.y)
@@ -211,8 +214,8 @@ class Server(asyncio.DatagramProtocol):
             #print(self.tick)
             self._send_snapshot()
             #print(dt)
-            for bot in self.bots:
-                if bot is None: continue
+            for player in self.players:
+                if not callable(player): continue
                 bot(None)
             self.engine.update(dt)
             for message, entity in self.engine.messages:
