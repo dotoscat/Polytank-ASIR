@@ -152,12 +152,16 @@ class Server(asyncio.DatagramProtocol):
         protocol.mono.pack_into(data, 0, protocol.START_GAME)
         offset = protocol.mono.size
         entities = self.engine.entities
-        for i, id_ in enumerate(self.players):
-            if id_ == 0:
+        for i, player in enumerate(self.players):
+            if player is None:
                 protocol.tri.pack_into(data, offset, 0, 0., 0.)
             else:
-                body = entities[id_].body
-                protocol.tri.pack_into(data, offset, id_, body.x, body.y)
+                if callable(player):
+                    tank = player.args[0]
+                else:
+                    tank = player.tank
+                body = tank.body
+                protocol.tri.pack_into(data, offset, tank.id, body.x, body.y)
             offset += protocol.tri.size
         self.transport.sendto(data, addr)
 
@@ -191,12 +195,12 @@ class Server(asyncio.DatagramProtocol):
 
     def _logout(self, addr):
         print("logout", self.clients)
-        tank = self.clients[addr]
+        player = self.clients[addr]
+        player.tank.free()
         del self.engine.entities[tank.id]
         del self.clients[addr]
-        self.players = [0 if tank.id == id_ else id_ for id_ in self.players]
+        self.players = [None if player == p else p for p in self.players]
         print(self.players)
-        tank.free()
         self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
         print("Client {} removed", addr)
         print(self.clients)
