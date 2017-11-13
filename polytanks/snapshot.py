@@ -64,7 +64,7 @@ class Snapshot:
         """Restore engine from the data."""
         command, tick = protocol.di_i.unpack_from(data)
         n_tanks = protocol.mono.unpack_from(data, protocol.di_i.size)[0]
-        print("n tanks", n_tanks)
+        #print("n tanks", n_tanks)
         offset = protocol.di_i.size + protocol.mono.size
         tanks_data = data[offset:offset + n_tanks*tank_struct.size]
         for id_, x, y in tank_struct.iter_unpack(tanks_data):

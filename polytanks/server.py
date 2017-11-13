@@ -51,6 +51,7 @@ class Server(asyncio.DatagramProtocol):
         self.transport = None
         self.dt = 0.
         self.secs = 0
+        self.tick = 0
         self.clients = {}
         self.players = [0]*4
         self.bots = [None]*4
@@ -198,22 +199,22 @@ class Server(asyncio.DatagramProtocol):
         dt = TIME
         print("sleep for", TIME)
         while True:
+            #print(self.tick)
             self._send_snapshot()
             #print(dt)
-            #for k in self.clients:
-             #   print(self.clients[k].body.x, self.clients[k].body.y)
             for bot in self.bots:
                 if bot is None: continue
                 bot(None)
             self.engine.update(dt)
             for message, entity in self.engine.messages:
                 pass
+            self.tick += 1
             yield from asyncio.sleep(TIME)
         
     def _send_snapshot(self):
         self.snapshot += 1
         data = self.snapshot.digest()
-        print("send snapshot", data)
+        print("send snapshot", len(data))
         clients = self.clients
         for client in clients:
             self.transport.sendto(data, client)
