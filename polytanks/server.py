@@ -49,8 +49,6 @@ class Server(asyncio.DatagramProtocol):
         self._loop = asyncio.get_event_loop()
         self._loop.set_debug(debug)
         self.transport = None
-        self.dt = 0.
-        self.secs = 0
         self.tick = 0
         self.clients = {}
         self.players = [0]*4
