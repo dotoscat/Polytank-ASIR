@@ -69,7 +69,7 @@ class Server(asyncio.DatagramProtocol):
 
     def add_bot(self, bot):
         for i, player in enumerate(self.players):
-            if player is None: continue
+            if player is not None: continue
             tank = self.engine.create_tank()
             tank.set("body", x=200., y=100.)
             self.players[i] = partial(bot, tank)
@@ -78,7 +78,7 @@ class Server(asyncio.DatagramProtocol):
     
     def add_player(self, tank):
         for i, player in enumerate(self.players):
-            if player is None: continue
+            if player is not None: continue
             player = Player(tank)
             self.players[i] = player
             return player
@@ -197,7 +197,7 @@ class Server(asyncio.DatagramProtocol):
         print("logout", self.clients)
         player = self.clients[addr]
         player.tank.free()
-        del self.engine.entities[tank.id]
+        del self.engine.entities[player.tank.id]
         del self.clients[addr]
         self.players = [None if player == p else p for p in self.players]
         print(self.players)
