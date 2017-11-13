@@ -196,6 +196,7 @@ Referencias
 * `https://gamedev.stackexchange.com/questions/67738/limitations-of-p2p-multiplayer-games-vs-client-server`
 * `https://en.wikipedia.org/wiki/Handshaking`
 * `https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking`
+* `https://gamedev.stackexchange.com/questions/120033/resolving-prediction-error-from-client-side-prediction-and-server-reconciliation`
 * `http://fabiensanglard.net/quake3/network.php`
 * `https://gamedev.stackexchange.com/questions/22815/how-can-i-alleviate-network-lag-issues-with-players-from-other-countries`
 * `https://www.gamedev.net/forums/topic/375992-lag-over-the-internet/`
