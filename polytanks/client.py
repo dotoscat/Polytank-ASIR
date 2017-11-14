@@ -158,6 +158,7 @@ class Client(Scene):
         self.dt = 0.
         self.input = Client.Input()
         self.snapshot = snapshot.Snapshot(self.engine)
+        self.last_server_tick = -1
         
     def send_input(self, dt):
         data = self.input.digest()
@@ -304,6 +305,11 @@ class Client(Scene):
             self.start_game(data)
             command = protocol.mono.unpack_from(data)[0]
         elif command == protocol.SNAPSHOT:
+            command, tick = protocol.di_i.unpack_from(data)
+            if tick <= self.last_server_tick:
+                print(tick, "rejected!")
+                return
+            self.last_server_tick = tick
             self.snapshot.restore(data)
             self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
 

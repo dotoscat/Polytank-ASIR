@@ -74,4 +74,5 @@ class Snapshot:
                 continue
             tank.body.x = x
             tank.body.y = y
+        return tick
         
