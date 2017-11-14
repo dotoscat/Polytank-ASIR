@@ -182,24 +182,6 @@ class Server(asyncio.DatagramProtocol):
             offset += protocol.tri.size
         self.transport.sendto(data, addr)
 
-    def _jump(self, addr, pressed):
-        tank = self.clients[addr]
-        if pressed == 1.:
-            tank.input.jump()
-        else:
-            tank.input.not_jump()
-
-    def _shoot(self, addr, release):
-        tank = self.clients[addr]
-        if release == 1.:
-            tank.input.accumulate_power = True
-        else:
-            tank.input.accumulate_power = False
-            tank.input.shoots = True
-            data = protocol.di_i.pack(protocol.SHOOTED, self.clients[addr].id)
-            for client in self.clients:
-                self.transport.sendto(data, client)
-
     def _join(self, addr):
         tank = self.engine.create_tank()
         player = self.add_player(tank)
