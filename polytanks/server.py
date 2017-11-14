@@ -26,6 +26,19 @@ from . import engine, level, bot, snapshot
 class Player:
     def __init__(self, tank):
         self.tank = tank
+        self.last_time = time.monotonic()
+        self.ping = 0.
+        self._ack = True
+        
+    def send(self):
+        self.last_time = time.monotonic()
+        self._ack = False
+        
+    def ack(self):
+        self._ack = True
+        now = time.monotonic()
+        self.ping = (now - self.last_time)/2.
+        self.last_time = now
 
 class Server(asyncio.DatagramProtocol):
     
@@ -102,6 +115,10 @@ class Server(asyncio.DatagramProtocol):
         elif command == protocol.CLIENT_INPUT:
             self.client_input(data, addr)
             #print("client input", addr, len(data))
+        elif command == protocol.CLIENT_ACK:
+            player = self.clients[addr]
+            player.ack()
+            print("ping de ", addr, player.ping)
 
     def client_input(self, data, addr):
         player = self.clients.get(addr)
@@ -233,6 +250,9 @@ class Server(asyncio.DatagramProtocol):
         #print("send snapshot", len(data))
         clients = self.clients
         for client in clients:
+            player = clients[client]
+            if isinstance(player, Player):
+                player.send()
             self.transport.sendto(data, client)
 
     def __del__(self):

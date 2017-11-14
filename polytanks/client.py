@@ -305,6 +305,7 @@ class Client(Scene):
             command = protocol.mono.unpack_from(data)[0]
         elif command == protocol.SNAPSHOT:
             self.snapshot.restore(data)
+            self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
 
     def start_game(self, data):
         offset = protocol.mono.size
