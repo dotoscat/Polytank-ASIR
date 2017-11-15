@@ -43,7 +43,7 @@ class Player:
 class Server(asyncio.DatagramProtocol):
     
     TICKRATE = 60
-    SNAPSHOT_RATE = 1
+    SNAPSHOT_RATE = 30
     
     class Repeater:
         """Basic repeater. Only calls the function each *secs*."""
@@ -70,7 +70,7 @@ class Server(asyncio.DatagramProtocol):
         self.clients = {}
         self.players = [None]*4
         self.snapshot = snapshot.Snapshot(self.engine)
-        self._send_snapshot = Server.Repeater(self._send_snapshot, 1.)
+        self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -78,7 +78,7 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
         
-        #self.add_bot(bot.jumper)
+        self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
         for i, player in enumerate(self.players):
@@ -219,7 +219,7 @@ class Server(asyncio.DatagramProtocol):
             #print(dt)
             for player in self.players:
                 if not callable(player): continue
-                bot(None)
+                player(None)
             self.engine.update(dt)
             for message, entity in self.engine.messages:
                 pass
