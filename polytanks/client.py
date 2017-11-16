@@ -31,9 +31,8 @@ from . import assets
 from .system import update_user_input
 from . import constant
 from .constant import G
-from . import level
-from . import builder
-from . import engine, protocol, snapshot
+from . import engine, protocol, builder, level
+from .snapshot import Snapshot
 
 class TankGraphic:
     def __init__(self, batch, group):
@@ -157,7 +156,6 @@ class Client(Scene):
         self.damage = []
         self.dt = 0.
         self.input = Client.Input()
-        self.snapshot = snapshot.Snapshot(self.engine)
         self.last_server_tick = -1
         
     def send_input(self, dt):
@@ -310,7 +308,7 @@ class Client(Scene):
                 print(tick, "rejected!")
                 return
             self.last_server_tick = tick
-            self.snapshot.restore(data)
+            Snapshot.restore(data, self.engine)
             self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
 
     def start_game(self, data):

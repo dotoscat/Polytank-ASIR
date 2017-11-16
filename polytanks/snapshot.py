@@ -49,14 +49,14 @@ class Snapshot:
         """Returns bytes of the current snapshot to send over the network."""
         data = bytearray()
         snapshot = self.snapshot
-        data += protocol.di_i.pack(protocol.SNAPSHOT, tick)
-        data += protocol.mono.pack(len(current["tanks"]))
-        for tank in current["tanks"]:
+        data += protocol.di_i.pack(protocol.SNAPSHOT, self.tick)
+        data += protocol.mono.pack(len(snapshot["tanks"]))
+        for tank in snapshot["tanks"]:
             data += tank_struct.pack(*tank)
         return data
 
     @staticmethod
-    def restore(self, data, engine):
+    def restore(data, engine):
         """Restore engine from the data."""
         command, tick = protocol.di_i.unpack_from(data)
         n_tanks = protocol.mono.unpack_from(data, protocol.di_i.size)[0]

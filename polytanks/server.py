@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import deque
 from functools import partial
 import time
 from time import perf_counter
@@ -20,8 +21,8 @@ import math
 from math import degrees
 from pprint import pprint
 import asyncio
-from . import protocol
-from . import engine, level, bot, snapshot
+from . import engine, level, bot, protocol
+from .snapshot import Snapshot
 
 class Player:
     def __init__(self, tank):
@@ -69,8 +70,8 @@ class Server(asyncio.DatagramProtocol):
         self.tick = 0
         self.clients = {}
         self.players = [None]*4
-        self.snapshot = snapshot.Snapshot(self.engine)
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
+        self.snapshots = deque()
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -227,8 +228,8 @@ class Server(asyncio.DatagramProtocol):
             yield from asyncio.sleep(TIME)
         
     def _send_snapshot(self):
-        self.snapshot += 1
-        data = self.snapshot.digest()
+        snapshot = Snapshot(self.engine, self.tick)
+        data = snapshot.to_network()
         #print("send snapshot", len(data))
         clients = self.clients
         for client in clients:
