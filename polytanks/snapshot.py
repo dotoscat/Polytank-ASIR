@@ -26,41 +26,37 @@ tank = namedtuple("tank", "id x y")
 tank_struct = struct.Struct("!iff")
 
 class Snapshot:
-    """To make snapshots is better pass the engine (and forget it)."""
-    def __init__(self, engine):
-        self._engine = engine
-        self.tick = 0
-        self.snapshots = deque()
-    
-    def __iadd__(self, value):
-        snapshot = self.make()
-        self.snapshots.appendleft((self.tick, snapshot))
-        self.tick += value
-        return self
-
-    def make(self):
+    def __init__(self, engine, tick=0):
+        self._ack = False
+        self.tick = tick
+        self.snapshot = self._make_from_engine(engine)
+        
+    def _make_from_engine(self, engine):
         snapshot = {}
         tanks = deque()
-        used_tanks = self._engine.tank_pool._used
+        used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             tank_snapshot = tank(atank.id, atank.body.x, atank.body.y)
             tanks.append(tank_snapshot)
         snapshot["tanks"] = tanks
         return snapshot
-        
-    def digest(self):
+    
+    @property
+    def ack(self):
+        return self.ack
+            
+    def to_network(self):
         """Returns bytes of the current snapshot to send over the network."""
-        if not self.snapshots:
-            return b'click!'
         data = bytearray()
-        tick, current = self.snapshots[0]
+        snapshot = self.snapshot
         data += protocol.di_i.pack(protocol.SNAPSHOT, tick)
         data += protocol.mono.pack(len(current["tanks"]))
         for tank in current["tanks"]:
             data += tank_struct.pack(*tank)
         return data
 
-    def restore(self, data):
+    @staticmethod
+    def restore(self, data, engine):
         """Restore engine from the data."""
         command, tick = protocol.di_i.unpack_from(data)
         n_tanks = protocol.mono.unpack_from(data, protocol.di_i.size)[0]
@@ -68,7 +64,7 @@ class Snapshot:
         offset = protocol.di_i.size + protocol.mono.size
         tanks_data = data[offset:offset + n_tanks*tank_struct.size]
         for id_, x, y in tank_struct.iter_unpack(tanks_data):
-            tank = self._engine.entities.get(id_)
+            tank = engine.entities.get(id_)
             if tank is None:
                 print("tank {} does not exist.".format(id_))
                 continue
