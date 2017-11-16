@@ -37,7 +37,8 @@ class Snapshot:
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
-            tank_snapshot = tank(atank.id, body.x, body.y, body.vel_x, body.vel_y)
+            tank_snapshot = tank(atank.id, body.x, body.y,
+                body.vel_x, body.vel_y)
             tanks.append(tank_snapshot)
         snapshot["tanks"] = tanks
         return snapshot
