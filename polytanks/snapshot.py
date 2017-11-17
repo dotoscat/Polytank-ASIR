@@ -22,8 +22,8 @@ BULLET = 2
 EXPLOSION = 3
 POWERUP = 4
 
-tank = namedtuple("tank", "id x y vel_x vel_y")
-tank_struct = struct.Struct("!iffff")
+tank = namedtuple("tank", "id x y vel_x vel_y damage")
+tank_struct = struct.Struct("!iffffi")
 
 class Snapshot:
     def __init__(self, engine, tick=0):
@@ -38,7 +38,7 @@ class Snapshot:
         for atank in used_tanks:
             body = atank.body
             tank_snapshot = tank(atank.id, body.x, body.y,
-                body.vel_x, body.vel_y)
+                body.vel_x, body.vel_y, atank.tank.damage)
             tanks.append(tank_snapshot)
         snapshot["tanks"] = tanks
         return snapshot
@@ -65,7 +65,7 @@ class Snapshot:
         #print("n tanks", n_tanks)
         offset = protocol.di_i.size + protocol.mono.size
         tanks_data = data[offset:offset + n_tanks*tank_struct.size]
-        for id_, x, y, vel_x, vel_y in tank_struct.iter_unpack(tanks_data):
+        for id_, x, y, vel_x, vel_y, damage in tank_struct.iter_unpack(tanks_data):
             tank = engine.entities.get(id_)
             if tank is None:
                 print("tank {} does not exist.".format(id_))
@@ -75,4 +75,5 @@ class Snapshot:
             body.y = y
             body.vel_x = vel_x
             body.vel_y = vel_y
+            tank.tank.damage = damage
         return tick
