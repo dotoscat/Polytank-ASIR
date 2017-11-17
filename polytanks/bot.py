@@ -25,5 +25,4 @@
 
 def jumper(entity, world):
     if entity.platform.touch_floor:
-        print("Salto!")
         entity.input.jump()

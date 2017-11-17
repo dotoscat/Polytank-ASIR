@@ -109,6 +109,7 @@ class Engine:
         vel_y = vel[1] + entity.body.vel_y
         bullet.set("body", vel_x=vel_x, vel_y=vel_y, x=x, y=y, gravity=gravity)
         bullet.set("collision", width=4., height=4.)
+        self.entities[bullet.id] = bullet
         return bullet
 
     def _spawn_explosion(self, x, y, damage, knockback=0):

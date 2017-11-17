@@ -76,4 +76,3 @@ class Snapshot:
             body.vel_x = vel_x
             body.vel_y = vel_y
         return tick
-        

@@ -119,7 +119,7 @@ class Server(asyncio.DatagramProtocol):
         elif command == protocol.CLIENT_ACK:
             player = self.clients[addr]
             player.ack()
-            print("ping de ", addr, player.ping)
+            #print("ping de ", addr, player.ping)
 
     def client_input(self, data, addr):
         player = self.clients.get(addr)
@@ -221,6 +221,7 @@ class Server(asyncio.DatagramProtocol):
             self.engine.update(dt)
             for message, entity in self.engine.messages:
                 pass
+                #print(message, entity)
             self.tick += 1
             self._send_snapshot()
             yield from asyncio.sleep(TIME)
