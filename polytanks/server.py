@@ -71,7 +71,7 @@ class Server(asyncio.DatagramProtocol):
         self.clients = {}
         self.players = [None]*4
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
-        self.snapshots = deque()
+        self.snapshots = deque([], 32)
         
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
@@ -227,6 +227,7 @@ class Server(asyncio.DatagramProtocol):
         
     def _send_snapshot(self):
         snapshot = Snapshot(self.engine, self.tick)
+        self.snapshots.appendleft(snapshot)
         data = snapshot.to_network()
         #print("send snapshot", len(data))
         clients = self.clients
