@@ -49,8 +49,10 @@ class Snapshot:
         for abullet in used_bullets:
             body = abullet.body
             bullet_snapshot = bullet(abullet.id, body.x, body.y,
-                body.vel_x, body.vel_y, abullet.bullet.owner,
+                body.vel_x, body.vel_y, abullet.bullet.owner.id,
                 abullet.bullet.power)
+            bullets.append(bullet_snapshot)
+        snapshot["bullets"] = bullets
         return snapshot
     
     @property
@@ -65,6 +67,9 @@ class Snapshot:
         data += protocol.mono.pack(len(snapshot["tanks"]))
         for tank in snapshot["tanks"]:
             data += tank_struct.pack(*tank)
+        data += protocol.mono.pack(len(snapshot["bullets"]))
+        for bullet in snapshot["bullets"]:
+            data += bullet_struct.pack(*bullet)
         return data
 
     @staticmethod
@@ -74,7 +79,8 @@ class Snapshot:
         n_tanks = protocol.mono.unpack_from(data, protocol.di_i.size)[0]
         #print("n tanks", n_tanks)
         offset = protocol.di_i.size + protocol.mono.size
-        tanks_data = data[offset:offset + n_tanks*tank_struct.size]
+        tanks_offset = n_tanks*tank_struct.size
+        tanks_data = data[offset:offset + tanks_offset]
         for id_, x, y, vel_x, vel_y, damage in tank_struct.iter_unpack(tanks_data):
             tank = engine.entities.get(id_)
             if tank is None:
@@ -86,4 +92,7 @@ class Snapshot:
             body.vel_x = vel_x
             body.vel_y = vel_y
             tank.tank.damage = damage
+        offset += tanks_offset
+        n_bullets = protocol.mono.unpack_from(data, offset)[0]
+        print("Número de balas del snapshot", n_bullets)
         return tick
