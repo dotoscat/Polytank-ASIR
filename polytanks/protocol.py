@@ -42,5 +42,6 @@ di = struct.Struct("!if")
 di_i = struct.Struct("!ii")
 tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
-tank = struct.Struct("!iffff")
-bullet = struct.Struct("!iffif")
+
+input_di = di_i
+input_tri = strutc.Struct("!iif")
