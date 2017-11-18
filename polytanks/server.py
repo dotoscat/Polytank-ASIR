@@ -124,45 +124,36 @@ class Server(asyncio.DatagramProtocol):
     def client_input(self, data, addr):
         player = self.clients.get(addr)
         if player is None: return
+        data_len = len(data)
+        if data_len == protocol.input_di.size:
+            command, subcommand = protocol.input_di.unpack(data)
+        else:
+            command, subcommand, value = protocol.input_tri.unpack(data)
         tank = player.tank
-        input_buffer = data[protocol.mono.size:]
-        fdata_iterator = protocol.struct.iter_unpack("!f", input_buffer)
-        idata_iterator = protocol.struct.iter_unpack("!i", input_buffer)
-        for idata, fdata in zip(idata_iterator, fdata_iterator):
-            tick = idata[0]
-            n_input = next(idata_iterator)[0]
-            next(fdata_iterator)
-            #if n_input:
-            #    print("tick", tick)
-            for i in range(n_input):
-                command = next(idata_iterator)[0]
-                next(fdata_iterator)
-                if command == protocol.MOVE_LEFT:
-                    tank.input.move_left()
-                    print("mover izquierda")
-                elif command == protocol.MOVE_RIGHT:
-                    tank.input.move_right()
-                    print("mover derecha")
-                elif command == protocol.STOP:
-                    tank.input.stop_moving()
-                    print("parar")
-                elif command == protocol.JUMP:
-                    tank.input.jump()
-                    print("saltar")
-                elif command == protocol.NO_JUMP:
-                    tank.input.not_jump()
-                    print("no saltar")
-                elif command == protocol.SHOOT:
-                    tank.input.accumulate_power = True
-                    print("disparar")
-                elif command == protocol.NO_SHOOT:
-                    tank.input.accumulate_power = False
-                    print("no disparar")
-                elif command == protocol.AIM:
-                    value = next(fdata_iterator)[0]
-                    next(idata_iterator)
-                    tank.input.cannon_angle = value
-                    #print("apuntar", -degrees(value))
+        if subcommand == protocol.MOVE_LEFT:
+            tank.input.move_left()
+            print("mover izquierda")
+        elif subcommand == protocol.MOVE_RIGHT:
+            tank.input.move_right()
+            print("mover derecha")
+        elif subcommand == protocol.STOP:
+            tank.input.stop_moving()
+            print("parar")
+        elif subcommand == protocol.JUMP:
+            tank.input.jump()
+            print("saltar")
+        elif subcommand == protocol.NO_JUMP:
+            tank.input.not_jump()
+            print("no saltar")
+        elif subcommand == protocol.SHOOT:
+            tank.input.accumulate_power = True
+            print("disparar")
+        elif subcommand == protocol.NO_SHOOT:
+            tank.input.accumulate_power = False
+            print("no disparar")
+        elif subcommand == protocol.AIM:
+            tank.input.cannon_angle = value
+            print("apuntar", -degrees(value))
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size

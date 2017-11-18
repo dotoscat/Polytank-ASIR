@@ -44,4 +44,4 @@ tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
 
 input_di = di_i
-input_tri = strutc.Struct("!iif")
+input_tri = struct.Struct("!iif")
