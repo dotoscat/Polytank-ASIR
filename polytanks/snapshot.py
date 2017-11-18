@@ -25,6 +25,9 @@ POWERUP = 4
 tank = namedtuple("tank", "id x y vel_x vel_y damage")
 tank_struct = struct.Struct("!iffffi")
 
+bullet = ("bullet", "id x y vel_x vel_y owner power")
+bullet_struct = struct.Struct("!iffffif")
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self._ack = False
@@ -34,6 +37,7 @@ class Snapshot:
     def _make_from_engine(self, engine):
         snapshot = {}
         tanks = deque()
+        bullets = deque()
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
@@ -41,6 +45,12 @@ class Snapshot:
                 body.vel_x, body.vel_y, atank.tank.damage)
             tanks.append(tank_snapshot)
         snapshot["tanks"] = tanks
+        used_bullets = engine.bullet_pool._used
+        for abullet in used_bullets:
+            body = abullet.body
+            bullet_snapshot = bullet(abullet.id, body.x, body.y,
+                body.vel_x, body.vel_y, abullet.bullet.owner,
+                abullet.bullet.power)
         return snapshot
     
     @property
