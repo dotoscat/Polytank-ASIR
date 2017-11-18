@@ -150,6 +150,7 @@ class Server(asyncio.DatagramProtocol):
             print("disparar")
         elif subcommand == protocol.NO_SHOOT:
             tank.input.accumulate_power = False
+            tank.input.shoots = True
             print("no disparar")
         elif subcommand == protocol.AIM:
             tank.input.cannon_angle = value

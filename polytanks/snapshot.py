@@ -25,7 +25,7 @@ POWERUP = 4
 tank = namedtuple("tank", "id x y vel_x vel_y damage")
 tank_struct = struct.Struct("!iffffi")
 
-bullet = ("bullet", "id x y vel_x vel_y owner power")
+bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
 class Snapshot:
