@@ -115,7 +115,6 @@ class Client(Scene):
         
         self.damage = []
         self.dt = 0.
-        self.input = Client.Input()
         self.last_server_tick = -1
         
     def send_input(self, dt):
@@ -126,7 +125,6 @@ class Client(Scene):
         self.director.set_exclusive_mouse(True)
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
-        pyglet.clock.schedule_interval(self.send_input, 1./Client.SEND_INPUT_RATE)
 
     def clean_entity(self, entity):
         if (isinstance(entity, self.engine.bullet_pool)
@@ -162,7 +160,6 @@ class Client(Scene):
         for message, entity in self.engine.messages:
             if message in assets.player:
                 assets.player.play(message)
-        self.input += 1
 
     def _upgrade_pointer(self):
         if not self._joined: return
