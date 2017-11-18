@@ -95,4 +95,13 @@ class Snapshot:
         offset += tanks_offset
         n_bullets = protocol.mono.unpack_from(data, offset)[0]
         print("Número de balas del snapshot", n_bullets)
+        offset += protocol.mono.size
+        bullets_offset = n_bullets*bullet_struct.size
+        bullets_data = data[offset:offset + bullets_offset]
+        for id_, x, y, vel_x, vel_y, owner_id, power in bullet_struct.iter_unpack(bullets_data):
+            bullet = engine.entities.get(id_)
+            if bullet is None:
+                bullet = engine.spawn_bullet(id_)
+            bullet.set("body", x=x, y=y, vel_x=vel_x, vel_y=vel_y)
+            bullet.set("bullet", power=power, owner=engine.entities[owner_id])
         return tick

@@ -112,6 +112,12 @@ class Engine:
         self.entities[bullet.id] = bullet
         return bullet
 
+    def spawn_bullet(self, id_=None):
+        bullet = self.bullet_pool.get()
+        id_ = id_ if id_ is not None else bullet.id
+        self.entities[id_] = bullet
+        return bullet
+
     def _spawn_explosion(self, x, y, damage, knockback=0):
         explosion = self.explosion_pool.get()
         explosion.set("body", x=x, y=y)
