@@ -211,9 +211,6 @@ class Server(asyncio.DatagramProtocol):
                 if not callable(player): continue
                 player(None)
             self.engine.update(dt)
-            for message, entity in self.engine.messages:
-                pass
-                #print(message, entity)
             self.tick += 1
             self._send_snapshot()
             yield from asyncio.sleep(TIME)

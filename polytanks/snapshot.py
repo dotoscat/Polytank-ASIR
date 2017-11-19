@@ -28,6 +28,8 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
+message_struct = struct.Struct("!pi")
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self._ack = False
@@ -53,6 +55,8 @@ class Snapshot:
                 abullet.bullet.power)
             bullets.append(bullet_snapshot)
         snapshot["bullets"] = bullets
+        messages = [message for message in engine.messages]
+        snapshot["messages"] = messages
         return snapshot
     
     @property
@@ -70,6 +74,9 @@ class Snapshot:
         data += protocol.mono.pack(len(snapshot["bullets"]))
         for bullet in snapshot["bullets"]:
             data += bullet_struct.pack(*bullet)
+        data += protocol.mono.pack(len(snapshot["messages"]))
+        for message, entity in snapshot["messages"]:
+            data += message_struct.pack(message.encode(), entity.id)
         return data
 
     @staticmethod
