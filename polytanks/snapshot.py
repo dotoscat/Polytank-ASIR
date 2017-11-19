@@ -28,7 +28,7 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
-message_struct = struct.Struct("!pi")
+message_struct = struct.Struct("!16si")
 
 class Snapshot:
     def __init__(self, engine, tick=0):
@@ -101,7 +101,6 @@ class Snapshot:
             tank.tank.damage = damage
         offset += tanks_offset
         n_bullets = protocol.mono.unpack_from(data, offset)[0]
-        print("Número de balas del snapshot", n_bullets)
         offset += protocol.mono.size
         bullets_offset = n_bullets*bullet_struct.size
         bullets_data = data[offset:offset + bullets_offset]
@@ -111,4 +110,10 @@ class Snapshot:
                 bullet = engine.spawn_bullet(id_)
             bullet.set("body", x=x, y=y, vel_x=vel_x, vel_y=vel_y)
             bullet.set("bullet", power=power, owner=engine.entities[owner_id])
+        offset += bullets_offset
+        n_messages = protocol.mono.unpack_from(data, offset)[0]
+        messages_offset = n_messages*message_struct.size
+        messages_data = data[offset:offset + messages_offset]
+        if n_messages:
+            print("n mensajes", n_messages)
         return tick
