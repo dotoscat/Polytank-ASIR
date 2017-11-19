@@ -29,7 +29,8 @@ class PlayerManager:
             self.voices[name] = source
         
     def play(self, name):
-        voice = self.voices[name]
+        voice = self.voices.get(name)
+        if voice is None: return
         if isinstance(voice, tuple):
             if not voice[0].playing:
                 voice[0].queue(voice[1])
@@ -37,9 +38,6 @@ class PlayerManager:
                 return voice[0]
         else:
             return voice.play()
-
-    def __contains__(self, name):
-        return name in self.voices
 
 ASSETS_DIR = "assets"
 
@@ -72,11 +70,3 @@ images["heal"].anchor_x = 8.
 images["heal"].anchor_y = 8.
 images["power"].anchor_x = 8.
 images["power"].anchor_y = 8.
-
-player = PlayerManager()
-player.add("explosion", sounds["explosion"])
-player.add("float", sounds["float"], repeat=True)
-player.add("touch-floor", sounds["hit-platform"])
-player.add("jump", sounds["jump"])
-player.add("powerup", sounds["powerup"])
-player.add("shoot", sounds["shoot"])

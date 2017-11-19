@@ -27,12 +27,11 @@ from .ogf4py3 import magnitude_to_vector, get_angle_from, Connection
 from .ogf4py3 import toyblock3
 from .ogf4py3 import Scene
 from .ogf4py3 import system
-from . import assets
 from .system import update_user_input
-from . import constant
 from .constant import G
-from . import engine, protocol, builder, level
+from . import engine, protocol, builder, level, constant, assets
 from .snapshot import Snapshot
+from .engine import Engine
 
 class TankGraphic:
     def __init__(self, batch, group):
@@ -100,6 +99,15 @@ class Client(Scene):
         builder.powerup.add("sprite", Sprite, assets.images["heal"],
             batch=self.batch, group=self.group[3])
         
+        self.player = assets.PlayerManager()
+        player = self.player
+        player.add(Engine.EXPLOSION, assets.sounds["explosion"])
+        player.add(Engine.FLOAT, assets.sounds["float"], repeat=True)
+        player.add(Engine.TOUCH_FLOOR, assets.sounds["hit-platform"])
+        player.add(Engine.JUMP, assets.sounds["jump"])
+        player.add(Engine.POWERUP, assets.sounds["powerup"])
+        player.add(Engine.SHOOT, assets.sounds["shoot"])
+        
         self.engine = engine.Engine()
         level.load_level(level.basic, self.engine.platform_pool)
 
@@ -157,9 +165,9 @@ class Client(Scene):
         update_tank_graphic()
         self._upgrade_pointer()
         system.sprite()
+        player_play = self.player.play
         for message, entity in self.engine.messages:
-            if message in assets.player:
-                assets.player.play(message)
+            player_play(message)
 
     def _upgrade_pointer(self):
         if not self._joined: return
