@@ -34,6 +34,13 @@ systems = [system.lifespan, update_user_input, system.collision,
 
 class Engine:
     
+    SHOOT = 1
+    TOUCH_FLOOR = 2
+    EXPLOSION = 3
+    FLOAT = 4
+    POWERUP = 5
+    JUMP = 6
+    
     def __init__(self, tank_builder=builder.tank, bullet_builder=builder.bullet,
                 platform_builder=builder.platform, explosion_builder=builder.explosion,
                 powerup_builder=builder.powerup, systems=systems):
@@ -77,7 +84,7 @@ class Engine:
         entity.input.reset_time_floating()
         entity.tank.hitstun = 0.
         entity.tank.control = True
-        self._add_message(("touch-floor", entity))
+        self._add_message((Engine.TOUCH_FLOOR, entity))
 
     def shoot(self, entity):
         x = entity.tank.cannon_x
@@ -91,7 +98,7 @@ class Engine:
             force *= power
         bullet = self._spawn_bullet(entity, x, y, force, angle, gravity)
         bullet.set("bullet", owner=entity, power=power)
-        self._add_message(("shoot", entity))
+        self._add_message((Engine.SHOOT, entity))
 
     def create_tank(self, id_=None):
         tank = self.tank_pool.get()
@@ -122,19 +129,19 @@ class Engine:
         explosion = self.explosion_pool.get()
         explosion.set("body", x=x, y=y)
         explosion.set("explosion", damage=damage, knockback=knockback)
-        self._add_message(("explosion", explosion))
+        self._add_message((Engine.EXPLOSION, explosion))
 
     def jump(self, entity):
         entity.body.vel_y = G/2.
         entity.input.do_jump = False
-        self._add_message(("jump", entity))
+        self._add_message((Engine.JUMP, entity))
         
     def float(self, entity, dt):
         if entity.body.vel_y < 0.:
             entity.body.vel_y = 0.
         entity.input.time_floating += dt
         entity.body.apply_force(dt, y=G*1.5)
-        self._add_message(("float", entity))
+        self._add_message((Engine.FLOAT, entity))
 
     def bullet_platform(self, bullet, platform):
         if bullet.body.vel_y < 0.:
@@ -164,7 +171,7 @@ class Engine:
     def powerup_tank(self, powerup, tank):
         powerup.powerup.action(tank)
         powerup.free()
-        self._add_message(("powerup", tank))
+        self._add_message((Engine.POWERUP, tank))
 
     def _spawn_powerup(self, x, y, type_):
         powerup = self.powerup_pool.get()

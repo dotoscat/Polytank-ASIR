@@ -28,7 +28,7 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
-message_struct = struct.Struct("!16si")
+message_struct = struct.Struct("!ii")
 
 class Snapshot:
     def __init__(self, engine, tick=0):
@@ -76,7 +76,7 @@ class Snapshot:
             data += bullet_struct.pack(*bullet)
         data += protocol.mono.pack(len(snapshot["messages"]))
         for message, entity in snapshot["messages"]:
-            data += message_struct.pack(message.encode(), entity.id)
+            data += message_struct.pack(message, entity.id)
         return data
 
     @staticmethod
