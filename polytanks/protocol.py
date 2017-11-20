@@ -43,5 +43,5 @@ di_i = struct.Struct("!ii")
 tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
 
-input_di = di_i
-input_tri = struct.Struct("!iif")
+#command, tick, movement, cannon_angle, shoot, jump
+input = struct.Struct("!iff??")

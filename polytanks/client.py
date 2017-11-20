@@ -124,9 +124,15 @@ class Client(Scene):
         self.damage = []
         self.dt = 0.
         self.last_server_tick = -1
+        self.tick = 0.
         
     def send_input(self, dt):
-        data = self.input.digest()
+        if self.tank is None: return
+        tank_input = self.tank.input
+        data = protocol.input.pack(protocol.CLIENT_INPUT, self.tick,
+            tank_input.move, tank_input.cannon_angle,
+            tank_input.shoots, tank_input.do_jump)
+        print(tank.input.move, tank.input.cannon_angle, tank.input.shoots, tank.input.do_jump)
         self.conn.socket.send(data)
 
     def init(self):
@@ -155,6 +161,7 @@ class Client(Scene):
         #    if choice((True, False)):
         #        powerup = self.engine._spawn_powerup(128., 128., "heal")
         #        powerup.sprite.image = assets.images["heal"]
+        self.send_input(dt)
         self.conn.tick()
         self.engine.update(dt)
         if self._joined:
@@ -167,9 +174,9 @@ class Client(Scene):
         system.sprite()
         player_play = self.player.play
         for message, entity in self.engine.messages:
-            print(message, entity)
             player_play(message)
-
+        self.tick += 1
+        
     def _upgrade_pointer(self):
         if not self._joined: return
         aim_pointer = self.player_input.aim_pointer
