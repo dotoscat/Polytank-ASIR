@@ -28,8 +28,6 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
-message_struct = struct.Struct("!ii")
-
 class Snapshot:
     def __init__(self, engine, tick=0):
         self._ack = False
@@ -55,8 +53,6 @@ class Snapshot:
                 abullet.bullet.power)
             bullets.append(bullet_snapshot)
         snapshot["bullets"] = bullets
-        messages = deque(message for message in engine.messages)
-        snapshot["messages"] = messages
         return snapshot
     
     @property
@@ -74,10 +70,6 @@ class Snapshot:
         data += protocol.mono.pack(len(snapshot["bullets"]))
         for bullet in snapshot["bullets"]:
             data += bullet_struct.pack(*bullet)
-        data += protocol.mono.pack(len(snapshot["messages"]))
-        for message, entity in snapshot["messages"]:
-            print(message, entity)
-            data += message_struct.pack(message, entity.id)
         return data
 
     @staticmethod
@@ -111,12 +103,4 @@ class Snapshot:
                 bullet = engine.spawn_bullet(id_)
             bullet.set("body", x=x, y=y, vel_x=vel_x, vel_y=vel_y)
             bullet.set("bullet", power=power, owner=engine.entities[owner_id])
-        offset += bullets_offset
-        n_messages = protocol.mono.unpack_from(data, offset)[0]
-        messages_offset = n_messages*message_struct.size
-        messages_data = data[offset:offset + messages_offset]
-        messages = ((message[0], engine.entities[message[1]]) for message
-            in message_struct.iter_unpack(messages_data))
-        #print("messages", [message for message in messages])
-        #engine._messages.extend(messages)
         return tick
