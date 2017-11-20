@@ -167,6 +167,7 @@ class Client(Scene):
         system.sprite()
         player_play = self.player.play
         for message, entity in self.engine.messages:
+            print(message, entity)
             player_play(message)
 
     def _upgrade_pointer(self):

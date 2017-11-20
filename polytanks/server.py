@@ -154,7 +154,7 @@ class Server(asyncio.DatagramProtocol):
             print("no disparar")
         elif subcommand == protocol.AIM:
             tank.input.cannon_angle = value
-            print("apuntar", -degrees(value))
+            #print("apuntar", -degrees(value))
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size

@@ -51,7 +51,7 @@ class Engine:
             (constant.EXPLOSION, constant.TANK): self.explosion_tank,
             (constant.POWERUP, constant.TANK): self.powerup_tank})
         self._messages = deque()
-        self._add_message = self._messages.append
+        self._add_message = self.add_message
         self.tank_pool = toyblock3.build_Entity(4, tank_builder,
             *systems)
         self.bullet_pool = toyblock3.build_Entity(64, bullet_builder,
@@ -70,6 +70,10 @@ class Engine:
         _messages = self._messages
         while _messages:
             yield _messages.pop()
+    
+    def add_message(self, message):
+        if message in self._messages: return
+        self._messages.append(message)
         
     def update(self, dt):
         system.lifespan(dt)

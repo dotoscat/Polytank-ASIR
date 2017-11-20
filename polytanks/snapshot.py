@@ -55,7 +55,7 @@ class Snapshot:
                 abullet.bullet.power)
             bullets.append(bullet_snapshot)
         snapshot["bullets"] = bullets
-        messages = [message for message in engine.messages]
+        messages = deque(message for message in engine.messages)
         snapshot["messages"] = messages
         return snapshot
     
@@ -76,6 +76,7 @@ class Snapshot:
             data += bullet_struct.pack(*bullet)
         data += protocol.mono.pack(len(snapshot["messages"]))
         for message, entity in snapshot["messages"]:
+            print(message, entity)
             data += message_struct.pack(message, entity.id)
         return data
 
@@ -114,6 +115,8 @@ class Snapshot:
         n_messages = protocol.mono.unpack_from(data, offset)[0]
         messages_offset = n_messages*message_struct.size
         messages_data = data[offset:offset + messages_offset]
-        if n_messages:
-            print("n mensajes", n_messages)
+        messages = ((message[0], engine.entities[message[1]]) for message
+            in message_struct.iter_unpack(messages_data))
+        #print("messages", [message for message in messages])
+        #engine._messages.extend(messages)
         return tick
