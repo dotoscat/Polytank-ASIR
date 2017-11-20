@@ -15,6 +15,10 @@
 
 class PlayerInput:
     def __init__(self):
+        """
+            Setting :attr:'client' to True avoid some processing
+            in the input system.
+        """
         self.do_jump = False
         self.move = 0.
         self.aim_pointer = (0., 0.)
@@ -25,6 +29,7 @@ class PlayerInput:
         self.time_power = 0.
         self.MAX_TIME_POWER = 3.
         self.shoots = False
+        self.client = False
     
     @property
     def floats(self):
@@ -32,6 +37,7 @@ class PlayerInput:
     
     @property
     def release_power(self):
+        if self.client: return
         return self.time_power > self.MAX_TIME_POWER
     
     def reset_time_floating(self):

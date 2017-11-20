@@ -294,6 +294,7 @@ class Client(Scene):
         self.tank = self.engine.create_tank(id_)
         self.tank.set("body", x=x, y=x)
         self.player_input = self.tank.input
+        self.player_input.client = True
         self._joined = True
         self.conn.socket.send(protocol.mono.pack(protocol.JOINED))
     
