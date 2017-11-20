@@ -23,15 +23,6 @@ DONE = 4
 
 CLIENT_INPUT = 5
 
-MOVE_LEFT = 6
-MOVE_RIGHT = 7
-STOP = 8
-JUMP = 9
-NO_JUMP = 10
-SHOOT = 11
-NO_SHOOT = 12
-AIM = 13
-
 SNAPSHOT = 10
 START_GAME = 11
 CLIENT_ACK = 12
@@ -43,5 +34,5 @@ di_i = struct.Struct("!ii")
 tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
 
-#command, tick, movement, cannon_angle, shoot, jump
-input = struct.Struct("!iff??")
+#command, tick, movement, cannon_angle, accumulate_power, jump
+input = struct.Struct("!iiff??")

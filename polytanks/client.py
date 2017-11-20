@@ -124,15 +124,16 @@ class Client(Scene):
         self.damage = []
         self.dt = 0.
         self.last_server_tick = -1
-        self.tick = 0.
+        self.tick = 0
         
     def send_input(self, dt):
         if self.tank is None: return
         tank_input = self.tank.input
+        #print(self.tick, tank_input.move, tank_input.cannon_angle,
+        #    tank_input.accumulate_power, tank_input.do_jump)
         data = protocol.input.pack(protocol.CLIENT_INPUT, self.tick,
             tank_input.move, tank_input.cannon_angle,
-            tank_input.shoots, tank_input.do_jump)
-        print(tank.input.move, tank.input.cannon_angle, tank.input.shoots, tank.input.do_jump)
+            tank_input.accumulate_power, tank_input.do_jump)
         self.conn.socket.send(data)
 
     def init(self):
@@ -185,7 +186,6 @@ class Client(Scene):
         self.player_input.cannon_angle = angle
         self.tank.tank_graphic.cannon.rotation = -degrees(angle)
         if self._send_cannon_rotation:
-            self.conn.socket.send(protocol.input_tri.pack(protocol.CLIENT_INPUT, protocol.AIM, angle))
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
@@ -198,22 +198,17 @@ class Client(Scene):
             return
         if symbol in (key.A, key.LEFT):
             self.player_input.move_left()
-            self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.MOVE_LEFT))
         elif symbol in (key.D, key.RIGHT):
             self.player_input.move_right()
-            self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.MOVE_RIGHT))
         elif symbol in (key.W, key.UP):
             self.player_input.jump()
-            self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.JUMP))
 
     def on_key_release(self, symbol, modifier):
         if not self._joined: return
         if symbol in (key.A, key.D, key.LEFT, key.RIGHT) and self.player_input.moves():
             self.player_input.stop_moving()
-            self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.STOP))
         if symbol in (key.UP, key.W) and self.player_input.do_jump:
             self.player_input.not_jump()
-            self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.NO_JUMP))
 
     def on_mouse_motion(self, x, y, dx, dy):
         #  print("mouse motion", x, y, dx, dy)
@@ -242,11 +237,11 @@ class Client(Scene):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not self._joined: return
-        self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.SHOOT))
+        self.tank.input.accumulate_power = True
         
     def on_mouse_release(self, x, y, button, modifiers):
         if not self._joined: return
-        self.conn.socket.send(protocol.input_di.pack(protocol.CLIENT_INPUT, protocol.NO_SHOOT))
+        self.tank.input.accumulate_power = False
 
     def _shoot(self, id_):
         entity = self.engine.entities[id_]

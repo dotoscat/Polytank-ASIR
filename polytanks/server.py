@@ -124,37 +124,11 @@ class Server(asyncio.DatagramProtocol):
     def client_input(self, data, addr):
         player = self.clients.get(addr)
         if player is None: return
-        data_len = len(data)
-        if data_len == protocol.input_di.size:
-            command, subcommand = protocol.input_di.unpack(data)
-        else:
-            command, subcommand, value = protocol.input_tri.unpack(data)
         tank = player.tank
-        if subcommand == protocol.MOVE_LEFT:
-            tank.input.move_left()
-            print("mover izquierda")
-        elif subcommand == protocol.MOVE_RIGHT:
-            tank.input.move_right()
-            print("mover derecha")
-        elif subcommand == protocol.STOP:
-            tank.input.stop_moving()
-            print("parar")
-        elif subcommand == protocol.JUMP:
-            tank.input.jump()
-            print("saltar")
-        elif subcommand == protocol.NO_JUMP:
-            tank.input.not_jump()
-            print("no saltar")
-        elif subcommand == protocol.SHOOT:
-            tank.input.accumulate_power = True
-            print("disparar")
-        elif subcommand == protocol.NO_SHOOT:
-            tank.input.accumulate_power = False
-            tank.input.shoots = True
-            print("no disparar")
-        elif subcommand == protocol.AIM:
-            tank.input.cannon_angle = value
-            #print("apuntar", -degrees(value))
+        command, tick, move, cannon_angle, shoots, jumps = (
+            protocol.input.unpack(data))
+        #print("input", addr, tick, move, cannon_angle, shoots,
+        #    jumps)
 
     def _start_game(self, addr):
         data_size = protocol.mono.size + len(self.players)*protocol.tri.size
