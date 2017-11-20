@@ -129,6 +129,8 @@ class Server(asyncio.DatagramProtocol):
         move, cannon_angle, accumulate_power, do_jump = player_input
         tank.input.move = move
         tank.input.cannon_angle = cannon_angle
+        if not accumulate_power and tank.input.accumulate_power:
+            tank.input.shoots = True 
         tank.input.accumulate_power = accumulate_power
         tank.input.do_jump = do_jump
         #print("input", addr, tick, move, cannon_angle, shoots,
