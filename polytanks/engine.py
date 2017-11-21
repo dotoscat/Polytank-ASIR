@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from math import floor
 from collections import deque
 from .system import update_user_input
 from .ogf4py3 import system
@@ -93,14 +94,15 @@ class Engine:
     def shoot(self, entity):
         x = entity.tank.cannon_x
         y = entity.tank.cannon_y
-        power = entity.input.time_power
+        time_power = entity.input.time_power
         entity.input.time_power = 0.
         angle = entity.input.cannon_angle
-        force = G/2.
+        force = time_power*(G*2.)/entity.input.MAX_TIME_POWER
+        force = force if time_power > 0.5 else G/2. 
         gravity = True
-        if power >= 1.:
-            force *= power
         bullet = self._spawn_bullet(entity, x, y, force, angle, gravity)
+        power = floor(time_power)*entity.input.MAX_TIME_POWER
+        print("shoot power", power)
         bullet.set("bullet", owner=entity, power=power)
         self._add_message((Engine.SHOOT, entity))
 
@@ -152,14 +154,14 @@ class Engine:
             x = bullet.body.x
             y = bullet.body.y
             bullet.free()
-            self._spawn_explosion(x, y, 1)
+            self._spawn_explosion(x, y, bullet.bullet.power)
 
     def bullet_tank(self, bullet, tank):
         if bullet.bullet.owner == tank: return
         x = bullet.body.x
         y = bullet.body.y
+        self._spawn_explosion(x, y, bullet.bullet.power)
         bullet.free()
-        self._spawn_explosion(x, y, 1)
 
     def explosion_tank(self, explosion, tank):
         angle = get_angle_from(explosion.body.x, explosion.body.y,
@@ -168,7 +170,7 @@ class Engine:
         tank.body.max_ascending_speed = 0.
         tank.body.vel_x = force[0]
         tank.body.vel_y = force[1]
-        tank.tank.damage += explosion.explosion.damage
+        tank.tank.damage += int(explosion.explosion.damage)
         tank.tank.hitstun = 1.
         tank.tank.control = False
 

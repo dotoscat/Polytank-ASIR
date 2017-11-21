@@ -27,7 +27,7 @@ class PlayerInput:
         self.MAX_TIME_FLOATING = 3.
         self.accumulate_power = False
         self.time_power = 0.
-        self.MAX_TIME_POWER = 3.
+        self.MAX_TIME_POWER = 2.
         self.shoots = False
         self.client = False
     
