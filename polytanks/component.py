@@ -29,6 +29,7 @@ class PlayerInput:
         self.time_power = 0.
         self.MAX_TIME_POWER = 2.
         self.shoots = False
+        self.shooted = False
         self.client = False
     
     @property

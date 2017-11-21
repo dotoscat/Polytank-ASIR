@@ -45,11 +45,12 @@ def update_user_input(self, entity, dt, engine):
         player_input.time_power += dt
         #  print(player_input.time_power)
     
-    if player_input.accumulate_power and player_input.release_power:
+    if (not player_input.shooted and player_input.accumulate_power
+        and player_input.release_power):
         player_input.accumulate_power = False
         player_input.shoots = True
         
     if player_input.shoots:
         engine.shoot(entity)
         player_input.shoots = False
-    
+        player_input.shooted = True
