@@ -36,14 +36,14 @@ class Snapshot:
         
     def _make_from_engine(self, engine):
         snapshot = {}
-        tanks = deque()
-        bullets = deque()
+        tanks = {}
+        bullets = {}
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
             tank_snapshot = tank(atank.id, body.x, body.y,
                 body.vel_x, body.vel_y, atank.tank.damage)
-            tanks.append(tank_snapshot)
+            tanks[atank.id] = tank_snapshot
         snapshot["tanks"] = tanks
         used_bullets = engine.bullet_pool._used
         for abullet in used_bullets:
@@ -51,7 +51,7 @@ class Snapshot:
             bullet_snapshot = bullet(abullet.id, body.x, body.y,
                 body.vel_x, body.vel_y, abullet.bullet.owner.id,
                 abullet.bullet.power)
-            bullets.append(bullet_snapshot)
+            bullets[abullet.id] = bullet_snapshot
         snapshot["bullets"] = bullets
         return snapshot
     
@@ -65,11 +65,13 @@ class Snapshot:
         snapshot = self.snapshot
         data += protocol.di_i.pack(protocol.SNAPSHOT, self.tick)
         data += protocol.mono.pack(len(snapshot["tanks"]))
-        for tank in snapshot["tanks"]:
-            data += tank_struct.pack(*tank)
+        snapshot_tanks = snapshot["tanks"]
+        for tank in snapshot_tanks:
+            data += tank_struct.pack(*snapshot_tanks[tank])
         data += protocol.mono.pack(len(snapshot["bullets"]))
-        for bullet in snapshot["bullets"]:
-            data += bullet_struct.pack(*bullet)
+        snapshot_bullets = snapshot["bullets"]
+        for bullet in snapshot_bullets:
+            data += bullet_struct.pack(*snapshot_bullets[bullet])
         return data
 
     @staticmethod
