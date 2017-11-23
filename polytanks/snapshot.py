@@ -90,7 +90,7 @@ class Snapshot:
                 value = getattr(self_entity, field)
                 if value == getattr(other_entity, field):
                     continue
-                modified.append((DIFF_TABLE[field], value))
+                modified.append((self_ent_id, DIFF_TABLE[field], value))
                     
         return diff_section
     
