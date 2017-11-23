@@ -17,11 +17,6 @@ import struct
 from collections import deque, namedtuple
 from . import protocol
 
-TANK = 1
-BULLET = 2
-EXPLOSION = 3
-POWERUP = 4
-
 tank = namedtuple("tank", "id x y vel_x vel_y damage")
 tank_struct = struct.Struct("!iffffi")
 
