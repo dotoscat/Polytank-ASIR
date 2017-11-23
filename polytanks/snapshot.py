@@ -24,7 +24,21 @@ bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
 SnapshotDiff = namedtuple("SnapshotDiff", "tanks bullets")
-DiffSection = namedtuple("DiffSection", "create destroy modify")
+DiffSection = namedtuple("DiffSection", "created destroyed modified")
+
+POS_X = 1
+POS_Y = 2
+VEL_X = 3
+VEL_Y = 4
+DAMAGE = 5
+
+DIFF_TABLE = {
+    "x": POS_X,
+    "y": POS_Y,
+    "vel_x": VEL_X,
+    "vel_y": VEL_Y,
+    "damage": DAMAGE
+}
 
 class Snapshot:
     def __init__(self, engine, tick=0):
@@ -54,12 +68,31 @@ class Snapshot:
         return snapshot
     
     def diff(self, other_snapshot):
-        diff = SnapshotDiff(deque(), deque())
         other_tanks = other_snapshot.snapshot["tanks"]
         self_tanks = self.snapshot["tanks"]
-        for tank_id in self_tanks:
-            pass
-        return diff
+        tanks_diff = Snapshot._generate_diff_section(self_tanks,
+            other_tanks)
+        return SnapshotDiff(tanks_diff, None)
+    
+    @staticmethod
+    def _generate_diff_section(self_entities, other_entities):
+        diff_section = DiffSection(deque(), deque(), deque())
+        created = diff_section.created
+        destroyed = diff_section.destroyed
+        modified = diff_section.modified
+        for self_ent_id in self_entities:
+            self_entity = self_entities.get(self_ent_id)
+            other_entity = other_entities.get(self_ent_id)
+            if other_entity is None:
+                created.append(self_entity)
+                return
+            for field in self_entity._fields:
+                value = getattr(self_entity, field)
+                if value == getattr(other_entity, field):
+                    continue
+                modified.append((DIFF_TABLE[field], value))
+                    
+        return diff_section
     
     @property
     def ack(self):
