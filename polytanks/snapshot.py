@@ -91,7 +91,13 @@ class Snapshot:
                 if value == getattr(other_entity, field):
                     continue
                 modified.append((self_ent_id, DIFF_TABLE[field], value))
-                    
+        
+        for other_ent_id in other_entities:
+            other_entity = other_entities[other_ent_id]
+            if self_entities.get(other_ent_id) is not None:
+                continue
+            destroyed.append(other_ent_id)
+        
         return diff_section
     
     @property
