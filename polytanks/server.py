@@ -202,7 +202,11 @@ class Server(asyncio.DatagramProtocol):
         
     def _send_snapshot(self):
         snapshot = Snapshot(self.engine, self.tick)
-        self.snapshots.appendleft(snapshot)
+        snapshots = self.snapshots
+        snapshots.appendleft(snapshot)
+        if len(snapshots) > 1:
+            diff = snapshots[0].diff(snapshots[1])
+            print("diff", diff)
         data = snapshot.to_network()
         #print("send snapshot", len(data))
         clients = self.clients

@@ -28,6 +28,9 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
+SnapshotDiff = namedtuple("SnapshotDiff", "tanks bullets")
+DiffSection = namedtuple("DiffSection", "create destroy modify")
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self._ack = False
@@ -54,6 +57,14 @@ class Snapshot:
             bullets[abullet.id] = bullet_snapshot
         snapshot["bullets"] = bullets
         return snapshot
+    
+    def diff(self, other_snapshot):
+        diff = SnapshotDiff(deque(), deque())
+        other_tanks = other_snapshot.snapshot["tanks"]
+        self_tanks = self.snapshot["tanks"]
+        for tank_id in self_tanks:
+            pass
+        return diff
     
     @property
     def ack(self):
