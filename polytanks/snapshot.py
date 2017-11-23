@@ -72,7 +72,11 @@ class Snapshot:
         self_tanks = self.snapshot["tanks"]
         tanks_diff = Snapshot._generate_diff_section(self_tanks,
             other_tanks)
-        return SnapshotDiff(tanks_diff, None)
+        other_bullets = other_snapshot.snapshot["bullets"]
+        self_bullets = self.snapshot["bullets"]
+        bullets_diff = Snapshot._generate_diff_section(self_bullets,
+            other_bullets)
+        return SnapshotDiff(tanks_diff, bullets_diff)
     
     @staticmethod
     def _generate_diff_section(self_entities, other_entities):
