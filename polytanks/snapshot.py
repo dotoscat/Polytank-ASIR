@@ -90,11 +90,14 @@ class Snapshot:
             if other_entity is None:
                 created.append(self_entity)
                 return
+            modified_fields = deque()
+            modified_fields.appendleft(self_ent_id)
             for field in self_entity._fields:
                 value = getattr(self_entity, field)
                 if value == getattr(other_entity, field):
                     continue
-                modified.append((self_ent_id, DIFF_TABLE[field], value))
+                modified_fields.appendleft((DIFF_TABLE[field], value))
+            modified.append(modified_fields)
         
         for other_ent_id in other_entities:
             other_entity = other_entities[other_ent_id]
