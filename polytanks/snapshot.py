@@ -23,7 +23,7 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
-SnapshotDiff = namedtuple("SnapshotDiff", "tanks bullets")
+SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
 
 POS_X = 1
@@ -42,7 +42,7 @@ DIFF_TABLE = {
 
 class Snapshot:
     def __init__(self, engine, tick=0):
-        self._ack = False
+        self.ack = False
         self.tick = tick
         self.snapshot = self._make_from_engine(engine)
         
@@ -76,7 +76,7 @@ class Snapshot:
         self_bullets = self.snapshot["bullets"]
         bullets_diff = Snapshot._generate_diff_section(self_bullets,
             other_bullets)
-        return SnapshotDiff(tanks_diff, bullets_diff)
+        return SnapshotDiff(self.tick, tanks_diff, bullets_diff)
     
     @staticmethod
     def _generate_diff_section(self_entities, other_entities):
@@ -131,14 +131,11 @@ class Snapshot:
     @staticmethod
     def _to_network(diff):
         data = bytearray()
+        data += protocol.di_i.pack(protocol.SNAPSHOT, diff.tick)
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
         data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
         return data
-    
-    @property
-    def ack(self):
-        return self.ack
-            
+                
     def to_network(self):
         """Returns bytes of the current snapshot to send over the network."""
         data = bytearray()
