@@ -40,6 +40,8 @@ DIFF_TABLE = {
     "damage": DAMAGE
 }
 
+INV_DIFF_TABLE = {v: k for k, v in DIFF_TABLE.items()}
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self.ack = False
@@ -135,7 +137,17 @@ class Snapshot:
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
         data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
         return data
-                
+    
+    @staticmethod
+    def _data_to_diff():
+        pass
+    
+    @staticmethod
+    def from_network(data):
+        command, tick = protocol.di_i.unpack_from(data)
+        offset = protocol.di_i.size
+        print("tick", tick)
+    
     @staticmethod
     def restore(data, engine):
         """Restore engine from the data."""
