@@ -118,14 +118,16 @@ class Snapshot:
             diff_data += to_bytes(id_, 4, "big")
         diff_data += to_bytes(len(diff_section.modified), 4, "big")
         for id_, fields in diff_section.modified:
-            print(id_, fields)
+            diff_data += to_bytes(id_, 4, "big")
+            for field, value in fields:
+                print(id_, field, value, type(value))
         return diff_data
     
     @staticmethod
     def _to_network(diff):
         data = bytearray()
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
-        data += Snapshot._diff_to_data(diff.tanks, bullet_struct)
+        data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
         return data
     
     @property
