@@ -110,19 +110,23 @@ class Snapshot:
     def _diff_to_data(diff_section, entity_struct):
         to_bytes = int.to_bytes
         diff_data = bytearray()
-        diff_data += to_bytes(len(diff_section.created))
+        diff_data += to_bytes(len(diff_section.created), 4, "big")
         for entity in diff_section.created:
             diff_data += entity_struct.pack(*entity)
         diff_data += to_bytes(len(diff_section.destroyed), 4, "big")
         for id_ in diff_section.destroyed:
             diff_data += to_bytes(id_, 4, "big")
         diff_data += to_bytes(len(diff_section.modified), 4, "big")
-        for entity 
+        for id_, fields in diff_section.modified:
+            print(id_, fields)
         return diff_data
     
     @staticmethod
-    def to_network(diff):
-            
+    def _to_network(diff):
+        data = bytearray()
+        data += Snapshot._diff_to_data(diff.tanks, tank_struct)
+        data += Snapshot._diff_to_data(diff.tanks, bullet_struct)
+        return data
     
     @property
     def ack(self):

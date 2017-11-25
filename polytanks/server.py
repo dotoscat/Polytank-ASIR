@@ -206,7 +206,7 @@ class Server(asyncio.DatagramProtocol):
         snapshots.appendleft(snapshot)
         if len(snapshots) > 1:
             diff = snapshots[0].diff(snapshots[1])
-            print("diff", diff.bullets)
+            print("diff data", len(Snapshot._to_network(diff)))
         data = snapshot.to_network()
         #print("send snapshot", len(data))
         clients = self.clients
