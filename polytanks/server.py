@@ -204,16 +204,16 @@ class Server(asyncio.DatagramProtocol):
         snapshot = Snapshot(self.engine, self.tick)
         snapshots = self.snapshots
         snapshots.appendleft(snapshot)
+        data = b''
         if len(snapshots) > 1:
             diff = snapshots[0].diff(snapshots[1])
-            print("diff data", len(Snapshot._to_network(diff)))
-        data = snapshot.to_network()
+            data = Snapshot.to_network(diff)
+            print("diff data", len(data))
         #print("send snapshot", len(data))
         clients = self.clients
         for client in clients:
             player = clients[client]
-            if isinstance(player, Player):
-                player.send()
+            player.send()
             self.transport.sendto(data, client)
 
     def __del__(self):

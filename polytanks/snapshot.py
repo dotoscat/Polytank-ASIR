@@ -129,28 +129,13 @@ class Snapshot:
         return diff_data
     
     @staticmethod
-    def _to_network(diff):
+    def to_network(diff):
         data = bytearray()
         data += protocol.di_i.pack(protocol.SNAPSHOT, diff.tick)
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
         data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
         return data
                 
-    def to_network(self):
-        """Returns bytes of the current snapshot to send over the network."""
-        data = bytearray()
-        snapshot = self.snapshot
-        data += protocol.di_i.pack(protocol.SNAPSHOT, self.tick)
-        data += protocol.mono.pack(len(snapshot["tanks"]))
-        snapshot_tanks = snapshot["tanks"]
-        for tank in snapshot_tanks:
-            data += tank_struct.pack(*snapshot_tanks[tank])
-        data += protocol.mono.pack(len(snapshot["bullets"]))
-        snapshot_bullets = snapshot["bullets"]
-        for bullet in snapshot_bullets:
-            data += bullet_struct.pack(*snapshot_bullets[bullet])
-        return data
-
     @staticmethod
     def restore(data, engine):
         """Restore engine from the data."""
