@@ -91,13 +91,12 @@ class Snapshot:
                 created.append(self_entity)
                 continue
             modified_fields = deque()
-            modified_fields.appendleft(self_ent_id)
             for field in self_entity._fields:
                 value = getattr(self_entity, field)
                 if value == getattr(other_entity, field):
                     continue
                 modified_fields.append((DIFF_TABLE[field], value))
-            modified.append(modified_fields)
+            modified.append((self_ent_id, modified_fields))
         
         for other_ent_id in other_entities:
             other_entity = other_entities[other_ent_id]
@@ -106,6 +105,24 @@ class Snapshot:
             destroyed.append(other_ent_id)
         
         return diff_section
+    
+    @staticmethod
+    def _diff_to_data(diff_section, entity_struct):
+        to_bytes = int.to_bytes
+        diff_data = bytearray()
+        diff_data += to_bytes(len(diff_section.created))
+        for entity in diff_section.created:
+            diff_data += entity_struct.pack(*entity)
+        diff_data += to_bytes(len(diff_section.destroyed), 4, "big")
+        for id_ in diff_section.destroyed:
+            diff_data += to_bytes(id_, 4, "big")
+        diff_data += to_bytes(len(diff_section.modified), 4, "big")
+        for entity 
+        return diff_data
+    
+    @staticmethod
+    def to_network(diff):
+            
     
     @property
     def ack(self):
