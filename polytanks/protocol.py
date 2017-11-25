@@ -30,7 +30,9 @@ CLIENT_ACK = 12
 mono = struct.Struct("!i")
 mono_f = struct.Struct("!f")
 di = struct.Struct("!if")
+di_f = di
 di_i = struct.Struct("!ii")
+di_b = struct.Struct("!i?")
 tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
 

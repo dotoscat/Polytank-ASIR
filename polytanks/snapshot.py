@@ -120,7 +120,12 @@ class Snapshot:
         for id_, fields in diff_section.modified:
             diff_data += to_bytes(id_, 4, "big")
             for field, value in fields:
-                print(id_, field, value, type(value))
+                if type(value) is float:
+                    diff_data += protocol.di_f.pack(field, value)
+                elif type(value) is bool:
+                    diff_data += protocol.di_b.pack(field, value)
+                elif type(value) is int:
+                    diff_data += protocol.di_i.pack(field, value)
         return diff_data
     
     @staticmethod
