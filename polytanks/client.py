@@ -125,6 +125,7 @@ class Client(Scene):
         self.dt = 0.
         self.last_server_tick = -1
         self.tick = 0
+        self.snapshots = deque([], 32)
         
     def send_input(self, dt):
         if self.tank is None: return
@@ -266,9 +267,10 @@ class Client(Scene):
                 print(tick, "rejected!")
                 return
             self.last_server_tick = tick
-            Snapshot.restore(data, self.engine)
+            self.snapshots.appendleft(Snapshot.from_network(data))
             self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
-
+            Snapshot.restore(data, self.engine)
+            
     def start_game(self, data):
         offset = protocol.mono.size
         players = 0
