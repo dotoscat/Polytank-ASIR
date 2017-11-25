@@ -139,14 +139,27 @@ class Snapshot:
         return data
     
     @staticmethod
-    def _data_to_diff():
-        pass
+    def _data_to_diff(data, offset, entity, entity_struct):
+        from_bytes = int.from_bytes
+        n_entities_created = from_bytes(data[offset:offset+4], "big")
+        offset += 4
+        created = deque()
+        created_size = n_entities_created*entity_struct.size
+        created_block = data[offset:offset + created_size]
+        for entity_info in entity_struct.iter_unpack(created_block):
+            created.appendleft(entity._make(entity_info))
+        offset += created_size
+        diff_section = DiffSection(created, None, None)
+        return diff_section, offset
     
     @staticmethod
     def from_network(data):
         command, tick = protocol.di_i.unpack_from(data)
         offset = protocol.di_i.size
-        print("tick", tick)
+        tanks_section, offset = Snapshot._data_to_diff(data, offset,
+            tank, tank_struct)
+        snapshot_diff = SnapshotDiff(tick, tanks_section, None)
+        return snapshot_diff
     
     @staticmethod
     def restore(data, engine):
