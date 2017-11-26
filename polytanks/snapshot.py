@@ -225,14 +225,8 @@ class Snapshot:
         return snapshot_diff
     
     @staticmethod
-    def restore(data, engine):
-        """Restore engine from the data."""
-        command, tick = protocol.di_i.unpack_from(data)
-        n_tanks = protocol.mono.unpack_from(data, protocol.di_i.size)[0]
-        #print("n tanks", n_tanks)
-        offset = protocol.di_i.size + protocol.mono.size
-        tanks_offset = n_tanks*tank_struct.size
-        tanks_data = data[offset:offset + tanks_offset]
+    def restore_from_diff(diff, engine):
+        """Restore engine from the diff."""
         for id_, x, y, vel_x, vel_y, damage in tank_struct.iter_unpack(tanks_data):
             tank = engine.entities.get(id_)
             if tank is None:
