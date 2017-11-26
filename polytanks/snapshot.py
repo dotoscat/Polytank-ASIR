@@ -117,13 +117,13 @@ class Snapshot:
     def _diff_to_data(diff_section, entity_struct):
         to_bytes = int.to_bytes
         diff_data = bytearray()
-        diff_data += to_bytes(len(diff_section.created), 4, "big")
+        diff_data += to_bytes(len(diff_section.created), 1, "big")
         for entity in diff_section.created:
             diff_data += entity_struct.pack(*entity)
-        diff_data += to_bytes(len(diff_section.destroyed), 4, "big")
+        diff_data += to_bytes(len(diff_section.destroyed), 1, "big")
         for id_ in diff_section.destroyed:
             diff_data += to_bytes(id_, 4, "big")
-        diff_data += to_bytes(len(diff_section.modified), 4, "big")
+        diff_data += to_bytes(len(diff_section.modified), 1, "big")
         for id_, fields in diff_section.modified:
             diff_data += to_bytes(id_, 4, "big")
             for field, value in fields:
@@ -147,8 +147,8 @@ class Snapshot:
     def _data_to_diff(data, offset, entity, entity_struct):
         from_bytes = int.from_bytes
         
-        n_entities_created = from_bytes(data[offset:offset+4], "big")
-        offset += 4
+        n_entities_created = from_bytes(data[offset:offset+1], "big")
+        offset += 1
         created = deque()
         created_size = n_entities_created*entity_struct.size
         created_block = data[offset:offset + created_size]
@@ -156,8 +156,8 @@ class Snapshot:
             created.appendleft(entity._make(entity_info))
         offset += created_size
         
-        n_entities_deleted = from_bytes(data[offset:offset+4], "big")
-        offset += 4
+        n_entities_deleted = from_bytes(data[offset:offset+1], "big")
+        offset += 1
         deleted_size = n_entities_deleted*4
         deleted_block = data[offset:offset + deleted_size]
         deleted = deque()

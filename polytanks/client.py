@@ -267,9 +267,10 @@ class Client(Scene):
                 print(tick, "rejected!")
                 return
             self.last_server_tick = tick
-            self.snapshots.appendleft(Snapshot.from_network(data))
+            snapshot_diff = Snapshot.from_network(data)
+            self.snapshots.appendleft(snaphot_diff)
             self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
-            Snapshot.restore(data, self.engine)
+            #Snapshot.restore(data, self.engine)
             
     def start_game(self, data):
         offset = protocol.mono.size
