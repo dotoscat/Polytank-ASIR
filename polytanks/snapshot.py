@@ -52,6 +52,9 @@ field_int = struct.Struct("!bi")
 
 id_nfields = struct.Struct("!ib")
 
+body_set = frozenset(("x", "y", "vel_x", "vel_y"))
+tank_set = frozenset(("damage",))
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self.ack = False
@@ -225,28 +228,27 @@ class Snapshot:
         return snapshot_diff
     
     @staticmethod
-    def restore_from_diff(diff, engine):
-        """Restore engine from the diff."""
-        for id_, x, y, vel_x, vel_y, damage in tank_struct.iter_unpack(tanks_data):
+    def set_engine_from_diff(diff, engine):
+        """Set engine from the diff."""
+        
+        #engine.tanks.created - Players connected
+        #engine.tanks.destroyed - Players disconnected
+        #engine.tanks.modified - Players info modified
+        
+        tanks_modified = diff.tanks.modified
+        
+        for id_, fields in tanks_modified:
             tank = engine.entities.get(id_)
-            if tank is None:
-                print("tank {} does not exist.".format(id_))
-                continue
-            body = tank.body
-            body.x = x
-            body.y = y
-            body.vel_x = vel_x
-            body.vel_y = vel_y
-            tank.tank.damage = damage
-        offset += tanks_offset
-        n_bullets = protocol.mono.unpack_from(data, offset)[0]
-        offset += protocol.mono.size
-        bullets_offset = n_bullets*bullet_struct.size
-        bullets_data = data[offset:offset + bullets_offset]
+            for name, value in fields:
+                if name in body_set:
+                    setattr(tank.body, name, value)
+                elif name in tank_set:
+                    setattr(tank.tank, name, value)
+        return
+        
         for id_, x, y, vel_x, vel_y, owner_id, power in bullet_struct.iter_unpack(bullets_data):
             bullet = engine.entities.get(id_)
             if bullet is None:
                 bullet = engine.spawn_bullet(id_)
             bullet.set("body", x=x, y=y, vel_x=vel_x, vel_y=vel_y)
             bullet.set("bullet", power=power, owner=engine.entities[owner_id])
-        return tick
