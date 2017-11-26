@@ -173,7 +173,7 @@ class Snapshot:
         deleted_block = data[offset:offset + deleted_size]
         deleted = deque()
         for id_ in protocol.mono.iter_unpack(deleted_block):
-            delete.appendleft(id_)
+            deleted.appendleft(id_)
         offset += deleted_size
         
         N_ENTITIES_MODIFIED = from_bytes(data[offset:offset + 1], "big")
@@ -218,10 +218,10 @@ class Snapshot:
         offset = protocol.di_i.size
         tanks_section, offset = Snapshot._data_to_diff(data, offset,
             tank, tank_struct)
-        #bullets_section, offset = Snapshot._data_to_diff(data, offset,
-        #    bullet, bullet_struct)
-        print(tanks_section.modified)
-        snapshot_diff = SnapshotDiff(tick, tanks_section, None)
+        bullets_section, offset = Snapshot._data_to_diff(data, offset,
+            bullet, bullet_struct)
+        #print(tanks_section.modified)
+        snapshot_diff = SnapshotDiff(tick, tanks_section, bullets_section)
         return snapshot_diff
     
     @staticmethod
