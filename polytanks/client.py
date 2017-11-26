@@ -268,7 +268,7 @@ class Client(Scene):
                 return
             self.last_server_tick = tick
             snapshot_diff = Snapshot.from_network(data)
-            self.snapshots.appendleft(snaphot_diff)
+            self.snapshots.appendleft(snapshot_diff)
             self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
             #Snapshot.restore(data, self.engine)
             

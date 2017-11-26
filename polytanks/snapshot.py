@@ -50,6 +50,8 @@ field_float = struct.Struct("!bbf")
 field_bool = struct.Struct("!bb?")
 field_int = struct.Struct("!bbi")
 
+id_nfields = struct.Struct("!ib")
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self.ack = False
@@ -129,8 +131,7 @@ class Snapshot:
             diff_data += to_bytes(id_, 4, "big")
         diff_data += to_bytes(len(diff_section.modified), 1, "big")
         for id_, fields in diff_section.modified:
-            diff_data += to_bytes(id_, 4, "big")
-            diff_data += to_bytes(len(fields), 1, "big")
+            diff_data += id_nfields.pack(id_, len(fields))
             for field, value in fields:
                 if type(value) is float:
                     diff_data += field_float.pack(FLOAT, field, value)
@@ -170,10 +171,23 @@ class Snapshot:
             delete.appendleft(id_)
         offset += deleted_size
         
-        n_entities_modified = from_bytes(data[offset:offset + 1], "big")
-        offset +=1
-        modified_size = n_entities_modified*1
-        
+        N_ENTITIES_MODIFIED = from_bytes(data[offset:offset + 1], "big")
+        offset += 1
+        modified = deque()
+        for entities in range(N_ENTITIES_MODIFIED):
+            id_, FIELDS = id_nfields.unpack_from(data, offset)
+            print("id", id_, "fields", nfields)
+            offset += id_nfields.size
+            type_ = from_bytes(data[offset:offset + 1], "big")
+            offset += 1
+            for field in range(NFIELDS):
+                if type_ == FLOAT:
+                    print("float!")
+                elif type_ == BOOL:
+                    print("bool!")
+                elif type_ == INT:
+                    print("int!")
+            
         diff_section = DiffSection(created, deleted, None)
         return diff_section, offset
     
