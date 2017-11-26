@@ -176,7 +176,7 @@ class Snapshot:
         deleted_block = data[offset:offset + deleted_size]
         deleted = deque()
         for id_ in protocol.mono.iter_unpack(deleted_block):
-            deleted.appendleft(id_)
+            deleted.appendleft(id_[0])
         offset += deleted_size
         
         N_ENTITIES_MODIFIED = from_bytes(data[offset:offset + 1], "big")
@@ -246,6 +246,7 @@ class Snapshot:
                     setattr(tank.tank, name, value)
                     
         bullets_created = diff.bullets.created
+        bullets_destroyed = diff.bullets.destroyed
         
         for bullet in bullets_created:
             bullet_created = engine.spawn_bullet(bullet.id)
@@ -253,5 +254,6 @@ class Snapshot:
                 vel_x=bullet.vel_x, vel_y=bullet.vel_y)
             bullet_created.set("bullet", power=bullet.power,
                 owner=engine.entities[bullet.owner])
-        return
-        
+    
+        for id_ in bullets_destroyed:
+            engine.entities[id_].free()
