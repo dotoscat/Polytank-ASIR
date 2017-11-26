@@ -181,8 +181,8 @@ class Snapshot:
         modified = deque()
         for entities in range(N_ENTITIES_MODIFIED):
             id_, FIELDS = id_nfields.unpack_from(data, offset)
-            print("id", id_, "fields", FIELDS)
             offset += id_nfields.size
+            modified_fields = deque()
             for f in range(FIELDS):
                 type_ = from_bytes(data[offset:offset + 1], "big")
                 offset += 1
@@ -197,9 +197,10 @@ class Snapshot:
                     offset += field_int.size
                 else:
                     print("Error!!!")
-                print("field", field, "value", value)
+                modified_fields.appendleft((INV_DIFF_TABLE[field], value))
+            modified.appendleft((id_, modified_fields))
             
-        diff_section = DiffSection(created, deleted, None)
+        diff_section = DiffSection(created, deleted, modified)
         return diff_section, offset
     
     @staticmethod
@@ -219,7 +220,7 @@ class Snapshot:
             tank, tank_struct)
         #bullets_section, offset = Snapshot._data_to_diff(data, offset,
         #    bullet, bullet_struct)
-        print(tanks_section)
+        print(tanks_section.modified)
         snapshot_diff = SnapshotDiff(tick, tanks_section, None)
         return snapshot_diff
     
