@@ -46,9 +46,9 @@ DIFF_TABLE = {
 
 INV_DIFF_TABLE = {v: k for k, v in DIFF_TABLE.items()}
 
-field_float = struct.Struct("!bbf")
-field_bool = struct.Struct("!bb?")
-field_int = struct.Struct("!bbi")
+field_float = struct.Struct("!bf")
+field_bool = struct.Struct("!b?")
+field_int = struct.Struct("!bi")
 
 id_nfields = struct.Struct("!ib")
 
@@ -134,11 +134,16 @@ class Snapshot:
             diff_data += id_nfields.pack(id_, len(fields))
             for field, value in fields:
                 if type(value) is float:
-                    diff_data += field_float.pack(FLOAT, field, value)
+                    diff_data += to_bytes(FLOAT, 1, "big")
+                    diff_data += field_float.pack(field, value)
                 elif type(value) is bool:
-                    diff_data += field_bool.pack(BOOL, field, value)
+                    diff_data += to_bytes(BOOL, 1, "big")
+                    diff_data += field_bool.pack(field, value)
                 elif type(value) is int:
-                    diff_data += field_int.pack(INT, field, value)
+                    diff_data += to_bytes(INT, 1, "big")
+                    diff_data += field_int.pack(field, value)
+                else:
+                    print("Missing!")
         return diff_data
     
     @staticmethod
@@ -176,17 +181,23 @@ class Snapshot:
         modified = deque()
         for entities in range(N_ENTITIES_MODIFIED):
             id_, FIELDS = id_nfields.unpack_from(data, offset)
-            print("id", id_, "fields", nfields)
+            print("id", id_, "fields", FIELDS)
             offset += id_nfields.size
-            type_ = from_bytes(data[offset:offset + 1], "big")
-            offset += 1
-            for field in range(NFIELDS):
+            for f in range(FIELDS):
+                type_ = from_bytes(data[offset:offset + 1], "big")
+                offset += 1
                 if type_ == FLOAT:
-                    print("float!")
+                    field, value = field_float.unpack_from(data, offset)
+                    offset += field_float.size
                 elif type_ == BOOL:
-                    print("bool!")
+                    field, value = field_bool.unpack_from(data, offset)
+                    offset += field_bool.size
                 elif type_ == INT:
-                    print("int!")
+                    field, value = field_int.unpack_from(data, offset)
+                    offset += field_int.size
+                else:
+                    print("Error!!!")
+                print("field", field, "value", value)
             
         diff_section = DiffSection(created, deleted, None)
         return diff_section, offset
