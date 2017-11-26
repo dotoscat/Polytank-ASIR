@@ -70,6 +70,7 @@ class Snapshot:
         return snapshot
     
     def diff(self, other_snapshot):
+        """Generates a SnapshotDiff with respect another snapshot."""
         other_tanks = other_snapshot.snapshot["tanks"]
         self_tanks = self.snapshot["tanks"]
         tanks_diff = Snapshot._generate_diff_section(self_tanks,
@@ -154,6 +155,15 @@ class Snapshot:
     
     @staticmethod
     def from_network(data):
+        """Convert a snapshot send from network to :class:`SnapshotDiff`.
+            
+            Parameters:
+                data (byte): Data received from network
+                
+            Returns:
+                SnapshotDiff
+            
+        """
         command, tick = protocol.di_i.unpack_from(data)
         offset = protocol.di_i.size
         tanks_section, offset = Snapshot._data_to_diff(data, offset,
