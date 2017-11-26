@@ -142,6 +142,7 @@ class Snapshot:
     @staticmethod
     def _data_to_diff(data, offset, entity, entity_struct):
         from_bytes = int.from_bytes
+        
         n_entities_created = from_bytes(data[offset:offset+4], "big")
         offset += 4
         created = deque()
@@ -150,7 +151,17 @@ class Snapshot:
         for entity_info in entity_struct.iter_unpack(created_block):
             created.appendleft(entity._make(entity_info))
         offset += created_size
-        diff_section = DiffSection(created, None, None)
+        
+        n_entities_deleted = from_bytes(data[offset:offset+4], "big")
+        offset += 4
+        deleted_size = n_entities_deleted*4
+        deleted_block = data[offset:offset + deleted_size]
+        deleted = deque()
+        for id_ in protocol.mono.iter_unpack(deleted_block):
+            delete.appendleft(id_)
+        offset += deleted_size
+        
+        diff_section = DiffSection(created, deleted, None)
         return diff_section, offset
     
     @staticmethod
@@ -168,6 +179,8 @@ class Snapshot:
         offset = protocol.di_i.size
         tanks_section, offset = Snapshot._data_to_diff(data, offset,
             tank, tank_struct)
+        #bullets_section, offset = Snapshot._data_to_diff(data, offset,
+        #    bullet, bullet_struct)
         snapshot_diff = SnapshotDiff(tick, tanks_section, None)
         return snapshot_diff
     
