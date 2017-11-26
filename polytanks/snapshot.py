@@ -244,11 +244,14 @@ class Snapshot:
                     setattr(tank.body, name, value)
                 elif name in tank_set:
                     setattr(tank.tank, name, value)
+                    
+        bullets_created = diff.bullets.created
+        
+        for bullet in bullets_created:
+            bullet_created = engine.spawn_bullet(bullet.id)
+            bullet_created.set("body", x=bullet.x, y=bullet.y,
+                vel_x=bullet.vel_x, vel_y=bullet.vel_y)
+            bullet_created.set("bullet", power=bullet.power,
+                owner=engine.entities[bullet.owner])
         return
         
-        for id_, x, y, vel_x, vel_y, owner_id, power in bullet_struct.iter_unpack(bullets_data):
-            bullet = engine.entities.get(id_)
-            if bullet is None:
-                bullet = engine.spawn_bullet(id_)
-            bullet.set("body", x=x, y=y, vel_x=vel_x, vel_y=vel_y)
-            bullet.set("bullet", power=power, owner=engine.entities[owner_id])
