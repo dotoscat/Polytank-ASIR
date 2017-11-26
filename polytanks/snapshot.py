@@ -42,6 +42,10 @@ DIFF_TABLE = {
 
 INV_DIFF_TABLE = {v: k for k, v in DIFF_TABLE.items()}
 
+field_float = struct.Struct("!bf")
+field_bool = struct.Struct("!b?")
+field_int = struct.Struct("!bi")
+
 class Snapshot:
     def __init__(self, engine, tick=0):
         self.ack = False
@@ -124,11 +128,11 @@ class Snapshot:
             diff_data += to_bytes(id_, 4, "big")
             for field, value in fields:
                 if type(value) is float:
-                    diff_data += protocol.di_f.pack(field, value)
+                    diff_data += field_float.pack(field, value)
                 elif type(value) is bool:
-                    diff_data += protocol.di_b.pack(field, value)
+                    diff_data += field_bool.pack(field, value)
                 elif type(value) is int:
-                    diff_data += protocol.di_i.pack(field, value)
+                    diff_data += field_int.pack(field, value)
         return diff_data
     
     @staticmethod
