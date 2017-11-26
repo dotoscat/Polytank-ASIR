@@ -32,6 +32,10 @@ VEL_X = 3
 VEL_Y = 4
 DAMAGE = 5
 
+FLOAT = 1
+BOOL = 2
+INT = 3
+
 DIFF_TABLE = {
     "x": POS_X,
     "y": POS_Y,
@@ -42,9 +46,9 @@ DIFF_TABLE = {
 
 INV_DIFF_TABLE = {v: k for k, v in DIFF_TABLE.items()}
 
-field_float = struct.Struct("!bf")
-field_bool = struct.Struct("!b?")
-field_int = struct.Struct("!bi")
+field_float = struct.Struct("!bbf")
+field_bool = struct.Struct("!bb?")
+field_int = struct.Struct("!bbi")
 
 class Snapshot:
     def __init__(self, engine, tick=0):
@@ -126,13 +130,14 @@ class Snapshot:
         diff_data += to_bytes(len(diff_section.modified), 1, "big")
         for id_, fields in diff_section.modified:
             diff_data += to_bytes(id_, 4, "big")
+            diff_data += to_bytes(len(fields), 1, "big")
             for field, value in fields:
                 if type(value) is float:
-                    diff_data += field_float.pack(field, value)
+                    diff_data += field_float.pack(FLOAT, field, value)
                 elif type(value) is bool:
-                    diff_data += field_bool.pack(field, value)
+                    diff_data += field_bool.pack(BOOL, field, value)
                 elif type(value) is int:
-                    diff_data += field_int.pack(field, value)
+                    diff_data += field_int.pack(INT, field, value)
         return diff_data
     
     @staticmethod
@@ -147,7 +152,7 @@ class Snapshot:
     def _data_to_diff(data, offset, entity, entity_struct):
         from_bytes = int.from_bytes
         
-        n_entities_created = from_bytes(data[offset:offset+1], "big")
+        n_entities_created = from_bytes(data[offset:offset + 1], "big")
         offset += 1
         created = deque()
         created_size = n_entities_created*entity_struct.size
@@ -156,7 +161,7 @@ class Snapshot:
             created.appendleft(entity._make(entity_info))
         offset += created_size
         
-        n_entities_deleted = from_bytes(data[offset:offset+1], "big")
+        n_entities_deleted = from_bytes(data[offset:offset + 1], "big")
         offset += 1
         deleted_size = n_entities_deleted*4
         deleted_block = data[offset:offset + deleted_size]
@@ -164,6 +169,10 @@ class Snapshot:
         for id_ in protocol.mono.iter_unpack(deleted_block):
             delete.appendleft(id_)
         offset += deleted_size
+        
+        n_entities_modified = from_bytes(data[offset:offset + 1], "big")
+        offset +=1
+        modified_size = n_entities_modified*1
         
         diff_section = DiffSection(created, deleted, None)
         return diff_section, offset
@@ -185,6 +194,7 @@ class Snapshot:
             tank, tank_struct)
         #bullets_section, offset = Snapshot._data_to_diff(data, offset,
         #    bullet, bullet_struct)
+        print(tanks_section)
         snapshot_diff = SnapshotDiff(tick, tanks_section, None)
         return snapshot_diff
     
