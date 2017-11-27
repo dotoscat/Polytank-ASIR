@@ -34,6 +34,22 @@ Herramientas usadas
 * GIMP: Para crear los gráficos del juego.
 * git: Un sistema de control de versiones.
 
+Requisitos
+----------
+
+Servidor
+++++++++
+
+- Python >= 3.4
+- Tarjeta de red
+
+Cliente
++++++++
+
+- Python >= 3.4
+- Tarjeta de red
+- Tarjeta gráfica con soporte OpenGL
+
 Estructura del proyecto
 -----------------------
 
