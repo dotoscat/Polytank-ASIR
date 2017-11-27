@@ -240,8 +240,10 @@ class Snapshot:
             tank, tank_struct)
         bullets_section, offset = Snapshot._data_to_diff(data, offset,
             bullet, bullet_struct)
-        #print(tanks_section.modified)
-        snapshot_diff = SnapshotDiff(tick, tanks_section, bullets_section)
+        explosions_section, offset = Snapshot._data_to_diff(data, offset,
+            explosion, explosion_struct)
+        snapshot_diff = SnapshotDiff(tick, tanks_section, bullets_section,
+            explosions_section)
         return snapshot_diff
         
     @staticmethod
