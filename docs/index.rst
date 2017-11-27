@@ -138,6 +138,9 @@ y no ser lento como TCP, la velocidad es importante en los juegos.
 La fiabilidad de la conexión se tiene que implementar, cosa que TCP ya tiene
 incorportado.
 
+Tanto el cliente como el servidor corren a 60 FPS. El cliente envía en cada ciclo
+una copia de la entrada, CLIENT_INPUT, al servidor.
+
 Modelo cliente/servidor vs p2p (peer to peer)
 +++++++++++++++++++++++++++++++++++++++++++++
 
