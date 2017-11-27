@@ -16,6 +16,7 @@
 import struct
 from collections import deque, namedtuple
 from . import protocol
+from .engine import Engine
 
 tank = namedtuple("tank", "id x y vel_x vel_y damage")
 tank_struct = struct.Struct("!iffffi")
@@ -226,15 +227,10 @@ class Snapshot:
         #print(tanks_section.modified)
         snapshot_diff = SnapshotDiff(tick, tanks_section, bullets_section)
         return snapshot_diff
-    
+        
     @staticmethod
     def set_engine_from_diff(diff, engine):
         """Set engine from the diff."""
-        
-        #engine.tanks.created - Players connected
-        #engine.tanks.destroyed - Players disconnected
-        #engine.tanks.modified - Players info modified
-        
         tanks_modified = diff.tanks.modified
         
         for id_, fields in tanks_modified:
@@ -254,6 +250,7 @@ class Snapshot:
                 vel_x=bullet.vel_x, vel_y=bullet.vel_y)
             bullet_created.set("bullet", power=bullet.power,
                 owner=engine.entities[bullet.owner])
+            engine.add_message((Engine.SHOOT, bullet.owner))
     
         for id_ in bullets_destroyed:
             engine.entities[id_].free()
