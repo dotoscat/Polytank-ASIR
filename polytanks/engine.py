@@ -137,6 +137,7 @@ class Engine:
         explosion.set("body", x=x, y=y)
         explosion.set("explosion", damage=damage, knockback=knockback)
         self._add_message((Engine.EXPLOSION, explosion))
+        return explosion
 
     def jump(self, entity):
         entity.body.vel_y = G/2.

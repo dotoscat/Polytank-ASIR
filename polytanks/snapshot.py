@@ -24,8 +24,8 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
-explosion = namedtuple("explosion", "id x y")
-explosion_struct = struct.Struct("!iff")
+explosion = namedtuple("explosion", "id x y max_time")
+explosion_struct = struct.Struct("!ifff")
 
 SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
@@ -58,6 +58,7 @@ id_nfields = struct.Struct("!ib")
 
 body_set = frozenset(("x", "y", "vel_x", "vel_y"))
 tank_set = frozenset(("damage",))
+timer_set = frozenset(("max_time",))
 
 class Snapshot:
     def __init__(self, engine, tick=0):
@@ -89,7 +90,7 @@ class Snapshot:
         for anexplosion in used_explosions:
             body = anexplosion.body
             explosion_snapshot = explosion(anexplosion.id, body.x,
-                body.y)
+                body.y, anexplosion.timer.max_time)
             explosions[anexplosion.id] = explosion_snapshot
         snapshot["explosions"] = explosions
         return snapshot
@@ -279,4 +280,5 @@ class Snapshot:
         for explosion in explosions_created:
             explosion_created = engine._spawn_explosion(explosion.x,
                 explosion.y, id_=explosion.id)
+            explosion_created.timer.max_time = explosion.max_time
             engine.add_message((Engine.EXPLOSION, explosion.id))
