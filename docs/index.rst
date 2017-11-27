@@ -201,18 +201,7 @@ Referencias
 * `https://gamedev.stackexchange.com/questions/22815/how-can-i-alleviate-network-lag-issues-with-players-from-other-countries`
 * `https://www.gamedev.net/forums/topic/375992-lag-over-the-internet/`
 * `https://www.youtube.com/watch?v=qv6UVOQ0F44`
-
-El sistema de entidad-componentes
----------------------------------
-
-Una entidad es simplemente un contenedor de cada uno de los componentes
-que se usa para un sistema. Un componente es un conjunto de datos de los que va a manejar un sistema.
-Y un sistema maneja como mínimo un componente de una entidad para una tarea específica.
-Así puede existir un sistema llamado *salto* que puede funcionar solamente si existe
-una entidad con al menos el componente Saltar. Puede existir otro sistemas que maneje
-más de un componente como el sistema de físicas, que requiere de un componente Cuerpo
-y un componente Colision para calcular la física y respuesta de las entidades que hay
-en el juego.
+* `https://en.wikipedia.org/wiki/Entity%E2%80%93component%E2%80%93system`
 
 Indices and tables
 ==================
