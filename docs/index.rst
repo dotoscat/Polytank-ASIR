@@ -161,14 +161,15 @@ Protocolo
 Mensajes desde el cliente
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-============    =============================================   ===========
-Comando         Parámetros                                      Descripción
-============    =============================================   ===========
-JOIN                                                            Unirse al servidor
-LOGOUT                                                          Desconectarse de un servidor
-CLIENT_INPUT    [[tick, n_input, [input1, input2, ...], ...]]   Entradas almacenadas en ticks
-JOINED                                                          El cliente se ha unido
-============    =============================================   ===========
+============    =====================================================   ===========
+Comando         Parámetros                                              Descripción
+============    =====================================================   ===========
+JOIN                                                                    Unirse al servidor
+LOGOUT                                                                  Desconectarse de un servidor
+CLIENT_INPUT    [tick, move, cannon_angle, accumulate_power, do_jump]   Estado actual de la entrada
+ACK                                                                     Ha recibido el snapshot
+JOINED                                                                  El cliente se ha unido
+============    =====================================================   ===========
 
 Mensajes desde el servidor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,6 +180,7 @@ Comando     Parámetros          Descripción
 JOINED      [id, x, y]          Id y posición del jugador al unirse
 DONE                            El cliente se ha desconectado
 SHOOTED     [id]                Quién dispara
+SNAPSHOT    [...]               Estado actual del juego
 START_GAME  [[[id, x, y], ...]] Empieza el juego con los jugadores y su posición actual
 ==========  =================== ===========
 
@@ -197,6 +199,8 @@ Orden del intercambio de mensajes
 |                   |START_GAME         |                              | Empieza el juego indicando los jugadores           |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
 |CLIENT_INPUT       |                   |                              | Envía las entradas acumuladas desde el cliente     |
++-------------------+-------------------+------------------------------+----------------------------------------------------+
+|ACK                |                   |                              | Notificar que ha recibido el snapshot              |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
 |                   |                   |SHOOTED                       | Enviar quién dispara                               |
 +-------------------+-------------------+------------------------------+----------------------------------------------------+
