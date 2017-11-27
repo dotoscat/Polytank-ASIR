@@ -171,6 +171,7 @@ class Snapshot:
         data += protocol.di_i.pack(protocol.SNAPSHOT, diff.tick)
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
         data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
+        data += Snapshot._diff_to_data(diff.explions, explosion_struct)
         return data
     
     @staticmethod
