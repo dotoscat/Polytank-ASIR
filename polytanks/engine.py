@@ -131,8 +131,9 @@ class Engine:
         self.entities[id_] = bullet
         return bullet
 
-    def _spawn_explosion(self, x, y, damage, knockback=0):
+    def _spawn_explosion(self, x, y, id_=None, damage=0, knockback=0):
         explosion = self.explosion_pool.get()
+        explosion.id = explosion.id if id_ is None else id_
         explosion.set("body", x=x, y=y)
         explosion.set("explosion", damage=damage, knockback=knockback)
         self._add_message((Engine.EXPLOSION, explosion))
@@ -154,13 +155,13 @@ class Engine:
             x = bullet.body.x
             y = bullet.body.y
             bullet.free()
-            self._spawn_explosion(x, y, bullet.bullet.power)
+            self._spawn_explosion(x, y, damage=bullet.bullet.power)
 
     def bullet_tank(self, bullet, tank):
         if bullet.bullet.owner == tank: return
         x = bullet.body.x
         y = bullet.body.y
-        self._spawn_explosion(x, y, bullet.bullet.power)
+        self._spawn_explosion(x, y, damage=bullet.bullet.power)
         bullet.free()
 
     def explosion_tank(self, explosion, tank):
