@@ -25,7 +25,7 @@ bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
 explosion = namedtuple("explosion", "id x y")
-explosion_struct = namedtuple("explosion", "!iff")
+explosion_struct = struct.Struct("!iff")
 
 SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
@@ -108,7 +108,8 @@ class Snapshot:
         self_explosions = self.snapshot["explosions"]
         explosions_diff = Snapshot._generate_diff_section(self_explosions,
             other_explosions)
-        return SnapshotDiff(self.tick, tanks_diff, bullets_diff)
+        return SnapshotDiff(self.tick, tanks_diff, bullets_diff,
+            explosions_diff)
     
     @staticmethod
     def _generate_diff_section(self_entities, other_entities):
@@ -171,7 +172,7 @@ class Snapshot:
         data += protocol.di_i.pack(protocol.SNAPSHOT, diff.tick)
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
         data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
-        data += Snapshot._diff_to_data(diff.explions, explosion_struct)
+        data += Snapshot._diff_to_data(diff.explosions, explosion_struct)
         return data
     
     @staticmethod
@@ -272,3 +273,10 @@ class Snapshot:
     
         for id_ in bullets_destroyed:
             engine.entities[id_].free()
+
+        explosions_created = diff.explosions.created
+
+        for explosion in explosions_created:
+            explosion_created = engine._spawn_explosion(explosion.x,
+                explosion.y, id_=explosion.id)
+            engine.add_message((Engine.EXPLOSION, explosion.id))
