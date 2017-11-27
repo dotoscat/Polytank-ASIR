@@ -24,7 +24,10 @@ tank_struct = struct.Struct("!iffffi")
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
 
-SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets")
+explosion = namedtuple("explosion", "id x y")
+explosion_struct = namedtuple("explosion", "!iff")
+
+SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
 
 POS_X = 1
@@ -66,6 +69,7 @@ class Snapshot:
         snapshot = {}
         tanks = {}
         bullets = {}
+        explosions = {}
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
@@ -81,6 +85,13 @@ class Snapshot:
                 abullet.bullet.power)
             bullets[abullet.id] = bullet_snapshot
         snapshot["bullets"] = bullets
+        used_explosions = engine.explosion_pool._used
+        for anexplosion in used_explosions:
+            body = anexplosion.body
+            explosion_snapshot = explosion(anexplosion.id, body.x,
+                body.y)
+            explosions[anexplosion.id] = explosion_snapshot
+        snapshot["explosions"] = explosions
         return snapshot
     
     def diff(self, other_snapshot):
@@ -93,6 +104,10 @@ class Snapshot:
         self_bullets = self.snapshot["bullets"]
         bullets_diff = Snapshot._generate_diff_section(self_bullets,
             other_bullets)
+        other_explosions = other_snapshot.snapshot["explosions"]
+        self_explosions = self.snapshot["explosions"]
+        explosions_diff = Snapshot._generate_diff_section(self_explosions,
+            other_explosions)
         return SnapshotDiff(self.tick, tanks_diff, bullets_diff)
     
     @staticmethod
