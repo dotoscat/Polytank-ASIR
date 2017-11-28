@@ -155,14 +155,16 @@ class Engine:
         if bullet.body.vel_y < 0.:
             x = bullet.body.x
             y = bullet.body.y
+            explosion = self._spawn_explosion(x, y, damage=bullet.bullet.power)
+            explosion.explosion.owner = bullet.bullet.owner
             bullet.free()
-            self._spawn_explosion(x, y, damage=bullet.bullet.power)
-
+            
     def bullet_tank(self, bullet, tank):
         if bullet.bullet.owner == tank: return
         x = bullet.body.x
         y = bullet.body.y
-        self._spawn_explosion(x, y, damage=bullet.bullet.power)
+        explosion = self._spawn_explosion(x, y, damage=bullet.bullet.power)
+        explosion.explosion.owner = bullet.bullet.owner
         bullet.free()
 
     def explosion_tank(self, explosion, tank):
@@ -175,6 +177,12 @@ class Engine:
         tank.tank.damage += int(explosion.explosion.damage)
         tank.tank.hitstun = 1.
         tank.tank.control = False
+        if explosion.explosion.owner is not tank:
+            tank.tank.hit_by = explosion.explosion.owner
+        else:
+            tank.tank.hit_by = None
+        if tank.tank.hit_by is None:
+            print("Autoexplosion!")
 
     def powerup_tank(self, powerup, tank):
         powerup.powerup.action(tank)

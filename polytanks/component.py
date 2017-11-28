@@ -107,6 +107,7 @@ class Explosion:
     def __init__(self):
         self.damage = 0
         self.knockback = 0
+        self.owner = None
 
 class PowerUp:
     def __init__(self):
