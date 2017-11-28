@@ -252,7 +252,7 @@ class Snapshot:
         return snapshot_diff
         
     @staticmethod
-    def set_engine_from_diff(diff, engine, player_tank=None):
+    def set_engine_from_diff(diff, engine, player_tank):
         """Set engine from the diff."""
         tanks_modified = diff.tanks.modified
         
@@ -264,6 +264,7 @@ class Snapshot:
                 elif name in tank_set:
                     setattr(tank.tank, name, value)
                 elif name in input_set:
+                    if tank is player_tank: continue
                     setattr(tank.input, name, value)
                     print(id_, tank.input.do_jump)
                     

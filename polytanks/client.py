@@ -270,7 +270,7 @@ class Client(Scene):
             snapshot_diff = Snapshot.from_network(data)
             self.snapshots.appendleft(snapshot_diff)
             self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
-            Snapshot.set_engine_from_diff(snapshot_diff, self.engine)
+            Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self.tank)
             
     def start_game(self, data):
         offset = protocol.mono.size
