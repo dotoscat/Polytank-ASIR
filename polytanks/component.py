@@ -13,6 +13,8 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import deque
+
 class PlayerInput:
     def __init__(self):
         """
@@ -70,7 +72,19 @@ class Tank:
         self.cannon_x = 0.
         self.cannon_y = 0.
         self.cannon_anchor = cannon_anchor
+        self._ko = deque()
+        self._fall = deque()
+        self.hit_by = None
         
+    def fall(self):
+        self._fall.append(self.hit_by)
+        self.hit_by = None
+        self.damage = 0
+    
+    @property
+    def suicides():
+        return self._fall.count(None)
+    
     def reset(self):
         self.damage = 0
         self.hitstun = 0.

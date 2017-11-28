@@ -194,7 +194,11 @@ class Engine:
         if isinstance(entity, self.bullet_pool):
             entity.free()
         elif isinstance(entity, self.tank_pool):
-            pass
+            entity.tank.fall()
+            entity.body.x = constant.VWIDTH/2.
+            entity.body.vel_x = 0.
+            entity.body.y = constant.VHEIGHT-constant.VHEIGHT/4.
+            entity.body.vel_y = 0.
 
     @staticmethod
     def _heal_tank(tank):
