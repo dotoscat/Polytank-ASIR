@@ -18,8 +18,8 @@ from collections import deque, namedtuple
 from . import protocol
 from .engine import Engine
 
-tank = namedtuple("tank", "id x y vel_x vel_y damage")
-tank_struct = struct.Struct("!iffffi")
+tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage")
+tank_struct = struct.Struct("!i?ffffi")
 
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
@@ -35,6 +35,7 @@ POS_Y = 2
 VEL_X = 3
 VEL_Y = 4
 DAMAGE = 5
+DO_JUMP = 6
 
 FLOAT = 1
 BOOL = 2
@@ -45,7 +46,8 @@ DIFF_TABLE = {
     "y": POS_Y,
     "vel_x": VEL_X,
     "vel_y": VEL_Y,
-    "damage": DAMAGE
+    "damage": DAMAGE,
+    "do_jump": DO_JUMP
 }
 
 INV_DIFF_TABLE = {v: k for k, v in DIFF_TABLE.items()}
@@ -58,6 +60,7 @@ id_nfields = struct.Struct("!ib")
 
 body_set = frozenset(("x", "y", "vel_x", "vel_y"))
 tank_set = frozenset(("damage",))
+input_set = frozenset(("do_jump",))
 timer_set = frozenset(("max_time",))
 
 class Snapshot:
@@ -74,7 +77,7 @@ class Snapshot:
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
-            tank_snapshot = tank(atank.id, body.x, body.y,
+            tank_snapshot = tank(atank.id, atank.input.do_jump, body.x, body.y,
                 body.vel_x, body.vel_y, atank.tank.damage)
             tanks[atank.id] = tank_snapshot
         snapshot["tanks"] = tanks
@@ -249,7 +252,7 @@ class Snapshot:
         return snapshot_diff
         
     @staticmethod
-    def set_engine_from_diff(diff, engine):
+    def set_engine_from_diff(diff, engine, player_tank=None):
         """Set engine from the diff."""
         tanks_modified = diff.tanks.modified
         
@@ -260,6 +263,9 @@ class Snapshot:
                     setattr(tank.body, name, value)
                 elif name in tank_set:
                     setattr(tank.tank, name, value)
+                elif name in input_set:
+                    setattr(tank.input, name, value)
+                    print(id_, tank.input.do_jump)
                     
         bullets_created = diff.bullets.created
         bullets_destroyed = diff.bullets.destroyed
