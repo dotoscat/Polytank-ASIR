@@ -38,9 +38,7 @@ class Main(ogf4py3.Scene):
         
     def change_color(self, dt):
         self.current_color += 1
-        if self.current_color == len(Main.COLORS):
-            self.current_color = 0
-        self.title.color = Main.COLORS[self.current_color]
+        self.title.color = Main.COLORS[self.current_color % len(Main.COLORS)]
         
     def init(self):
         pyglet.clock.schedule_interval(self.change_color, 0.25)
