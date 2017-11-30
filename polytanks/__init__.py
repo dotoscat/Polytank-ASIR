@@ -12,3 +12,8 @@
 
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+WHITE = (255, 255, 255, 255)
+RED = (255, 200, 200, 255)
+GREEN = (200, 255, 200, 255)
+BLUE = (200, 200, 255, 255)
