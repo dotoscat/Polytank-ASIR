@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import deque
 from weakref import proxy
 import pyglet
 
@@ -33,6 +34,7 @@ class Scene(object):
         self._director = None
         self._batch = pyglet.graphics.Batch()
         self._groups = [pyglet.graphics.OrderedGroup(i) for i in range(n_groups)]
+        self.child = deque()
 
     @property
     def director(self):
@@ -85,3 +87,15 @@ class Scene(object):
             dt (float): Time elapsed from the last call to update.
         """
         pass
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        get_virtual_xy = self.director.get_virtual_xy
+        vx, vy = get_virtual_xy(x, y)
+        vdx, vdy = get_virtual_xy(dx, dy)
+        for child in self.child:
+            child.on_mouse_motion(vx, vy, vdx, vdy)
+    
+    def on_mouse_release(self, x, y, button, modifiers):
+        vx, vy = self.director.get_virtual_xy(x, y)
+        for child in self.child:
+            child.on_mouse_release(vx, vy, button, modifiers)

@@ -41,6 +41,7 @@ class Main(ogf4py3.Scene):
         
         self.boton = ogf4py3.gui.Button("Hola mundo", batch=self.batch,
             action=achis)
+        self.child.append(self.boton)
         
     def change_color(self, dt):
         self.current_color += 1
@@ -51,16 +52,6 @@ class Main(ogf4py3.Scene):
         
     def update(self, dt):
         pass
-
-    def on_mouse_motion(self, x, y, dx, dy):
-        get_virtual_xy = self.director.get_virtual_xy
-        vx, vy = get_virtual_xy(x, y)
-        vdx, vdy = get_virtual_xy(dx, dy)
-        self.boton.on_mouse_motion(vx, vy, vdx, vdy)
-    
-    def on_mouse_release(self, x, y, button, modifiers):
-        vx, vy = self.director.get_virtual_xy(x, y)
-        self.boton.on_mouse_release(vx, vy, button, modifiers)
     
 if __name__ == "__main__":
     director = ogf4py3.Director(
