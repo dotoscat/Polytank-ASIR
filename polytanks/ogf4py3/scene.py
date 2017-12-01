@@ -37,7 +37,7 @@ class Scene(object):
         self._child = deque()
 
     @property
-    def child(self):
+    def children(self):
         return self._child
 
     @property

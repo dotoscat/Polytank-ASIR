@@ -44,22 +44,24 @@ class Main(ogf4py3.Scene):
         
         Button = ogf4py3.gui.Button
         
-        self.main_buttons = [
+        self.main_buttons = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
+        
+        main_buttons = [
             Button("Unirse a partida", batch=self.batch, action=achis),
             Button("Crear servidor", batch=self.batch, action=achis),
             Button("Salir", batch=self.batch, action=app_exit),
         ]
 
         def irse(button, x, y, buttons, modifiers):
-            self.main_buttons[2].visible = not self.main_buttons[2].visible
+            main_buttons[2].visible = not main_buttons[2].visible
         
-        self.main_buttons[0].action = irse
-        self.main_buttons[2].visible = False
+        main_buttons[0].action = irse
+        main_buttons[2].visible = False
 
-        for i, button in enumerate(self.main_buttons):
-            button.x = self.title.x
-            button.y = self.title.y - 32 - i*(16.+8.)
-            self.child.append(button)
+        for i, button in enumerate(main_buttons):
+            button.y = i*(-16.+-8.)
+            self.main_buttons.add_child(button)
+            self.children.append(button)
         
     def change_color(self, dt):
         self.current_color += 1
