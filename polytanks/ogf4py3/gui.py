@@ -52,19 +52,21 @@ class Bar(object):
         )
 
 class Button(pyglet.text.Label):
-    def __init__(self, *args, bg_color=(200, 200, 255, 255),
-    action=None, **kwargs):
+    def __init__(self, *args, hover_color=(255, 200, 200, 255),
+    idle_color=(255, 255, 255, 255), action=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.__width = self.content_width
         self.__height = self.content_height
         self.action = action
+        self.hover_color = hover_color
+        self.idle_color = idle_color
         
     def on_mouse_motion(self, x, y, dx, dy):
         if (self.x < x < self.x + self.__width
         and self.y < y < self.y + self.__height):
-            self.color = (255, 0, 0, 255)
-        else:
-            self.color = (255, 255, 255, 255)
+            self.color = self.hover_color
+        elif self.color is not self.idle_color:
+            self.color = self.idle_color
     
     def on_mouse_release(self, x, y, button, modifiers):
         if not callable(self.action): return
