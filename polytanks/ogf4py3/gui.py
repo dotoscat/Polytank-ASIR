@@ -60,8 +60,21 @@ class Button(pyglet.text.Label):
         self.action = action
         self.hover_color = hover_color
         self.idle_color = idle_color
-        
+        self._visible = True
+    
+    @property
+    def visible(self):
+        return self._visible
+    
+    @visible.setter
+    def visible(self, visible):
+        if not isinstance(visible, bool):
+            raise TypeError("visible uses a bool. Got {} instead".format(type(visible)))
+        self._visible = visible
+        self.color = self.color[0:3] + (255,) if visible else self.color[0:3] + (0,)
+    
     def on_mouse_motion(self, x, y, dx, dy):
+        if not self._visible: return
         if (self.x < x < self.x + self.__width
         and self.y < y < self.y + self.__height):
             self.color = self.hover_color
@@ -69,6 +82,7 @@ class Button(pyglet.text.Label):
             self.color = self.idle_color
     
     def on_mouse_release(self, x, y, button, modifiers):
+        if not self._visible: return
         if not callable(self.action): return
         if (self.x < x < self.x + self.__width
         and self.y < y < self.y + self.__height):

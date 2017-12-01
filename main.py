@@ -50,6 +50,12 @@ class Main(ogf4py3.Scene):
             Button("Salir", batch=self.batch, action=app_exit),
         ]
 
+        def irse(button, x, y, buttons, modifiers):
+            self.main_buttons[2].visible = True
+        
+        self.main_buttons[0].action = irse
+        self.main_buttons[2].visible = False
+
         for i, button in enumerate(self.main_buttons):
             button.x = self.title.x
             button.y = self.title.y - 32 - i*(16.+8.)
