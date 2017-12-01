@@ -39,9 +39,21 @@ class Main(ogf4py3.Scene):
         def achis(button, x, y, buttons, modifiers):
             print("achis!", x, y)
         
-        self.boton = ogf4py3.gui.Button("Hola mundo", batch=self.batch,
-            action=achis)
-        self.child.append(self.boton)
+        def app_exit(button, x, y, buttons, modifiers):
+            pyglet.app.exit()
+        
+        Button = ogf4py3.gui.Button
+        
+        self.main_buttons = [
+            Button("Unirse a partida", batch=self.batch, action=achis),
+            Button("Crear servidor", batch=self.batch, action=achis),
+            Button("Salir", batch=self.batch, action=app_exit),
+        ]
+
+        for i, button in enumerate(self.main_buttons):
+            button.x = self.title.x
+            button.y = self.title.y - 32 - i*(16.+8.)
+            self.child.append(button)
         
     def change_color(self, dt):
         self.current_color += 1
