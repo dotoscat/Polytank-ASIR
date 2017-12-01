@@ -35,34 +35,31 @@ class Main(ogf4py3.Scene):
         batch=self.batch, group=self.group[0], anchor_x="center",
         anchor_y="center", align="center", x=constant.VWIDTH/2.,
         y=constant.VHEIGHT-constant.VHEIGHT/4.)
-        
-        def achis(button, x, y, buttons, modifiers):
-            print("achis!", x, y)
-        
-        def app_exit(button, x, y, buttons, modifiers):
-            pyglet.app.exit()
-        
+
         Button = ogf4py3.gui.Button
         
         self.main_buttons = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
         
         main_buttons = [
-            Button("Unirse a partida", batch=self.batch, action=achis),
-            Button("Crear servidor", batch=self.batch, action=achis),
-            Button("Salir", batch=self.batch, action=app_exit),
+            Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida),
+            Button("Crear servidor", batch=self.batch, action=self.crear_servidor),
+            Button("Salir", batch=self.batch, action=self.app_exit),
         ]
-
-        def irse(button, x, y, buttons, modifiers):
-            main_buttons[2].visible = not main_buttons[2].visible
-        
-        main_buttons[0].action = irse
-        main_buttons[2].visible = False
 
         for i, button in enumerate(main_buttons):
             button.y = i*(-16.+-8.)
             self.main_buttons.add_child(button)
             self.children.append(button)
-        
+
+    def crear_servidor(self, button, x, y, buttons, modifiers):
+        print("crear servidor")
+
+    def unirse_a_partida(self, button, x, y, buttons, modifiers):
+        print("Unirse a partida")
+    
+    def app_exit(self, button, x, y, buttons, modifiers):
+        pyglet.app.exit()
+    
     def change_color(self, dt):
         self.current_color += 1
         self.title.color = Main.COLORS[self.current_color % len(Main.COLORS)]
