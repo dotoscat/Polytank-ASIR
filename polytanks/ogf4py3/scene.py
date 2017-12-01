@@ -34,7 +34,11 @@ class Scene(object):
         self._director = None
         self._batch = pyglet.graphics.Batch()
         self._groups = [pyglet.graphics.OrderedGroup(i) for i in range(n_groups)]
-        self.child = deque()
+        self._child = deque()
+
+    @property
+    def child(self):
+        return self._child
 
     @property
     def director(self):
@@ -92,10 +96,10 @@ class Scene(object):
         get_virtual_xy = self.director.get_virtual_xy
         vx, vy = get_virtual_xy(x, y)
         vdx, vdy = get_virtual_xy(dx, dy)
-        for child in self.child:
+        for child in self._child:
             child.on_mouse_motion(vx, vy, vdx, vdy)
     
     def on_mouse_release(self, x, y, button, modifiers):
         vx, vy = self.director.get_virtual_xy(x, y)
-        for child in self.child:
+        for child in self._child:
             child.on_mouse_release(vx, vy, button, modifiers)
