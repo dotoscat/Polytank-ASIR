@@ -51,7 +51,7 @@ class Main(ogf4py3.Scene):
         ]
 
         def irse(button, x, y, buttons, modifiers):
-            self.main_buttons[2].visible = True
+            self.main_buttons[2].visible = not self.main_buttons[2].visible
         
         self.main_buttons[0].action = irse
         self.main_buttons[2].visible = False

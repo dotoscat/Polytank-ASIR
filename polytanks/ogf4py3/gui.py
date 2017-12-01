@@ -51,6 +51,30 @@ class Bar(object):
             width=self._value, height=self._height - margin*2.
         )
 
+class Node:
+    """Group buttons, labels, text edits, spinners...
+    """
+    def __init__(self, x=0., y=0.):
+        self._children = deque()
+        self._x = x
+        self._y = y
+        self._visible = True
+    
+    def add_child(self, child):
+        child.x += self._x
+        child.y += self._y
+        self._children.append(child)
+    
+    @property
+    def visible(self):
+        return self._visible
+        
+    @visible.setter
+    def visible(self, value):
+        self._visible = value
+        for child in self._children:
+            child.visible = value
+    
 class Button(pyglet.text.Label):
     def __init__(self, *args, hover_color=(255, 200, 200, 255),
     idle_color=(255, 255, 255, 255), action=None, **kwargs):
