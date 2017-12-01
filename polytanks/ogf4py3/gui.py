@@ -67,6 +67,10 @@ class Node:
         self._children.append(child)
     
     @property
+    def children(self):
+        return self._children
+    
+    @property
     def visible(self):
         return self._visible
         
