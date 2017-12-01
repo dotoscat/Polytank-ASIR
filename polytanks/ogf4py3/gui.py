@@ -52,10 +52,12 @@ class Bar(object):
         )
 
 class Button(pyglet.text.Label):
-    def __init__(self, *args, bg_color=(200, 200, 255, 255), **kwargs):
+    def __init__(self, *args, bg_color=(200, 200, 255, 255),
+    action=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.__width = self.content_width
         self.__height = self.content_height
+        self.action = action
         
     def on_mouse_motion(self, x, y, dx, dy):
         if (self.x < x < self.x + self.__width
@@ -64,8 +66,11 @@ class Button(pyglet.text.Label):
         else:
             self.color = (255, 255, 255, 255)
     
-    def on_draw(self):
-        print("dibujame")
+    def on_mouse_release(self, x, y, button, modifiers):
+        if not callable(self.action): return
+        if (self.x < x < self.x + self.__width
+        and self.y < y < self.y + self.__height):
+            self.action(self, x, y, button, modifiers)
 
 class Menu(object):
 
