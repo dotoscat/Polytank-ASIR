@@ -21,6 +21,7 @@ from . import toyblock3
 
 from .director import Director
 from .scene import Scene
+from . import gui
 
 def magnitude_to_vector(magnitude, angle):
     """

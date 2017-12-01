@@ -35,6 +35,7 @@ class Main(ogf4py3.Scene):
         batch=self.batch, group=self.group[0], anchor_x="center",
         anchor_y="center", align="center", x=constant.VWIDTH/2.,
         y=constant.VHEIGHT-constant.VHEIGHT/4.)
+        self.boton = ogf4py3.gui.Button("Hola mundo", batch=self.batch)
         
     def change_color(self, dt):
         self.current_color += 1
@@ -46,6 +47,12 @@ class Main(ogf4py3.Scene):
     def update(self, dt):
         pass
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        get_virtual_xy = self.director.get_virtual_xy
+        vx, vy = get_virtual_xy(x, y)
+        vdx, vdy = get_virtual_xy(dx, dy)
+        self.boton.on_mouse_motion(vx, vy, vdx, vdy)
+        
 if __name__ == "__main__":
     director = ogf4py3.Director(
         caption="Polytanks", fullscreen=False,

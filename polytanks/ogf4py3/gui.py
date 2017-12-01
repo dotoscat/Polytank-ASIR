@@ -51,6 +51,22 @@ class Bar(object):
             width=self._value, height=self._height - margin*2.
         )
 
+class Button(pyglet.text.Label):
+    def __init__(self, *args, bg_color=(200, 200, 255, 255), **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__width = self.content_width
+        self.__height = self.content_height
+        
+    def on_mouse_motion(self, x, y, dx, dy):
+        if (self.x < x < self.x + self.__width
+        and self.y < y < self.y + self.__height):
+            self.color = (255, 0, 0, 255)
+        else:
+            self.color = (255, 255, 255, 255)
+    
+    def on_draw(self):
+        print("dibujame")
+
 class Menu(object):
 
     class Entry(object):
