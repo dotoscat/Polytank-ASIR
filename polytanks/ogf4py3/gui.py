@@ -65,6 +65,7 @@ class Node:
         self._visible = True
         self.margin = margin
         self.orientation = orientation
+        self._next_pos = y if orientation == Node.VERTICAL else x
     
     def add_child(self, child):
         self._children.append(child)
@@ -72,11 +73,13 @@ class Node:
             child.x += self._x
             height = getattr(child, "height", None)
             height = height if height is not None else getattr(child, "content_height", 0)
-            child.y += self._y + len(self._children)*(-height + -self.margin)
+            child.y += self._next_pos
+            self._next_pos += -height + -self.margin
         elif self.orientation == Node.HORIZONTAL:
             width = getattr(child, "width", None)
             width = width if width is not None else getattr(child, "content_width", 0)
-            child.x += self._x + len(self._children)*(width + self.margin)
+            child.x += self._next_pos
+            self._next_pos += width + self.margin
             child.y += self._y
         else:
             raise TypeError("orentation is not HORIZONTAL or VERTICAL")
