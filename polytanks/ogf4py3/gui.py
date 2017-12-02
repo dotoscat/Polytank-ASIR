@@ -118,23 +118,12 @@ class Node:
         
     @visible.setter
     def visible(self, value):
-        print(self, self._children)
         self._visible = value
-        for child in self._children:
-            if hasattr(child, "visible"):
-                setattr(child, "visible", value)
-                print("child has visible", child)
-            elif hasattr(child, "color"):
-                
+        for child in self._children:            
             try:
                 child.visible = value
             except AttributeError:
-                print("type", type(child))
-                color = getattr(child, "color", None)
-                #print(child, "color", color)
-                if color is None: continue
-                alpha = (255,) if visible else (0,)
-                child.color = color[0:3] + alpha
+                pass
     
     def on_mouse_motion(self, x, y, dx, dy):
         for child in self._children:
@@ -155,7 +144,7 @@ class Spinner(Node):
         super().__init__(x, y, orientation=Node.HORIZONTAL)
         self._values = deque(values)
         text = values[0] if values else '-'
-        self._label = pyglet.text.Label(text, **kwargs)
+        self._label = VisibleLabel(text, **kwargs)
         self._label.width = width
         self._button_left = Button("<", action=self.change_left, **kwargs)
         self._button_right = Button(">", action=self.change_right, **kwargs)
