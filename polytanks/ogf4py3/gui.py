@@ -121,10 +121,17 @@ class Node:
         print(self, self._children)
         self._visible = value
         for child in self._children:
+            if hasattr(child, "visible"):
+                setattr(child, "visible", value)
+                print("child has visible", child)
+            elif hasattr(child, "color"):
+                
             try:
                 child.visible = value
             except AttributeError:
+                print("type", type(child))
                 color = getattr(child, "color", None)
+                #print(child, "color", color)
                 if color is None: continue
                 alpha = (255,) if visible else (0,)
                 child.color = color[0:3] + alpha
@@ -171,17 +178,10 @@ class Spinner(Node):
     def value(self):
         return self._label.text
 
-class Button(pyglet.text.Label):
-    def __init__(self, *args, hover_color=(255, 200, 200, 255),
-    idle_color=(255, 255, 255, 255), action=None, **kwargs):
+class VisibleLabel(pyglet.text.Label):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__width = self.content_width
-        self.__height = self.content_height
-        self.action = action
-        self.hover_color = hover_color
-        self.idle_color = idle_color
-        self._visible = True
-    
+        
     @property
     def visible(self):
         return self._visible
@@ -192,6 +192,17 @@ class Button(pyglet.text.Label):
             raise TypeError("visible uses a bool. Got {} instead".format(type(visible)))
         self._visible = visible
         self.color = self.color[0:3] + (255,) if visible else self.color[0:3] + (0,)
+
+class Button(VisibleLabel):
+    def __init__(self, *args, hover_color=(255, 200, 200, 255),
+    idle_color=(255, 255, 255, 255), action=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__width = self.content_width
+        self.__height = self.content_height
+        self.action = action
+        self.hover_color = hover_color
+        self.idle_color = idle_color
+        self._visible = True
     
     def on_mouse_motion(self, x, y, dx, dy):
         if not self._visible: return
