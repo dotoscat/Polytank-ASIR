@@ -51,6 +51,9 @@ class Main(ogf4py3.Scene):
 
         self.children.append(self.main_buttons)
         
+        spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), x=128, y=128, batch=self.batch)
+        self.children.append(spinnerman)
+        
         self.edit = ogf4py3.gui.TextEntry(256, 24, batch=self.batch)
         
     def crear_servidor(self, button, x, y, buttons, modifiers):

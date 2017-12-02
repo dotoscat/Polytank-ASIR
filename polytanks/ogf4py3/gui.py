@@ -73,7 +73,7 @@ class Node:
             child.x += self._x
             child.y += self._y + len(self._children)*(-self._height + -self.margin)
         elif self.orientation == Node.HORIZONTAL:
-            child.x += self._x + len(self._children)*(-self._height + -self.margin)
+            child.x += self._x + len(self._children)*(8. + self.margin)
             child.y += self._y
         else:
             raise TypeError("orentation is not HORIZONTAL or VERTICAL")
@@ -94,12 +94,45 @@ class Node:
     
     def on_mouse_motion(self, x, y, dx, dy):
         for child in self._children:
-            child.on_mouse_motion(x, y, dx, dy)
+            try:
+                child.on_mouse_motion(x, y, dx, dy)
+            except AttributeError:
+                pass
             
     def on_mouse_release(self, x, y, buttons, modifiers):
         for child in self._children:
-            child.on_mouse_release(x, y, buttons, modifiers)
+            try:
+                child.on_mouse_release(x, y, buttons, modifiers)
+            except AttributeError as ae:
+                pass
+
+class Spinner(Node):
+    def __init__(self, values, x=0., y=0., **kwargs):
+        super().__init__(self, 16, x, y, orientation=Node.HORIZONTAL)
+        self._values = deque(values)
+        text = values[0] if values else '-'
+        self._label = pyglet.text.Label(text, **kwargs)
+        self._button_left = Button("<", action=self.change_left, **kwargs)
+        self._button_right = Button(">", action=self.change_right, **kwargs)
+        
+        self.add_child(self._button_left)
+        self.add_child(self._label)
+        self.add_child(self._button_right)
+        
+    def change_left(self, button, x, y, buttons, modifiers):
+        if not self._values: return
+        self._values.rotate(-1)
+        self._label.text = self._values[0]
+        
+    def change_right(self, button, x, y, buttons, modifiers):
+        if not self._values: return
+        self._values.rotate(1)
+        self._label.text = self._values[0]
     
+    @property
+    def value(self):
+        return self._label.text
+
 class Button(pyglet.text.Label):
     def __init__(self, *args, hover_color=(255, 200, 200, 255),
     idle_color=(255, 255, 255, 255), action=None, **kwargs):
