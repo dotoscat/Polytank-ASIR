@@ -67,10 +67,31 @@ class Node:
         self.orientation = orientation
         self._next_pos = y if orientation == Node.VERTICAL else x
     
+    @property
+    def x(self):
+        return self._x
+    
+    @x.setter
+    def x(self, value):
+        for child in self._children:
+            child.x += value
+    
+    @property
+    def y(self):
+        return self._y
+    
+    @y.setter
+    def y(self, value):
+        for child in self._children:
+            child.y += value
+    
     def add_child(self, child):
         self._children.append(child)
         if self.orientation == Node.VERTICAL:
-            child.x += self._x
+            try:
+                child.x += self._x
+            except AttributeError:
+                pass
             height = getattr(child, "height", None)
             height = height if height is not None else getattr(child, "content_height", 0)
             child.y += self._next_pos
@@ -80,7 +101,10 @@ class Node:
             width = width if width is not None else getattr(child, "content_width", 0)
             child.x += self._next_pos
             self._next_pos += width + self.margin
-            child.y += self._y
+            try:
+                child.y += self._y
+            except AttributeError:
+                pass
         else:
             raise TypeError("orentation is not HORIZONTAL or VERTICAL")
         
@@ -94,9 +118,16 @@ class Node:
         
     @visible.setter
     def visible(self, value):
+        print(self, self._children)
         self._visible = value
         for child in self._children:
-            child.visible = value
+            try:
+                child.visible = value
+            except AttributeError:
+                color = getattr(child, "color", None)
+                if color is None: continue
+                alpha = (255,) if visible else (0,)
+                child.color = color[0:3] + alpha
     
     def on_mouse_motion(self, x, y, dx, dy):
         for child in self._children:
@@ -135,7 +166,7 @@ class Spinner(Node):
         if not self._values: return
         self._values.rotate(1)
         self._label.text = self._values[0]
-    
+
     @property
     def value(self):
         return self._label.text
