@@ -38,7 +38,7 @@ class Main(ogf4py3.Scene):
 
         Button = ogf4py3.gui.Button
         
-        self.main_buttons = ogf4py3.gui.Node(16, x=constant.VWIDTH/2., y=self.title.y - 64.)
+        self.main_buttons = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
         
         main_buttons = [
             Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida),
@@ -51,7 +51,7 @@ class Main(ogf4py3.Scene):
 
         self.children.append(self.main_buttons)
         
-        spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), x=128, y=128, batch=self.batch)
+        spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), 64, x=128, y=128, batch=self.batch)
         self.children.append(spinnerman)
         
         self.edit = ogf4py3.gui.TextEntry(256, 24, batch=self.batch)

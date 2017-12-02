@@ -58,22 +58,25 @@ class Node:
     HORIZONTAL = 1
     VERTICAL = 2
     
-    def __init__(self, height, x=0., y=0., margin=8., orientation=VERTICAL):
+    def __init__(self, x=0., y=0., margin=8., orientation=VERTICAL):
         self._children = deque()
         self._x = x
         self._y = y
         self._visible = True
         self.margin = margin
-        self._height = height
         self.orientation = orientation
     
     def add_child(self, child):
         self._children.append(child)
         if self.orientation == Node.VERTICAL:
             child.x += self._x
-            child.y += self._y + len(self._children)*(-self._height + -self.margin)
+            height = getattr(child, "height", None)
+            height = height if height is not None else getattr(child, "content_height", 0)
+            child.y += self._y + len(self._children)*(-height + -self.margin)
         elif self.orientation == Node.HORIZONTAL:
-            child.x += self._x + len(self._children)*(8. + self.margin)
+            width = getattr(child, "width", None)
+            width = width if width is not None else getattr(child, "content_width", 0)
+            child.x += self._x + len(self._children)*(width + self.margin)
             child.y += self._y
         else:
             raise TypeError("orentation is not HORIZONTAL or VERTICAL")
@@ -107,11 +110,12 @@ class Node:
                 pass
 
 class Spinner(Node):
-    def __init__(self, values, x=0., y=0., **kwargs):
-        super().__init__(self, 16, x, y, orientation=Node.HORIZONTAL)
+    def __init__(self, values, width, x=0., y=0., **kwargs):
+        super().__init__(x, y, orientation=Node.HORIZONTAL)
         self._values = deque(values)
         text = values[0] if values else '-'
         self._label = pyglet.text.Label(text, **kwargs)
+        self._label.width = width
         self._button_left = Button("<", action=self.change_left, **kwargs)
         self._button_right = Button(">", action=self.change_right, **kwargs)
         
