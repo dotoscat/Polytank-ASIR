@@ -20,7 +20,7 @@ import polytanks.server
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-ADDRESS = ("127.0.0.1", 7777)
+ADDRESS = ("0.0.0.0", 7777)
 
 if __name__ == "__main__":
     server = polytanks.server.Server(ADDRESS, debug=True)

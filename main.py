@@ -14,6 +14,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import socket
 import pyglet
 import polytanks
 from polytanks import constant
@@ -37,14 +38,25 @@ class Main(ogf4py3.Scene):
         y=constant.VHEIGHT-constant.VHEIGHT/4.)
 
         Button = ogf4py3.gui.Button
+        Spinner = ogf4py3.gui.Spinner
         
-        self.main_buttons = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
-        main_buttons = self.main_buttons
-        main_buttons.add_child(Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida))
-        main_buttons.add_child(Button("Crear servidor", batch=self.batch, action=self.crear_servidor))
-        main_buttons.add_child(Button("Salir", batch=self.batch, action=self.app_exit))
-        self.children.append(self.main_buttons)
+        self.main_menu = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
+        main_menu = self.main_menu
+        main_menu.add_child(Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida))
+        main_menu.add_child(Button("Crear servidor", batch=self.batch, action=self.crear_servidor))
+        main_menu.add_child(Button("Salir", batch=self.batch, action=self.app_exit))
+        self.children.append(main_menu)
         
+        hostname = socket.getfqdn()
+        ifaces = ["0.0.0.0"] + socket.gethostbyname_ex(hostname)[2]
+        
+        self.create_game_menu = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
+        create_game_menu = self.create_game_menu
+        create_game_menu.add_child(Spinner(ifaces, 128, batch=self.batch))
+        create_game_menu.add_child(Spinner(('1', '2', '3', '4'), 16, batch=self.batch))
+        create_game_menu.visible = False
+        self.children.append(create_game_menu)
+
         #spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), 64, x=128, y=128, batch=self.batch)
         #self.children.append(spinnerman)
         
@@ -65,7 +77,7 @@ class Main(ogf4py3.Scene):
         
     def init(self):
         pyglet.clock.schedule_interval(self.change_color, 0.25)
-        self.director.push_handlers(self.edit.caret)
+        #self.director.push_handlers(self.edit.caret)
         
     def update(self, dt):
         pass
