@@ -133,11 +133,15 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
         super().__init__(self.__document, width, height, **kwargs)
         self.__caret = pyglet.text.caret.Caret(self)
         self.__document.set_style(0, len(self.__document.text),
-            {"color": (255, 0, 0, 255), "background_color": (0, 255, 0, 255)})
+            {"color": (255, 255, 255, 255)})
         
     @property
     def caret(self):
         return self.__caret
+
+    @property
+    def value(self):
+        return self.__document.text
 
 class Menu(object):
 
