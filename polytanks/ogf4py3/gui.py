@@ -127,6 +127,17 @@ class Button(pyglet.text.Label):
         and self.y < y < self.y + self.__height):
             self.action(self, x, y, button, modifiers)
 
+class TextEntry(pyglet.text.layout.IncrementalTextLayout):
+    def __init__(self, width, height=16):
+        self.__document = pyglet.text.document.UnformattedDocument()
+        super().__init__(self.__document, width, 16)
+        self.__caret = pyglet.text.caret.Caret(self)
+        self.color = (0, 255, 0, 255)
+    
+    @property
+    def caret(self):
+        return self.__caret
+
 class Menu(object):
 
     class Entry(object):

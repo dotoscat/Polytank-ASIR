@@ -50,7 +50,10 @@ class Main(ogf4py3.Scene):
             self.main_buttons.add_child(button)
 
         self.children.append(self.main_buttons)
-
+        
+        self.edit = ogf4py3.gui.TextEntry(256, 24)
+        print(self.edit.x, self.edit.y)
+        
     def crear_servidor(self, button, x, y, buttons, modifiers):
         print("crear servidor")
 
@@ -66,6 +69,7 @@ class Main(ogf4py3.Scene):
         
     def init(self):
         pyglet.clock.schedule_interval(self.change_color, 0.25)
+        self.director.push_handlers(self.edit.caret)
         
     def update(self, dt):
         pass
