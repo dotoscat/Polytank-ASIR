@@ -51,8 +51,7 @@ class Main(ogf4py3.Scene):
 
         self.children.append(self.main_buttons)
         
-        self.edit = ogf4py3.gui.TextEntry(256, 24)
-        print(self.edit.x, self.edit.y)
+        self.edit = ogf4py3.gui.TextEntry(256, 24, batch=self.batch)
         
     def crear_servidor(self, button, x, y, buttons, modifiers):
         print("crear servidor")

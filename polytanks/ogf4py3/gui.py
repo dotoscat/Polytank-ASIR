@@ -128,12 +128,13 @@ class Button(pyglet.text.Label):
             self.action(self, x, y, button, modifiers)
 
 class TextEntry(pyglet.text.layout.IncrementalTextLayout):
-    def __init__(self, width, height=16):
+    def __init__(self, width, height=16, **kwargs):
         self.__document = pyglet.text.document.UnformattedDocument()
-        super().__init__(self.__document, width, 16)
+        super().__init__(self.__document, width, height, **kwargs)
         self.__caret = pyglet.text.caret.Caret(self)
-        self.color = (0, 255, 0, 255)
-    
+        self.__document.set_style(0, len(self.__document.text),
+            {"color": (255, 0, 0, 255), "background_color": (0, 255, 0, 255)})
+        
     @property
     def caret(self):
         return self.__caret
