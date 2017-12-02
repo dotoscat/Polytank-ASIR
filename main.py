@@ -32,6 +32,7 @@ class Main(ogf4py3.Scene):
     def __init__(self):
         super().__init__(2)
         self.current_color = 0
+        self._current_menu = None
         self.title = pyglet.text.Label("POLYTANKS", font_size=24,
         batch=self.batch, group=self.group[0], anchor_x="center",
         anchor_y="center", align="center", x=constant.VWIDTH/2.,
@@ -54,6 +55,8 @@ class Main(ogf4py3.Scene):
         create_game_menu = self.create_game_menu
         create_game_menu.add_child(Spinner(ifaces, 128, batch=self.batch))
         create_game_menu.add_child(Spinner(('1', '2', '3', '4'), 16, batch=self.batch))
+        create_game_menu.add_child(Button("Cancelar", batch=self.batch, action=self.to_main_menu))
+        create_game_menu.add_child(Button("Listo", batch=self.batch, action=self.to_main_menu))
         create_game_menu.visible = False
         self.children.append(create_game_menu)
 
@@ -65,12 +68,19 @@ class Main(ogf4py3.Scene):
     def create_game(self, button, x, y, buttons, modifiers):
         self.main_menu.visible = False
         self.create_game_menu.visible = True
+        self._current_menu = self.create_game_menu
 
     def unirse_a_partida(self, button, x, y, buttons, modifiers):
         print("Unirse a partida")
     
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
+    
+    def to_main_menu(self, button, x, y, buttons, modifiers):
+        if self._current_menu is None: return
+        self._current_menu.visible = False
+        self.main_menu.visible = True
+        self._current_menu = None
     
     def change_color(self, dt):
         self.current_color += 1
