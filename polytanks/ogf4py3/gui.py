@@ -146,6 +146,7 @@ class Spinner(Node):
         text = values[0] if values else '-'
         self._label = VisibleLabel(text, **kwargs)
         self._label.width = width
+        self._height = self._label.content_height
         self._button_left = Button("<", action=self.change_left, **kwargs)
         self._button_right = Button(">", action=self.change_right, **kwargs)
         
@@ -162,6 +163,10 @@ class Spinner(Node):
         if not self._values: return
         self._values.rotate(1)
         self._label.text = self._values[0]
+
+    @property
+    def height(self):
+        return self._height
 
     @property
     def value(self):
