@@ -39,22 +39,16 @@ class Main(ogf4py3.Scene):
         Button = ogf4py3.gui.Button
         
         self.main_buttons = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
-        
-        main_buttons = [
-            Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida),
-            Button("Crear servidor", batch=self.batch, action=self.crear_servidor),
-            Button("Salir", batch=self.batch, action=self.app_exit),
-        ]
-
-        for i, button in enumerate(main_buttons):
-            self.main_buttons.add_child(button)
-
+        main_buttons = self.main_buttons
+        main_buttons.add_child(Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida))
+        main_buttons.add_child(Button("Crear servidor", batch=self.batch, action=self.crear_servidor))
+        main_buttons.add_child(Button("Salir", batch=self.batch, action=self.app_exit))
         self.children.append(self.main_buttons)
         
-        spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), 64, x=128, y=128, batch=self.batch)
-        self.children.append(spinnerman)
+        #spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), 64, x=128, y=128, batch=self.batch)
+        #self.children.append(spinnerman)
         
-        self.edit = ogf4py3.gui.TextEntry(256, 24, batch=self.batch)
+        #self.edit = ogf4py3.gui.TextEntry(256, 24, batch=self.batch)
         
     def crear_servidor(self, button, x, y, buttons, modifiers):
         print("crear servidor")
