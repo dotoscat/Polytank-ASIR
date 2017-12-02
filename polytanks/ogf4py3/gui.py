@@ -55,18 +55,28 @@ class Bar(object):
 class Node:
     """Group buttons, labels, text edits, spinners...
     """
-    def __init__(self, height, x=0., y=0., margin=8.):
+    HORIZONTAL = 1
+    VERTICAL = 2
+    
+    def __init__(self, height, x=0., y=0., margin=8., orientation=VERTICAL):
         self._children = deque()
         self._x = x
         self._y = y
         self._visible = True
         self.margin = margin
         self._height = height
+        self.orientation = orientation
     
     def add_child(self, child):
         self._children.append(child)
-        child.x += self._x
-        child.y += self._y + len(self._children)*(-self._height + -self.margin)
+        if self.orientation == Node.VERTICAL:
+            child.x += self._x
+            child.y += self._y + len(self._children)*(-self._height + -self.margin)
+        elif self.orientation == Node.HORIZONTAL:
+            child.x += self._x + len(self._children)*(-self._height + -self.margin)
+            child.y += self._y
+        else:
+            raise TypeError("orentation is not HORIZONTAL or VERTICAL")
         
     @property
     def children(self):
