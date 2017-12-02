@@ -55,17 +55,19 @@ class Bar(object):
 class Node:
     """Group buttons, labels, text edits, spinners...
     """
-    def __init__(self, x=0., y=0.):
+    def __init__(self, height, x=0., y=0., margin=8.):
         self._children = deque()
         self._x = x
         self._y = y
         self._visible = True
+        self.margin = margin
+        self._height = height
     
     def add_child(self, child):
-        child.x += self._x
-        child.y += self._y
         self._children.append(child)
-    
+        child.x += self._x
+        child.y += self._y + len(self._children)*(-self._height + -self.margin)
+        
     @property
     def children(self):
         return self._children

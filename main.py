@@ -38,7 +38,7 @@ class Main(ogf4py3.Scene):
 
         Button = ogf4py3.gui.Button
         
-        self.main_buttons = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
+        self.main_buttons = ogf4py3.gui.Node(16, x=constant.VWIDTH/2., y=self.title.y - 64.)
         
         main_buttons = [
             Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida),
@@ -47,7 +47,6 @@ class Main(ogf4py3.Scene):
         ]
 
         for i, button in enumerate(main_buttons):
-            button.y = i*(-16.+-8.)
             self.main_buttons.add_child(button)
             self.children.append(button)
 
