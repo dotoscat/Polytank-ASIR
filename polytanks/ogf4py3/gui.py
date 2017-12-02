@@ -82,6 +82,14 @@ class Node:
         for child in self._children:
             child.visible = value
     
+    def on_mouse_motion(self, x, y, dx, dy):
+        for child in self._children:
+            child.on_mouse_motion(x, y, dx, dy)
+            
+    def on_mouse_release(self, x, y, buttons, modifiers):
+        for child in self._children:
+            child.on_mouse_release(x, y, buttons, modifiers)
+    
 class Button(pyglet.text.Label):
     def __init__(self, *args, hover_color=(255, 200, 200, 255),
     idle_color=(255, 255, 255, 255), action=None, **kwargs):

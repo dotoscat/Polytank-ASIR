@@ -48,7 +48,8 @@ class Main(ogf4py3.Scene):
 
         for i, button in enumerate(main_buttons):
             self.main_buttons.add_child(button)
-            self.children.append(button)
+
+        self.children.append(self.main_buttons)
 
     def crear_servidor(self, button, x, y, buttons, modifiers):
         print("crear servidor")
