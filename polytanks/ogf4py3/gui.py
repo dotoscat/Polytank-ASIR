@@ -65,6 +65,8 @@ class Node:
         self._visible = True
         self.margin = margin
         self.orientation = orientation
+        if orientation not in (Node.HORIZONTAL, Node.VERTICAL):
+            raise TypeError("orientation is not HORIZONTAL or VERTICAL")
         self._next_pos = y if orientation == Node.VERTICAL else x
     
     @property
@@ -106,7 +108,7 @@ class Node:
             except AttributeError:
                 pass
         else:
-            raise TypeError("orentation is not HORIZONTAL or VERTICAL")
+            raise TypeError("orientation is not HORIZONTAL or VERTICAL")
         
     @property
     def children(self):
