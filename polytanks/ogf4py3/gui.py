@@ -237,20 +237,59 @@ class Button(VisibleLabel):
         and self.y < y < self.y + self.__height):
             self.action(self, x, y, button, modifiers)
 
+class Rectangle(object):
+    '''Draws a rectangle into a batch.'''
+    def __init__(self, x1, y1, x2, y2, batch):
+        self.vertex_list = batch.add(4, pyglet.gl.GL_QUADS, None,
+            ('v2i', [x1, y1, x2, y1, x2, y2, x1, y2]),
+            ('c4B', [200, 200, 220, 128] * 4)
+        )
+
 class TextEntry(pyglet.text.layout.IncrementalTextLayout):
     def __init__(self, width, height, text="", **kwargs):
+
+
         self.__document = pyglet.text.document.UnformattedDocument(text=text)
-        super().__init__(self.__document, width, height, **kwargs)
-        self.__caret = pyglet.text.caret.Caret(self, color=(255, 255, 255))
         self.__document.set_style(0, len(self.__document.text),
-            {"color": (255, 255, 255, 255)})
+            {"color": (0, 255, 0, 255)})
+        font = self.__document.get_font()
+        height = font.ascent - font.descent
+        super().__init__(self.__document, width, height, **kwargs)
+        self.__caret = pyglet.text.caret.Caret(self)
+        background = (pyglet.image.SolidColorImagePattern((255, 255, 255, 255))
+            .create_image(width, height))
+        self.__background = pyglet.sprite.Sprite(background, batch=kwargs["batch"])
+        self.__background.x = self._x
+        self.__background.y = self._y
         self._visible = True
-    
+ 
     def hit_test(self, x, y):
         print("TextEntry", id(self), self.x, x, self.x + self.width)
         if (self.x < x < self.x + self.width
         and self.y < y < self.y + self.height):
             return self
+    
+    @property
+    def x(self):
+        return self._x
+    
+    @x.setter
+    def x(self, value):
+        if not isinstance(value, (int, float)):
+            raise TypeError("Not a number")
+        super(self).x = value
+        self.__background.x = value 
+    
+    @property
+    def y(self):
+        return self._y
+    
+    @y.setter
+    def y(self, value):
+        if not isinstance(value, (int, float)):
+            raise TypeError("Not a number")
+        super(self).y = value
+        self.__background.y = value
     
     @property
     def visible(self):
@@ -262,6 +301,7 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
         alpha = (255,) if value else (0,)
         color = self.__document.get_style("color")
         self.__document.set_style(0, len(self.__document.text), {"color": color[0:3] + alpha})
+        self.__background.visible = value
     
     @property
     def caret(self):
