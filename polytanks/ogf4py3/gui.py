@@ -142,6 +142,14 @@ class Node:
             except AttributeError:
                 pass
     
+    def hit_test(self, x, y):
+        for child in self._children:
+            hit_test = getattr(child, "hit_test", None)
+            if hit_test is None:
+                continue
+            if hit_test(x, y):
+                return child
+    
     def on_mouse_motion(self, x, y, dx, dy):
         for child in self._children:
             try:
@@ -231,13 +239,26 @@ class Button(VisibleLabel):
             self.action(self, x, y, button, modifiers)
 
 class TextEntry(pyglet.text.layout.IncrementalTextLayout):
-    def __init__(self, width, height=16, **kwargs):
-        self.__document = pyglet.text.document.UnformattedDocument()
+    def __init__(self, width, height, text="", **kwargs):
+        self.__document = pyglet.text.document.UnformattedDocument(text=text)
         super().__init__(self.__document, width, height, **kwargs)
-        self.__caret = pyglet.text.caret.Caret(self)
+        self.__caret = pyglet.text.caret.Caret(self, color=(255, 255, 255))
         self.__document.set_style(0, len(self.__document.text),
             {"color": (255, 255, 255, 255)})
+        self._visible = True
+    
+    def hit_test(self, x, y):
+        return (self.x < x < self.x + self.width
+        and self.y < y < self.y + self.height)
+    
+    @property
+    def visible(self):
+        return self._visible
         
+    @visible.setter
+    def visible(self, value):
+        self._visible = value
+    
     @property
     def caret(self):
         return self.__caret
