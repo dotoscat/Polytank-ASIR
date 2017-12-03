@@ -78,11 +78,15 @@ class Main(ogf4py3.Scene):
         create_game_menu.add_child(port_horizontal)
         create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
         create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.create_game))
+        self._configure_error_message = VisibleLabel("",
+            **dict(color=(255, 128, 128, 255), **common_layout_options))
+        create_game_menu.add_child(self._configure_error_message)
         create_game_menu.visible = False
         self.children.append(create_game_menu)
         
     def configure_game(self, button, x, y, buttons, modifiers):
         self._port_entry.value = "7777"
+        self._configure_error_message.text = ""
         self.main_menu.visible = False
         self.create_game_menu.visible = True
         self._current_menu = self.create_game_menu
@@ -90,9 +94,12 @@ class Main(ogf4py3.Scene):
     def create_game(self, button, x, y, buttons, modifiers):
         ip = self._ip_spinner.value
         players = self._players_spinner.value
-        port = self._port_entry.value
-        print("Create game", ip, port, players)
-        self._to_main_menu()
+        try:
+            port = int(self._port_entry.value)
+            print("Create game", ip, port, players)
+            self._to_main_menu()
+        except ValueError:
+            self._configure_error_message.text = "Puerto debe ser un número"
 
     def unirse_a_partida(self, button, x, y, buttons, modifiers):
         print("Unirse a partida")
