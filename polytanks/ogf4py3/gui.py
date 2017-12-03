@@ -156,12 +156,12 @@ class Spinner(Node):
         
     def change_left(self, button, x, y, buttons, modifiers):
         if not self._values: return
-        self._values.rotate(-1)
+        self._values.rotate(1)
         self._label.text = self._values[0]
         
     def change_right(self, button, x, y, buttons, modifiers):
         if not self._values: return
-        self._values.rotate(1)
+        self._values.rotate(-1)
         self._label.text = self._values[0]
 
     @property
