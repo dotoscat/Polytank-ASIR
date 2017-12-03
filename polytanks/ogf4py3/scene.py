@@ -93,6 +93,14 @@ class Scene(object):
         """
         pass
 
+    def on_text(self, text):
+        if self._focus:
+            self._focus.caret.on_text(text)
+
+    def on_text_motion(self, motion):
+        if self._focus:
+            self._focus.caret.on_text_motion(motion)
+
     def on_mouse_motion(self, x, y, dx, dy):
         get_virtual_xy = self.director.get_virtual_xy
         vx, vy = get_virtual_xy(x, y)
@@ -100,7 +108,7 @@ class Scene(object):
         for child in self._child:
             child.on_mouse_motion(vx, vy, vdx, vdy)
     
-    def on_mouse_press(self, x, y, button, modifers):
+    def on_mouse_press(self, x, y, buttons, modifiers):
         vx, vy = self.director.get_virtual_xy(x, y)
         for child in self._child:
             if not child.visible: continue
@@ -108,15 +116,15 @@ class Scene(object):
             if hit_test is None: continue
             text_entry = hit_test(vx, vy)
             if text_entry is None: continue
-            if self._focus is not None:
-                self.director.remove_handlers(self._focus)
-            self.director.push_handlers(text_entry.caret)
             self._focus = text_entry
+            self._focus.caret.on_mouse_press(x, y, buttons, modifiers)
+            self._focus.caret.mark = 0
+            self._focus.caret.position = 0
             return
         if self._focus is not None:
-            print("remover foco", self._focus)
-            self.director.remove_handlers(self._focus)
-    
+            self._focus.caret.visible = False
+            self._focus = None
+            
     def on_mouse_release(self, x, y, button, modifiers):
         vx, vy = self.director.get_virtual_xy(x, y)
         for child in self._child:

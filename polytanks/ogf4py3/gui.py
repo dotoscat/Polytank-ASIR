@@ -250,6 +250,7 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
         self._visible = True
     
     def hit_test(self, x, y):
+        print("TextEntry", id(self), self.x, x, self.x + self.width)
         if (self.x < x < self.x + self.width
         and self.y < y < self.y + self.height):
             return self
