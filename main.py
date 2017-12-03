@@ -40,6 +40,8 @@ class Main(ogf4py3.Scene):
 
         Button = ogf4py3.gui.Button
         Spinner = ogf4py3.gui.Spinner
+        Node = ogf4py3.gui.Node
+        VisibleLabel = ogf4py3.gui.VisibleLabel
         
         common_layout_options = {
             "batch": self.batch
@@ -57,10 +59,16 @@ class Main(ogf4py3.Scene):
         hostname = socket.getfqdn()
         ifaces = ["0.0.0.0"] + socket.gethostbyname_ex(hostname)[2]
 
-        self.create_game_menu = ogf4py3.gui.Node(x=menu_x, y=self.title.y - 64.)
+        self.create_game_menu = Node(x=menu_x, y=self.title.y - 64.)
         create_game_menu = self.create_game_menu
-        create_game_menu.add_child(Spinner(ifaces, 128, **common_layout_options))
-        create_game_menu.add_child(Spinner(('1', '2', '3', '4'), 16, **common_layout_options))
+        ip_horizontal = Node(orientation=Node.HORIZONTAL)
+        ip_horizontal.add_child(VisibleLabel("Ip", **common_layout_options))
+        ip_horizontal.add_child(Spinner(ifaces, 128, **common_layout_options))
+        create_game_menu.add_child(ip_horizontal)
+        players_horizontal = Node(orientation=Node.HORIZONTAL)
+        players_horizontal.add_child(VisibleLabel("Jugadores", **common_layout_options))
+        players_horizontal.add_child(Spinner(('1', '2', '3', '4'), 16, **common_layout_options))
+        create_game_menu.add_child(players_horizontal)
         create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
         create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.to_main_menu))
         create_game_menu.visible = False

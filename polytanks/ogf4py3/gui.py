@@ -109,7 +109,22 @@ class Node:
                 pass
         else:
             raise TypeError("orientation is not HORIZONTAL or VERTICAL")
-        
+    
+    @staticmethod
+    def _get_height(child):
+        height = getattr(child, "height", None)
+        height = height if height is not None else getattr(child, "content_height", 0)
+        return height
+    
+    @property
+    def height(self):
+        max_ = 0
+        for child in self._children:
+            height = self._get_height(child)
+            if height > max_:
+                max_ = height
+        return max_
+    
     @property
     def children(self):
         return self._children
