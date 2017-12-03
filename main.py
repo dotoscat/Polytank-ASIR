@@ -82,6 +82,7 @@ class Main(ogf4py3.Scene):
         self.children.append(create_game_menu)
         
     def configure_game(self, button, x, y, buttons, modifiers):
+        self._port_entry.value = "7777"
         self.main_menu.visible = False
         self.create_game_menu.visible = True
         self._current_menu = self.create_game_menu

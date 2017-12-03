@@ -117,12 +117,13 @@ class Scene(object):
             text_entry = hit_test(vx, vy)
             if text_entry is None: continue
             self._focus = text_entry
-            self._focus.caret.on_mouse_press(x, y, buttons, modifiers)
             self._focus.caret.mark = 0
-            self._focus.caret.position = 0
+            self._focus.caret.position = len(text_entry.value)
             return
         if self._focus is not None:
             self._focus.caret.visible = False
+            self._focus.caret.mark = 0
+            self._focus.caret.position = 0
             self._focus = None
             
     def on_mouse_release(self, x, y, button, modifiers):

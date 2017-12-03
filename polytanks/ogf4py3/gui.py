@@ -308,6 +308,10 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
     @property
     def value(self):
         return self.__document.text
+        
+    @value.setter
+    def value(self, value):
+        self.__document.text = value
 
 class Menu(object):
 
