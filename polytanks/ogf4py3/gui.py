@@ -241,14 +241,15 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
     def __init__(self, width, height, text="", **kwargs):
         self.__document = pyglet.text.document.UnformattedDocument(text=text)
         self.__document.set_style(0, len(self.__document.text),
-            {"color": (0, 255, 0, 255)})
+            {"color": (50, 50, 50, 255)})
         font = self.__document.get_font()
         height = font.ascent - font.descent
         self.__layout = pyglet.text.layout.IncrementalTextLayout(
-            self.__document, width, height, **kwargs)
+            self.__document, width, height, group=pyglet.graphics.OrderedGroup(1), **kwargs)
         background = (pyglet.image.SolidColorImagePattern((255, 255, 255, 255))
             .create_image(width, height))
-        self.__background = pyglet.sprite.Sprite(background, batch=kwargs["batch"])
+        self.__background = pyglet.sprite.Sprite(background,
+            batch=kwargs["batch"], group=pyglet.graphics.OrderedGroup(0))
         self.__caret = pyglet.text.caret.Caret(self.__layout)
         self._visible = True
  
