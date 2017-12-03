@@ -52,7 +52,7 @@ class Main(ogf4py3.Scene):
         self.main_menu = ogf4py3.gui.Node(x=menu_x , y=self.title.y - 64.)
         main_menu = self.main_menu
         main_menu.add_child(Button("Unirse a partida", action=self.unirse_a_partida, **common_layout_options))
-        main_menu.add_child(Button("Crear partida", action=self.create_game, **common_layout_options))
+        main_menu.add_child(Button("Crear partida", action=self.configure_game, **common_layout_options))
         main_menu.add_child(Button("Salir", action=self.app_exit, **common_layout_options))
         self.children.append(main_menu)
         
@@ -63,25 +63,35 @@ class Main(ogf4py3.Scene):
         create_game_menu = self.create_game_menu
         ip_horizontal = Node(orientation=Node.HORIZONTAL)
         ip_horizontal.add_child(VisibleLabel("Ip", **common_layout_options))
-        ip_horizontal.add_child(Spinner(ifaces, 128, **common_layout_options))
+        self._ip_spinner = Spinner(ifaces, 128, **common_layout_options)
+        ip_horizontal.add_child(self._ip_spinner)
         create_game_menu.add_child(ip_horizontal)
         players_horizontal = Node(orientation=Node.HORIZONTAL)
         players_horizontal.add_child(VisibleLabel("Jugadores", **common_layout_options))
-        players_horizontal.add_child(Spinner(('1', '2', '3', '4'), 16, **common_layout_options))
+        self._players_spinner = Spinner(('1', '2', '3', '4'), 16, **common_layout_options)
+        players_horizontal.add_child(self._players_spinner)
         create_game_menu.add_child(players_horizontal)
         port_horizontal = Node(orientation=Node.HORIZONTAL)
         port_horizontal.add_child(VisibleLabel("Puerto", **common_layout_options))
-        port_horizontal.add_child(ogf4py3.gui.TextEntry(128, 16, text="7777", **common_layout_options))
+        self._port_entry = ogf4py3.gui.TextEntry(64, 16, text="7777", **common_layout_options)
+        port_horizontal.add_child(self._port_entry)
         create_game_menu.add_child(port_horizontal)
         create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
-        create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.to_main_menu))
+        create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.create_game))
         create_game_menu.visible = False
         self.children.append(create_game_menu)
         
-    def create_game(self, button, x, y, buttons, modifiers):
+    def configure_game(self, button, x, y, buttons, modifiers):
         self.main_menu.visible = False
         self.create_game_menu.visible = True
         self._current_menu = self.create_game_menu
+
+    def create_game(self, button, x, y, buttons, modifiers):
+        ip = self._ip_spinner.value
+        players = self._players_spinner.value
+        port = self._port_entry.value
+        print("Create game", ip, port, players)
+        self._to_main_menu()
 
     def unirse_a_partida(self, button, x, y, buttons, modifiers):
         print("Unirse a partida")
@@ -89,11 +99,14 @@ class Main(ogf4py3.Scene):
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
     
-    def to_main_menu(self, button, x, y, buttons, modifiers):
+    def _to_main_menu(self):
         if self._current_menu is None: return
         self._current_menu.visible = False
         self.main_menu.visible = True
         self._current_menu = None
+    
+    def to_main_menu(self, button, x, y, buttons, modifiers):
+        self._to_main_menu()
     
     def change_color(self, dt):
         self.current_color += 1
