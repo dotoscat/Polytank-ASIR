@@ -41,22 +41,26 @@ class Main(ogf4py3.Scene):
         Button = ogf4py3.gui.Button
         Spinner = ogf4py3.gui.Spinner
         
+        common_layout_options = {
+            "batch": self.batch
+        }
+        
         self.main_menu = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
         main_menu = self.main_menu
-        main_menu.add_child(Button("Unirse a partida", batch=self.batch, action=self.unirse_a_partida))
-        main_menu.add_child(Button("Crear partida", batch=self.batch, action=self.create_game))
-        main_menu.add_child(Button("Salir", batch=self.batch, action=self.app_exit))
+        main_menu.add_child(Button("Unirse a partida", action=self.unirse_a_partida, **common_layout_options))
+        main_menu.add_child(Button("Crear partida", action=self.create_game, **common_layout_options))
+        main_menu.add_child(Button("Salir", action=self.app_exit, **common_layout_options))
         self.children.append(main_menu)
         
         hostname = socket.getfqdn()
         ifaces = ["0.0.0.0"] + socket.gethostbyname_ex(hostname)[2]
-        
+
         self.create_game_menu = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
         create_game_menu = self.create_game_menu
-        create_game_menu.add_child(Spinner(ifaces, 128, batch=self.batch))
-        create_game_menu.add_child(Spinner(('1', '2', '3', '4'), 16, batch=self.batch))
-        create_game_menu.add_child(Button("Cancelar", batch=self.batch, action=self.to_main_menu))
-        create_game_menu.add_child(Button("Listo", batch=self.batch, action=self.to_main_menu))
+        create_game_menu.add_child(Spinner(ifaces, 128, **common_layout_options))
+        create_game_menu.add_child(Spinner(('1', '2', '3', '4'), 16, **common_layout_options))
+        create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
+        create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.to_main_menu))
         create_game_menu.visible = False
         self.children.append(create_game_menu)
 
