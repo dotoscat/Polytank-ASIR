@@ -239,20 +239,17 @@ class Button(VisibleLabel):
 
 class TextEntry(pyglet.text.layout.IncrementalTextLayout):
     def __init__(self, width, height, text="", **kwargs):
-
-
         self.__document = pyglet.text.document.UnformattedDocument(text=text)
         self.__document.set_style(0, len(self.__document.text),
             {"color": (0, 255, 0, 255)})
         font = self.__document.get_font()
         height = font.ascent - font.descent
-        super().__init__(self.__document, width, height, **kwargs)
-        self.__caret = pyglet.text.caret.Caret(self)
+        self.__layout = pyglet.text.layout.IncrementalTextLayout(
+            self.__document, width, height, **kwargs)
         background = (pyglet.image.SolidColorImagePattern((255, 255, 255, 255))
             .create_image(width, height))
         self.__background = pyglet.sprite.Sprite(background, batch=kwargs["batch"])
-        self.__background.x = self._x
-        self.__background.y = self._y
+        self.__caret = pyglet.text.caret.Caret(self.__layout)
         self._visible = True
  
     def hit_test(self, x, y):
@@ -262,25 +259,33 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
             return self
     
     @property
+    def width(self):
+        return self.__background.width
+    
+    @property
+    def height(self):
+        return self.__background.height
+    
+    @property
     def x(self):
-        return self._x
+        return self.__background.x
     
     @x.setter
     def x(self, value):
         if not isinstance(value, (int, float)):
             raise TypeError("Not a number")
-        super(self).x = value
+        self.__layout.x = value
         self.__background.x = value 
     
     @property
     def y(self):
-        return self._y
+        return self.__background.y
     
     @y.setter
     def y(self, value):
         if not isinstance(value, (int, float)):
             raise TypeError("Not a number")
-        super(self).y = value
+        self.__layout.y = value
         self.__background.y = value
     
     @property
