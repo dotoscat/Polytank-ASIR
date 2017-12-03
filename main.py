@@ -45,7 +45,9 @@ class Main(ogf4py3.Scene):
             "batch": self.batch
         }
         
-        self.main_menu = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
+        menu_x = self.title.x - self.title.content_width/2.
+        
+        self.main_menu = ogf4py3.gui.Node(x=menu_x , y=self.title.y - 64.)
         main_menu = self.main_menu
         main_menu.add_child(Button("Unirse a partida", action=self.unirse_a_partida, **common_layout_options))
         main_menu.add_child(Button("Crear partida", action=self.create_game, **common_layout_options))
@@ -55,7 +57,7 @@ class Main(ogf4py3.Scene):
         hostname = socket.getfqdn()
         ifaces = ["0.0.0.0"] + socket.gethostbyname_ex(hostname)[2]
 
-        self.create_game_menu = ogf4py3.gui.Node(x=constant.VWIDTH/2., y=self.title.y - 64.)
+        self.create_game_menu = ogf4py3.gui.Node(x=menu_x, y=self.title.y - 64.)
         create_game_menu = self.create_game_menu
         create_game_menu.add_child(Spinner(ifaces, 128, **common_layout_options))
         create_game_menu.add_child(Spinner(('1', '2', '3', '4'), 16, **common_layout_options))
