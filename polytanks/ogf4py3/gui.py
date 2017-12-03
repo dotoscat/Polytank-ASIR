@@ -136,11 +136,8 @@ class Node:
     @visible.setter
     def visible(self, value):
         self._visible = value
-        for child in self._children:            
-            try:
-                child.visible = value
-            except AttributeError:
-                pass
+        for child in self._children:
+            child.visible = value
     
     def hit_test(self, x, y):
         for child in self._children:
@@ -262,6 +259,9 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
     @visible.setter
     def visible(self, value):
         self._visible = value
+        alpha = (255,) if value else (0,)
+        color = self.__document.get_style("color")
+        self.__document.set_style(0, len(self.__document.text), {"color": color[0:3] + alpha})
     
     @property
     def caret(self):

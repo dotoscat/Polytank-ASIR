@@ -71,17 +71,12 @@ class Main(ogf4py3.Scene):
         create_game_menu.add_child(players_horizontal)
         port_horizontal = Node(orientation=Node.HORIZONTAL)
         port_horizontal.add_child(VisibleLabel("Puerto", **common_layout_options))
-        port_horizontal.add_child(ogf4py3.gui.TextEntry(256, 24, text="7777", **common_layout_options))
+        port_horizontal.add_child(ogf4py3.gui.TextEntry(128, 16, text="7777", **common_layout_options))
         create_game_menu.add_child(port_horizontal)
         create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
         create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.to_main_menu))
         create_game_menu.visible = False
         self.children.append(create_game_menu)
-
-        #spinnerman = ogf4py3.gui.Spinner(("Uno", "dos"), 64, x=128, y=128, batch=self.batch)
-        #self.children.append(spinnerman)
-        
-        #self.edit = ogf4py3.gui.TextEntry(256, 24, batch=self.batch)
         
     def create_game(self, button, x, y, buttons, modifiers):
         self.main_menu.visible = False
