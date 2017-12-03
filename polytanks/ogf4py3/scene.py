@@ -99,6 +99,18 @@ class Scene(object):
         for child in self._child:
             child.on_mouse_motion(vx, vy, vdx, vdy)
     
+    def on_mouse_press(self, x, y, button, modifers):
+        vx, vy = self.director.get_virtual_xy(x, y)
+        for child in self._child:
+            if not child.visible: continue
+            hit_test = getattr(child, "hit_test", None)
+            if hit_test is None: continue
+            text_entry = hit_test(vx, vy)
+            print("text_entry", child, text_entry)
+            if text_entry is None: continue
+            print("focus", text_entry)
+            break
+    
     def on_mouse_release(self, x, y, button, modifiers):
         vx, vy = self.director.get_virtual_xy(x, y)
         for child in self._child:
