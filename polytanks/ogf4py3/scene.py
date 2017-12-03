@@ -35,6 +35,7 @@ class Scene(object):
         self._batch = pyglet.graphics.Batch()
         self._groups = [pyglet.graphics.OrderedGroup(i) for i in range(n_groups)]
         self._child = deque()
+        self._focus = None
 
     @property
     def children(self):
@@ -106,10 +107,15 @@ class Scene(object):
             hit_test = getattr(child, "hit_test", None)
             if hit_test is None: continue
             text_entry = hit_test(vx, vy)
-            print("text_entry", child, text_entry)
             if text_entry is None: continue
-            print("focus", text_entry)
-            break
+            if self._focus is not None:
+                self.director.remove_handlers(self._focus)
+            self.director.push_handlers(text_entry.caret)
+            self._focus = text_entry
+            return
+        if self._focus is not None:
+            print("remover foco", self._focus)
+            self.director.remove_handlers(self._focus)
     
     def on_mouse_release(self, x, y, button, modifiers):
         vx, vy = self.director.get_virtual_xy(x, y)

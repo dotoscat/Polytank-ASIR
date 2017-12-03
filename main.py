@@ -69,6 +69,10 @@ class Main(ogf4py3.Scene):
         players_horizontal.add_child(VisibleLabel("Jugadores", **common_layout_options))
         players_horizontal.add_child(Spinner(('1', '2', '3', '4'), 16, **common_layout_options))
         create_game_menu.add_child(players_horizontal)
+        port_horizontal = Node(orientation=Node.HORIZONTAL)
+        port_horizontal.add_child(VisibleLabel("Puerto", **common_layout_options))
+        port_horizontal.add_child(ogf4py3.gui.TextEntry(256, 24, text="7777", **common_layout_options))
+        create_game_menu.add_child(port_horizontal)
         create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
         create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.to_main_menu))
         create_game_menu.visible = False

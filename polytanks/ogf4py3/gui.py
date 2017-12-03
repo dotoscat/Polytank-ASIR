@@ -144,11 +144,13 @@ class Node:
     
     def hit_test(self, x, y):
         for child in self._children:
+            if not child.visible: continue
             hit_test = getattr(child, "hit_test", None)
             if hit_test is None:
                 continue
-            if hit_test(x, y):
-                return child
+            hit_child = hit_test(x, y)
+            if hit_child is None: continue
+            return hit_child
     
     def on_mouse_motion(self, x, y, dx, dy):
         for child in self._children:
@@ -248,8 +250,9 @@ class TextEntry(pyglet.text.layout.IncrementalTextLayout):
         self._visible = True
     
     def hit_test(self, x, y):
-        return (self.x < x < self.x + self.width
-        and self.y < y < self.y + self.height)
+        if (self.x < x < self.x + self.width
+        and self.y < y < self.y + self.height):
+            return self
     
     @property
     def visible(self):
