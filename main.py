@@ -48,18 +48,27 @@ class Main(ogf4py3.Scene):
         }
         
         menu_x = self.title.x - self.title.content_width/2.
+        menu_y = self.title.y - 64
         
-        self.main_menu = ogf4py3.gui.Node(x=menu_x , y=self.title.y - 64.)
+        self.main_menu = ogf4py3.gui.Node(x=menu_x , y=menu_y)
         main_menu = self.main_menu
         main_menu.add_child(Button("Unirse a partida", action=self.unirse_a_partida, **common_layout_options))
-        main_menu.add_child(Button("Crear partida", action=self.configure_game, **common_layout_options))
+        self._create_game_button = Button("Crear partida", action=self.configure_game, **common_layout_options)
+        main_menu.add_child(self._create_game_button)
         main_menu.add_child(Button("Salir", action=self.app_exit, **common_layout_options))
         self.children.append(main_menu)
+        
+        created_game_node = Node(x=menu_x, y=menu_y, orientation=Node.HORIZONTAL)
+        created_game_node.add_child(Button("X", action=self.close_game, **common_layout_options))
+        self._created_game_label = VisibleLabel("Created game blabla", **common_layout_options)
+        created_game_node.add_child(self._created_game_label)
+        self._created_game_node = created_game_node
+        created_game_node.visible = False
         
         hostname = socket.getfqdn()
         ifaces = ["0.0.0.0"] + socket.gethostbyname_ex(hostname)[2]
 
-        self.create_game_menu = Node(x=menu_x, y=self.title.y - 64.)
+        self.create_game_menu = Node(x=menu_x, y=menu_y)
         create_game_menu = self.create_game_menu
         ip_horizontal = Node(orientation=Node.HORIZONTAL)
         ip_horizontal.add_child(VisibleLabel("Ip", **common_layout_options))
@@ -112,6 +121,12 @@ class Main(ogf4py3.Scene):
         self._current_menu.visible = False
         self.main_menu.visible = True
         self._current_menu = None
+    
+    def close_game(self, button, x, y, buttons, modifiers):
+        self._close_game()
+    
+    def _close_game(self):
+        print("Close game")
     
     def to_main_menu(self, button, x, y, buttons, modifiers):
         self._to_main_menu()

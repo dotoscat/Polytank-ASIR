@@ -110,6 +110,11 @@ class Node:
         else:
             raise TypeError("orientation is not HORIZONTAL or VERTICAL")
     
+    def replace_child(self, i, child):
+        replaced_child = self._children[i]
+        self._children[i] = child
+        return replaced_child
+    
     @staticmethod
     def _get_height(child):
         height = getattr(child, "height", None)
