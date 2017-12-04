@@ -106,6 +106,8 @@ class Main(ogf4py3.Scene):
         try:
             port = int(self._port_entry.value)
             print("Create game", ip, port, players)
+            text = "{}:{} {} players".format(ip, port, players)
+            self._created_game_label.text = text
             self.main_menu.replace_child(1, self._created_game_node)
             self._to_main_menu()
         except ValueError:
