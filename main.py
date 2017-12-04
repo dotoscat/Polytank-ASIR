@@ -14,7 +14,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from multiprocessing import Process
+from threading import Thread
 import socket
 import pyglet
 import polytanks
@@ -110,12 +110,16 @@ class Main(ogf4py3.Scene):
             port = int(self._port_entry.value)
             print("Create game", ip, port, players)
             text = "{}:{} {} players".format(ip, port, players)
-            self._server = polytanks.server.Server((ip, port), debug=True)
+            server = polytanks.server.Server((ip, port), debug=True)
+            self._server = Thread(target=server.run, daemon=True)
+            self._server.start()
             self._created_game_label.text = text
             self.main_menu.replace_child(1, self._created_game_node)
             self._to_main_menu()
         except ValueError:
             self._configure_error_message.text = "Puerto debe ser un número"
+        except EOFError as error:
+            self._configure_error_message.text = error.to_string()
 
     def unirse_a_partida(self, button, x, y, buttons, modifiers):
         print("Unirse a partida")
@@ -133,6 +137,9 @@ class Main(ogf4py3.Scene):
         self._close_game()
     
     def _close_game(self):
+        if self._server.is_alive():
+            self._server.terminate()
+        print("La partida termina con", self._server.exitcode)
         del self._server
         self._server = None
         self._create_game_button.visible = True
