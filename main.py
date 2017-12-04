@@ -129,7 +129,10 @@ class Main(ogf4py3.Scene):
         self._close_game()
     
     def _close_game(self):
-        print("Close game")
+        self._create_game_button.visible = True
+        self._created_game_node.visible = False
+        self.main_menu.replace_child(1, self._create_game_button)
+        print("Close game", self._create_game_button)
     
     def to_main_menu(self, button, x, y, buttons, modifiers):
         self._to_main_menu()
