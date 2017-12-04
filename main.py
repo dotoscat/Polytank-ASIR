@@ -14,11 +14,13 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from multiprocessing import Process
 import socket
 import pyglet
 import polytanks
 from polytanks import constant
 import polytanks.ogf4py3 as ogf4py3
+import polytanks.server
 
 class Main(ogf4py3.Scene):
     
@@ -31,6 +33,7 @@ class Main(ogf4py3.Scene):
     
     def __init__(self):
         super().__init__(2)
+        self._server = None
         self.current_color = 0
         self._current_menu = None
         self.title = pyglet.text.Label("POLYTANKS", font_size=24,
@@ -107,6 +110,7 @@ class Main(ogf4py3.Scene):
             port = int(self._port_entry.value)
             print("Create game", ip, port, players)
             text = "{}:{} {} players".format(ip, port, players)
+            self._server = polytanks.server.Server((ip, port), debug=True)
             self._created_game_label.text = text
             self.main_menu.replace_child(1, self._created_game_node)
             self._to_main_menu()
@@ -129,6 +133,8 @@ class Main(ogf4py3.Scene):
         self._close_game()
     
     def _close_game(self):
+        del self._server
+        self._server = None
         self._create_game_button.visible = True
         self._created_game_node.visible = False
         self.main_menu.replace_child(1, self._create_game_button)
