@@ -58,7 +58,7 @@ class Main(ogf4py3.Scene):
         main_menu.add_child(Button("Salir", action=self.app_exit, **common_layout_options))
         self.children.append(main_menu)
         
-        created_game_node = Node(x=menu_x, y=menu_y, orientation=Node.HORIZONTAL)
+        created_game_node = Node(x=0, y=0, orientation=Node.HORIZONTAL)
         created_game_node.add_child(Button("X", action=self.close_game, **common_layout_options))
         self._created_game_label = VisibleLabel("Created game blabla", **common_layout_options)
         created_game_node.add_child(self._created_game_label)

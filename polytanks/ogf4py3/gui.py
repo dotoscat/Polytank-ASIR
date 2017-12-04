@@ -78,6 +78,7 @@ class Node:
         for child in self._children:
             rel_x = child.x - self._x
             child.x = value + rel_x
+        self._x = value
     
     @property
     def y(self):
@@ -88,6 +89,7 @@ class Node:
         for child in self._children:
             rel_y = child.y - self._y
             child.y = value + rel_y
+        self._y = value
     
     def add_child(self, child):
         self._children.append(child)
@@ -113,7 +115,10 @@ class Node:
             raise TypeError("orientation is not HORIZONTAL or VERTICAL")
     
     def replace_child(self, i, child):
+        print("node x y", self.x, self.y)
         replaced_child = self._children[i]
+        print("child x y", child.x, child.y, type(child))
+        print("replaced child", replaced_child.x, replaced_child.y, type(replaced_child))
         child.x = replaced_child.x
         child.y = replaced_child.y
         self._children[i] = child
