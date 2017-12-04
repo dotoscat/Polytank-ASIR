@@ -76,7 +76,8 @@ class Node:
     @x.setter
     def x(self, value):
         for child in self._children:
-            child.x += value
+            rel_x = child.x - self._x
+            child.x = value + rel_x
     
     @property
     def y(self):
@@ -85,7 +86,8 @@ class Node:
     @y.setter
     def y(self, value):
         for child in self._children:
-            child.y += value
+            rel_y = child.y - self._y
+            child.y = value + rel_y
     
     def add_child(self, child):
         self._children.append(child)
@@ -112,6 +114,8 @@ class Node:
     
     def replace_child(self, i, child):
         replaced_child = self._children[i]
+        child.x = replaced_child.x
+        child.y = replaced_child.y
         self._children[i] = child
         return replaced_child
     

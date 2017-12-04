@@ -106,6 +106,7 @@ class Main(ogf4py3.Scene):
         try:
             port = int(self._port_entry.value)
             print("Create game", ip, port, players)
+            self.main_menu.replace_child(1, self._created_game_node)
             self._to_main_menu()
         except ValueError:
             self._configure_error_message.text = "Puerto debe ser un número"
