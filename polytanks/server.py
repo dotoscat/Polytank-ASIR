@@ -59,7 +59,7 @@ class Server(asyncio.DatagramProtocol):
                 self.last = now
                 self._f(*args, **kwargs)
 
-    def __init__(self, address, *args, debug=False, **kwargs):
+    def __init__(self, address, *args, nplayers=1, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.engine = engine.Engine()
         level.load_level(level.basic, self.engine.platform_pool)
@@ -69,7 +69,7 @@ class Server(asyncio.DatagramProtocol):
         self.transport = None
         self.tick = 0
         self.clients = {}
-        self.players = [None]*4
+        self.players = [None]*nplayers
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
         self.snapshots = deque([], 32)
         
@@ -79,7 +79,7 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
         
-        self.add_bot(bot.jumper)
+        #self.add_bot(bot.jumper)
 
     def add_bot(self, bot):
         for i, player in enumerate(self.players):
@@ -120,6 +120,9 @@ class Server(asyncio.DatagramProtocol):
             player = self.clients[addr]
             player.ack()
             #print("ping de ", addr, player.ping)
+        elif command == protocol.TERMINATE:
+            self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
+            print("End server from remote")
 
     def client_input(self, data, addr):
         player = self.clients.get(addr)
@@ -184,6 +187,7 @@ class Server(asyncio.DatagramProtocol):
     def run(self):
         self._past_time = self._loop.time()
         self._loop.run_forever()
+        return 0
 
     @asyncio.coroutine
     def _tick(self, time):
@@ -208,7 +212,7 @@ class Server(asyncio.DatagramProtocol):
         if len(snapshots) > 1:
             diff = snapshots[0].diff(snapshots[1])
             data = Snapshot.to_network(diff)
-            print("diff data", len(data))
+            #print("diff data", len(data))
         #print("send snapshot", len(data))
         clients = self.clients
         for client in clients:
