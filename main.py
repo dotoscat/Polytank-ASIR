@@ -14,15 +14,13 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from threading import Thread
-import socket
 import pyglet
 import polytanks
 from polytanks import constant
-import polytanks.ogf4py3 as ogf4py3
-import polytanks.server
+from polytanks.ogf4py3 import Scene, Director
+from polytanks.ogf4py3.gui import Node, VisibleLabel, TextEntry, Button
 
-class Main(ogf4py3.Scene):
+class Main(Scene):
     
     COLORS = [
         polytanks.WHITE,
@@ -33,18 +31,12 @@ class Main(ogf4py3.Scene):
     
     def __init__(self):
         super().__init__(2)
-        self._server = None
         self.current_color = 0
         self._current_menu = None
         self.title = pyglet.text.Label("POLYTANKS", font_size=24,
         batch=self.batch, group=self.group[0], anchor_x="center",
         anchor_y="center", align="center", x=constant.VWIDTH/2.,
         y=constant.VHEIGHT-constant.VHEIGHT/4.)
-
-        Button = ogf4py3.gui.Button
-        Spinner = ogf4py3.gui.Spinner
-        Node = ogf4py3.gui.Node
-        VisibleLabel = ogf4py3.gui.VisibleLabel
         
         common_layout_options = {
             "batch": self.batch
@@ -53,26 +45,15 @@ class Main(ogf4py3.Scene):
         menu_x = self.title.x - self.title.content_width/2.
         menu_y = self.title.y - 64
         
-        self.main_menu = ogf4py3.gui.Node(x=menu_x , y=menu_y)
+        self.main_menu = Node(x=menu_x , y=menu_y)
         main_menu = self.main_menu
         main_menu.add_child(Button("Unirse a partida", action=self.unirse_a_partida, **common_layout_options))
-        self._create_game_button = Button("Crear partida", action=self.configure_game, **common_layout_options)
-        main_menu.add_child(self._create_game_button)
         main_menu.add_child(Button("Salir", action=self.app_exit, **common_layout_options))
         self.children.append(main_menu)
-        
-        created_game_node = Node(x=0, y=0, orientation=Node.HORIZONTAL)
-        created_game_node.add_child(Button("X", action=self.close_game, **common_layout_options))
-        self._created_game_label = VisibleLabel("Created game blabla", **common_layout_options)
-        created_game_node.add_child(self._created_game_label)
-        self._created_game_node = created_game_node
-        created_game_node.visible = False
-        
-        hostname = socket.getfqdn()
-        ifaces = ["0.0.0.0"] + socket.gethostbyname_ex(hostname)[2]
-
-        self.create_game_menu = Node(x=menu_x, y=menu_y)
-        create_game_menu = self.create_game_menu
+    
+    def _build_join_game_menu(self, common_layour_options):
+        self.join_game_menu = Node(x=menu_x, y=menu_y)
+        join_game_menu = self.create_game_menu
         ip_horizontal = Node(orientation=Node.HORIZONTAL)
         ip_horizontal.add_child(VisibleLabel("Ip", **common_layout_options))
         self._ip_spinner = Spinner(ifaces, 128, **common_layout_options)
@@ -95,7 +76,12 @@ class Main(ogf4py3.Scene):
         create_game_menu.add_child(self._configure_error_message)
         create_game_menu.visible = False
         self.children.append(create_game_menu)
-        
+    
+    def listen(self, data, socket):
+        command = protocol.mono.unpack(data)[0]
+        if command == protocol.DONE:
+            print("El servidor ha terminado")
+    
     def configure_game(self, button, x, y, buttons, modifiers):
         self._port_entry.value = "7777"
         self._configure_error_message.text = ""
@@ -113,6 +99,8 @@ class Main(ogf4py3.Scene):
             server = polytanks.server.Server((ip, port), debug=True)
             self._server = Thread(target=server.run, daemon=True)
             self._server.start()
+            self._client = ogf4py3.Connection((ip, port), self.listen)
+            self._client.socket.send(b"Hola mundo!!!")
             self._created_game_label.text = text
             self.main_menu.replace_child(1, self._created_game_node)
             self._to_main_menu()
@@ -134,7 +122,9 @@ class Main(ogf4py3.Scene):
         self._current_menu = None
     
     def close_game(self, button, x, y, buttons, modifiers):
-        self._close_game()
+        #self._close_game()
+        self._client.connect.send(protocol.mono.pack(protocol.TERMINATE))
+        print("close game")
     
     def _close_game(self):
         if self._server.is_alive():
@@ -162,7 +152,7 @@ class Main(ogf4py3.Scene):
         pass
     
 if __name__ == "__main__":
-    director = ogf4py3.Director(
+    director = Director(
         caption="Polytanks", fullscreen=False,
         width=constant.WIDTH, height=constant.HEIGHT,
         vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)

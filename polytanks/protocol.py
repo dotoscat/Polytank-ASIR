@@ -27,6 +27,8 @@ SNAPSHOT = 10
 START_GAME = 11
 CLIENT_ACK = 12
 
+TERMINATE = 13
+
 mono = struct.Struct("!i")
 mono_f = struct.Struct("!f")
 di = struct.Struct("!if")
