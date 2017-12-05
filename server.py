@@ -14,15 +14,29 @@
 
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import socket
+import argparse
 import signal
-import asyncio
 import polytanks.server
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-ADDRESS = ("0.0.0.0", 7777)
+parse = argparse.ArgumentParser(description="Polytanks server")
+parse.add_argument("-p", "--port", default=7777, type=int)
+parse.add_argument("-np", "--nplayers", default=1, type=int, choices=range(1, 5))
+arguments = parse.parse_args()
+
+hostname = socket.gethostname()
+ip = socket.gethostbyname_ex(hostname)[2].pop()
+
+port = arguments.port
+nplayers = arguments.nplayers
+
+ADDRESS = (ip, port)
 
 if __name__ == "__main__":
+    print("Run polytanks at {}:{} with {} players".format(ip, port, nplayers))
     server = polytanks.server.Server(ADDRESS, debug=True)
     try:
         server.run()
