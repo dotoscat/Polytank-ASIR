@@ -14,6 +14,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 import socket
 import pyglet
 import polytanks
@@ -94,6 +95,9 @@ class Main(Scene):
        
     def _join_game(self, button, x, y, buttons, modifiers):
         ip = self._ip_entry.value
+        if re.fullmatch("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", ip) is None:
+            self._join_error_message.text = "Dirección IP malformada."
+            return
         try:
             port = int(self._port_entry.value)
         except ValueError:
