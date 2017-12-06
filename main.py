@@ -14,6 +14,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import socket
 import pyglet
 import polytanks
 from polytanks import constant
@@ -110,6 +111,9 @@ class Main(Scene):
             self._configure_error_message.text = error.to_string()
 
     def join_game(self, button, x, y, buttons, modifiers):
+        hostname = socket.gethostname()
+        ip = socket.gethostbyname_ex(hostname)[2].pop()
+        self._ip_entry.value = ip
         self.main_menu.visible = False
         self.join_game_menu.visible = True
         self._current_menu = self.join_game_menu
