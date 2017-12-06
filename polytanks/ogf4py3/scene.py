@@ -116,6 +116,10 @@ class Scene(object):
             if hit_test is None: continue
             text_entry = hit_test(vx, vy)
             if text_entry is None: continue
+            if self._focus is not None:
+                self._focus.caret.visible = False
+                self._focus.caret.mark = 0
+                self._focus.caret.position = 0
             self._focus = text_entry
             self._focus.caret.mark = 0
             self._focus.caret.position = len(text_entry.value)

@@ -70,7 +70,7 @@ class Main(Scene):
         port_horizontal.add_child(self._port_entry)
         join_game_menu.add_child(port_horizontal)
         
-        join_game_menu.add_child(Button("Unirse", **common_layout_options, action=self.join_game))
+        join_game_menu.add_child(Button("Unirse", **common_layout_options, action=self._join_game))
         join_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
         self._join_error_message = VisibleLabel("",
             **dict(color=(255, 128, 128, 255), **common_layout_options))
@@ -90,7 +90,10 @@ class Main(Scene):
         self.main_menu.visible = False
         self.join_game_menu.visible = True
         self._current_menu = self.join_game_menu
-        
+       
+    def _join_game(self):
+        print("Join game!")
+    
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
     
