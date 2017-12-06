@@ -86,13 +86,20 @@ class Main(Scene):
     def join_game(self, button, x, y, buttons, modifiers):
         hostname = socket.gethostname()
         ip = socket.gethostbyname_ex(hostname)[2].pop()
+        self._join_error_message.text = ""
         self._ip_entry.value = ip
         self.main_menu.visible = False
         self.join_game_menu.visible = True
         self._current_menu = self.join_game_menu
        
-    def _join_game(self):
-        print("Join game!")
+    def _join_game(self, button, x, y, buttons, modifiers):
+        ip = self._ip_entry.value
+        try:
+            port = int(self._port_entry.value)
+        except ValueError:
+            self._join_error_message.text = "Puerto tiene que ser un número entero."
+            return
+        print("Join game!", ip, port)
     
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
