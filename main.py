@@ -82,33 +82,6 @@ class Main(Scene):
         command = protocol.mono.unpack(data)[0]
         if command == protocol.DONE:
             print("El servidor ha terminado")
-    
-    def configure_game(self, button, x, y, buttons, modifiers):
-        self._port_entry.value = "7777"
-        self._configure_error_message.text = ""
-        self.main_menu.visible = False
-        self.create_game_menu.visible = True
-        self._current_menu = self.create_game_menu
-
-    def create_game(self, button, x, y, buttons, modifiers):
-        ip = self._ip_spinner.value
-        players = self._players_spinner.value
-        try:
-            port = int(self._port_entry.value)
-            print("Create game", ip, port, players)
-            text = "{}:{} {} players".format(ip, port, players)
-            server = polytanks.server.Server((ip, port), debug=True)
-            self._server = Thread(target=server.run, daemon=True)
-            self._server.start()
-            self._client = ogf4py3.Connection((ip, port), self.listen)
-            self._client.socket.send(b"Hola mundo!!!")
-            self._created_game_label.text = text
-            self.main_menu.replace_child(1, self._created_game_node)
-            self._to_main_menu()
-        except ValueError:
-            self._configure_error_message.text = "Puerto debe ser un número"
-        except EOFError as error:
-            self._configure_error_message.text = error.to_string()
 
     def join_game(self, button, x, y, buttons, modifiers):
         hostname = socket.gethostname()
@@ -117,7 +90,7 @@ class Main(Scene):
         self.main_menu.visible = False
         self.join_game_menu.visible = True
         self._current_menu = self.join_game_menu
-    
+        
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
     
@@ -126,22 +99,6 @@ class Main(Scene):
         self._current_menu.visible = False
         self.main_menu.visible = True
         self._current_menu = None
-    
-    def close_game(self, button, x, y, buttons, modifiers):
-        #self._close_game()
-        self._client.connect.send(protocol.mono.pack(protocol.TERMINATE))
-        print("close game")
-    
-    def _close_game(self):
-        if self._server.is_alive():
-            self._server.terminate()
-        print("La partida termina con", self._server.exitcode)
-        del self._server
-        self._server = None
-        self._create_game_button.visible = True
-        self._created_game_node.visible = False
-        self.main_menu.replace_child(1, self._create_game_button)
-        print("Close game", self._create_game_button)
     
     def to_main_menu(self, button, x, y, buttons, modifiers):
         self._to_main_menu()
