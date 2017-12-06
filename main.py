@@ -47,35 +47,35 @@ class Main(Scene):
         
         self.main_menu = Node(x=menu_x , y=menu_y)
         main_menu = self.main_menu
-        main_menu.add_child(Button("Unirse a partida", action=self.unirse_a_partida, **common_layout_options))
+        main_menu.add_child(Button("Unirse a partida", action=self.join_game, **common_layout_options))
         main_menu.add_child(Button("Salir", action=self.app_exit, **common_layout_options))
         self.children.append(main_menu)
+        
+        self._build_join_game_menu(common_layout_options, menu_x, menu_y)
     
-    def _build_join_game_menu(self, common_layour_options):
+    def _build_join_game_menu(self, common_layout_options, menu_x, menu_y):
         self.join_game_menu = Node(x=menu_x, y=menu_y)
-        join_game_menu = self.create_game_menu
+        join_game_menu = self.join_game_menu
+        
         ip_horizontal = Node(orientation=Node.HORIZONTAL)
         ip_horizontal.add_child(VisibleLabel("Ip", **common_layout_options))
-        self._ip_spinner = Spinner(ifaces, 128, **common_layout_options)
-        ip_horizontal.add_child(self._ip_spinner)
-        create_game_menu.add_child(ip_horizontal)
-        players_horizontal = Node(orientation=Node.HORIZONTAL)
-        players_horizontal.add_child(VisibleLabel("Jugadores", **common_layout_options))
-        self._players_spinner = Spinner(('1', '2', '3', '4'), 16, **common_layout_options)
-        players_horizontal.add_child(self._players_spinner)
-        create_game_menu.add_child(players_horizontal)
+        self._ip_entry = TextEntry(120, 16, **common_layout_options)
+        ip_horizontal.add_child(self._ip_entry)
+        join_game_menu.add_child(ip_horizontal)
+        
         port_horizontal = Node(orientation=Node.HORIZONTAL)
         port_horizontal.add_child(VisibleLabel("Puerto", **common_layout_options))
-        self._port_entry = ogf4py3.gui.TextEntry(64, 16, text="7777", **common_layout_options)
+        self._port_entry = TextEntry(64, 16, text="7777", **common_layout_options)
         port_horizontal.add_child(self._port_entry)
-        create_game_menu.add_child(port_horizontal)
-        create_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
-        create_game_menu.add_child(Button("Listo", **common_layout_options, action=self.create_game))
-        self._configure_error_message = VisibleLabel("",
+        join_game_menu.add_child(port_horizontal)
+        
+        join_game_menu.add_child(Button("Unirse", **common_layout_options, action=self.join_game))
+        join_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
+        self._join_error_message = VisibleLabel("",
             **dict(color=(255, 128, 128, 255), **common_layout_options))
-        create_game_menu.add_child(self._configure_error_message)
-        create_game_menu.visible = False
-        self.children.append(create_game_menu)
+        join_game_menu.add_child(self._join_error_message)
+        join_game_menu.visible = False
+        self.children.append(join_game_menu)
     
     def listen(self, data, socket):
         command = protocol.mono.unpack(data)[0]
@@ -109,8 +109,10 @@ class Main(Scene):
         except EOFError as error:
             self._configure_error_message.text = error.to_string()
 
-    def unirse_a_partida(self, button, x, y, buttons, modifiers):
-        print("Unirse a partida")
+    def join_game(self, button, x, y, buttons, modifiers):
+        self.main_menu.visible = False
+        self.join_game_menu.visible = True
+        self._current_menu = self.join_game_menu
     
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
