@@ -21,7 +21,7 @@ import math
 from math import degrees
 from pprint import pprint
 import asyncio
-from . import engine, level, bot, protocol
+from . import engine, level, protocol
 from .snapshot import Snapshot
 
 class Player:
@@ -78,18 +78,7 @@ class Server(asyncio.DatagramProtocol):
 
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
-        
-        #self.add_bot(bot.jumper)
-
-    def add_bot(self, bot):
-        for i, player in enumerate(self.players):
-            if player is not None: continue
-            tank = self.engine.create_tank()
-            tank.set("body", x=200., y=100.)
-            self.players[i] = partial(bot, tank)
-            return
-        raise Exception("Assure enough slots, players, for bots")
-    
+            
     def add_player(self, tank):
         for i, player in enumerate(self.players):
             if player is not None: continue
