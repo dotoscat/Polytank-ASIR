@@ -42,7 +42,7 @@ class Director(pyglet.window.Window):
     @staticmethod
     def set_scene(key):
         """Set the current scene by its key."""
-        if Director.director is None: return
+        if Director._director is None: return
         Director._director.scene = Director._scenes[key]
 
     def __init__(self, *args, vwidth=None, vheight=None, **kwargs):
