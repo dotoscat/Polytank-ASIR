@@ -49,7 +49,7 @@ class Connection:
     """Async UDP connection to a server.
     
     If you want to receive data from server say first a "hello" to the server.
-    Once you have done call close
+    Once you have done with the server call :meth:`close`.
     
     Parameters:
         address ((host, port)):
