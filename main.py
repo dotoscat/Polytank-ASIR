@@ -153,7 +153,8 @@ if __name__ == "__main__":
     director = Director(
         caption="Polytanks", fullscreen=False,
         width=constant.WIDTH, height=constant.HEIGHT,
-        vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
+        vwidth=constant.VWIDTH, vheight=constant.VHEIGHT,
+        exit_with_ESC=False)
     director.set_background_color(0., 0., 0.)
     director.add_scene("main", Main())
     director.add_scene("client", Client())

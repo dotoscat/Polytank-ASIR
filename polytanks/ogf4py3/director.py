@@ -50,11 +50,13 @@ class Director(pyglet.window.Window):
         """Get a scene stored but its key."""
         return cls._scenes[key]
 
-    def __init__(self, *args, vwidth=None, vheight=None, **kwargs):
+    def __init__(self, *args, vwidth=None, vheight=None,
+    exit_with_ESC=True, **kwargs):
         super(Director, self).__init__(*args, **kwargs)
         self._vwidth = vwidth
         self._vheight = vheight
         self._scene = None
+        self._exit_with_ESC = exit_with_ESC
         Director._director = self
 
     def set_background_color(self, r, g, b):
@@ -84,7 +86,10 @@ class Director(pyglet.window.Window):
         return vx, vy
 
     def on_key_press(self, symbol, modifiers):
-        super(Director, self).on_key_press(symbol, modifiers)
+        if symbol == key.ESCAPE and self._exit_with_ESC:
+            super(Director, self).on_key_press(symbol, modifiers)
+        elif symbol != key.ESCAPE:
+            super(Director, self).on_key_press(symbol, modifiers)
         if symbol == key.F4:
             self.do_screenshot()
 
