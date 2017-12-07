@@ -81,6 +81,12 @@ class Connection:
         """Outside of :meth:`tick` you can use the socket to send data."""
         return self._socket
     
+    def set_listener(self, listener):
+        """Set a new listener for this connection."""
+        if not callable(listener):
+            raise TypeError("listener is not a callable. {} passed".format(type(listener)))
+        self._selector.modify(self._socket, selectors.EVENT_READ, listener)
+    
     def tick(self):
         """Receive and process network events.
         

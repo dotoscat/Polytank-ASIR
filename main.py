@@ -81,7 +81,8 @@ class Main(Scene):
         self.children.append(join_game_menu)
     
     def listen(self, data, socket):
-        command = protocol.mono.unpack(data)[0]
+        command = protocol.mono.unpack_from(data)[0]
+        print("listen", data, len(data), command)
         if command == protocol.JOINED:
             print("Te has unido!")
 

@@ -81,10 +81,10 @@ class Client(Scene):
             if i == 0: return self.x
             if i == 1: return self.y
 
-    def __init__(self, address):
+    def __init__(self, connection):
         super().__init__(5)
         
-        self.conn = Connection(address, self.listen)
+        self.connection = connection
         self._joined = False
         self.tank = None
         self._send_cannon_rotation = False
@@ -142,6 +142,9 @@ class Client(Scene):
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
 
+    def quit(self):
+        self.director.set_exclusive_mouse(False)
+
     def clean_entity(self, entity):
         if (isinstance(entity, self.engine.bullet_pool)
             or isinstance(entity, self.engine.explosion_pool)
@@ -163,9 +166,9 @@ class Client(Scene):
         #    if choice((True, False)):
         #        powerup = self.engine._spawn_powerup(128., 128., "heal")
         #        powerup.sprite.image = assets.images["heal"]
-        self.send_input(dt)
-        self.conn.tick()
-        self.engine.update(dt)
+        #self.send_input(dt)
+        self.connection.tick()
+        #self.engine.update(dt)
         if self._joined:
             for damage in self.damage:
                 id_ = self.damage[damage]
@@ -190,9 +193,7 @@ class Client(Scene):
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
-        if not self._joined and symbol == key.J:
-            self.conn.socket.send(protocol.mono.pack(protocol.JOIN))
-        elif self._joined and symbol == key.L:
+        if self._joined and symbol == key.L:
             print("logout pressed")
             self.logout()
         if not self._joined:

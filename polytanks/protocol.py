@@ -18,6 +18,7 @@ import struct
 JOIN = 1
 LOGOUT = 2
 
+JOINED = 3
 DONE = 4
 
 CLIENT_INPUT = 5

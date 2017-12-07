@@ -101,7 +101,8 @@ class Server(asyncio.DatagramProtocol):
         elif command == protocol.LOGOUT:
             self._logout(addr)
         elif command == protocol.CLIENT_INPUT:
-            self.client_input(data, addr)
+            pass
+            #self.client_input(data, addr)
             #print("client input", addr, len(data))
         elif command == protocol.CLIENT_ACK:
             player = self.clients[addr]
@@ -128,23 +129,25 @@ class Server(asyncio.DatagramProtocol):
         #    jumps)
 
     def _join(self, addr):
-        tank = self.engine.create_tank()
-        player = self.add_player(tank)
-        self.clients[addr] = player
-        tank.set("body", x=128., y=128.)
-        print("Client {} {} added".format(addr, tank.id))
+        #tank = self.engine.create_tank()
+        #player = self.add_player(tank)
+        #self.clients[addr] = player
+        self.clients[addr] = addr
+        #tank.set("body", x=128., y=128.)
+        #print("Client {} {} added".format(addr, tank.id))
         print(self.players)
-        message = protocol.tetra.pack(protocol.JOINED, tank.id, tank.body.x, tank.body.y)
+        message = protocol.mono.pack(protocol.JOINED)
+        print("message", message)
         self.transport.sendto(message, addr)
 
     def _logout(self, addr):
         print("logout", self.clients)
         player = self.clients[addr]
-        player.tank.free()
-        del self.engine.entities[player.tank.id]
-        del self.clients[addr]
-        self.players = [None if player == p else p for p in self.players]
-        print(self.players)
+        #player.tank.free()
+        #del self.engine.entities[player.tank.id]
+        #del self.clients[addr]
+        #self.players = [None if player == p else p for p in self.players]
+        #print(self.players)
         self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
         print("Client {} removed", addr)
         print(self.clients)
@@ -163,8 +166,8 @@ class Server(asyncio.DatagramProtocol):
             for player in self.players:
                 if not callable(player): continue
                 player(None)
-            self._send_snapshot()
-            self.engine.update(dt)
+            #self._send_snapshot()
+            #self.engine.update(dt)
             for message in self.engine.messages: pass
             self.tick += 1
             yield from asyncio.sleep(TIME)
@@ -182,7 +185,7 @@ class Server(asyncio.DatagramProtocol):
         clients = self.clients
         for client in clients:
             player = clients[client]
-            player.send()
+            #player.send()
             self.transport.sendto(data, client)
 
     def __del__(self):
