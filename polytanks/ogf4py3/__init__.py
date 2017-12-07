@@ -78,15 +78,16 @@ class Connection:
         return self._socket
     
     def tick(self):
-        """Receive and process network events."""
+        """Receive and process network events.
+        
+        Raises:
+            ConnectionResetError: If the remote server doesn't respond
+        """
         events = self._selector_select(0)
         for key, mask in events:
-            try:
-                socket = key.fileobj
-                data = socket.recv(1024)
-                key.data(data, socket)
-            except ConnectionResetError:
-                print("Could not connect to the server: {}".format(self._address))
+            socket = key.fileobj
+            data = socket.recv(1024)
+            key.data(data, socket)
     
     def __del__(self):
         self._socket.close()
