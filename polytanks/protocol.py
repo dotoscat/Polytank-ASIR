@@ -18,7 +18,6 @@ import struct
 JOIN = 1
 LOGOUT = 2
 
-JOINED = 3
 DONE = 4
 
 CLIENT_INPUT = 5
@@ -26,7 +25,6 @@ REQUEST_SNAPSHOT = 6
 REJECTED = 7
 
 SNAPSHOT = 10
-START_GAME = 11
 CLIENT_ACK = 12
 
 mono = struct.Struct("!i")

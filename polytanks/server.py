@@ -100,8 +100,6 @@ class Server(asyncio.DatagramProtocol):
             self._join(addr)
         elif command == protocol.LOGOUT:
             self._logout(addr)
-        elif command == protocol.JOINED:
-            self._start_game(addr)
         elif command == protocol.CLIENT_INPUT:
             self.client_input(data, addr)
             #print("client input", addr, len(data))
@@ -128,25 +126,6 @@ class Server(asyncio.DatagramProtocol):
         tank.input.do_jump = do_jump
         #print("input", addr, tick, move, cannon_angle, shoots,
         #    jumps)
-
-    def _start_game(self, addr):
-        data_size = protocol.mono.size + len(self.players)*protocol.tri.size
-        data = bytearray(data_size)
-        protocol.mono.pack_into(data, 0, protocol.START_GAME)
-        offset = protocol.mono.size
-        entities = self.engine.entities
-        for i, player in enumerate(self.players):
-            if player is None:
-                protocol.tri.pack_into(data, offset, 0, 0., 0.)
-            else:
-                if callable(player):
-                    tank = player.args[0]
-                else:
-                    tank = player.tank
-                body = tank.body
-                protocol.tri.pack_into(data, offset, tank.id, body.x, body.y)
-            offset += protocol.tri.size
-        self.transport.sendto(data, addr)
 
     def _join(self, addr):
         tank = self.engine.create_tank()
