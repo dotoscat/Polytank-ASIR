@@ -81,10 +81,10 @@ class Client(Scene):
             if i == 0: return self.x
             if i == 1: return self.y
 
-    def __init__(self, connection):
+    def __init__(self):
         super().__init__(5)
         
-        self.connection = connection
+        self.connection = None
         self._joined = False
         self.tank = None
         self._send_cannon_rotation = False
@@ -126,7 +126,11 @@ class Client(Scene):
         self.last_server_tick = -1
         self.tick = 0
         self.snapshots = deque([], 32)
-        
+    
+    def set_connection(self, connection):
+        self.connection = connection
+        connection.set_listener(self.listen)
+    
     def send_input(self, dt):
         if self.tank is None: return
         tank_input = self.tank.input

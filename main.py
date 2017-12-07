@@ -85,7 +85,8 @@ class Main(Scene):
         command = protocol.mono.unpack_from(data)[0]
         print("listen", data, len(data), command)
         if command == protocol.JOINED:
-            print("Te has unido!")
+            Director.get_scene("client").set_connection(self._connection)
+            Director.set_scene("client")
 
     def join_game(self, button, x, y, buttons, modifiers):
         hostname = socket.gethostname()
@@ -135,9 +136,12 @@ class Main(Scene):
         self.title.color = Main.COLORS[self.current_color % len(Main.COLORS)]
         
     def init(self):
+        self._to_main_menu()
         pyglet.clock.schedule_interval(self.change_color, 0.25)
-        #self.director.push_handlers(self.edit.caret)
-        
+    
+    def quit(self):
+        pyglet.clock.unschedule(self.change_color)
+    
     def update(self, dt):
         if not self._connection is None:
             try:

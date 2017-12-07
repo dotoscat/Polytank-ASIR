@@ -45,6 +45,11 @@ class Director(pyglet.window.Window):
         if Director._director is None: return
         Director._director.scene = Director._scenes[key]
 
+    @classmethod
+    def get_scene(cls, key):
+        """Get a scene stored but its key."""
+        return cls._scenes[key]
+
     def __init__(self, *args, vwidth=None, vheight=None, **kwargs):
         super(Director, self).__init__(*args, **kwargs)
         self._vwidth = vwidth
