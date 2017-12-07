@@ -90,5 +90,6 @@ class Connection:
             key.data(data, socket)
     
     def __del__(self):
+        print("Delete connection")
         self._socket.close()
         self._selector.close()

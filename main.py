@@ -18,8 +18,8 @@ import re
 import socket
 import pyglet
 import polytanks
-from polytanks import constant
-from polytanks.ogf4py3 import Scene, Director
+from polytanks import constant, protocol
+from polytanks.ogf4py3 import Scene, Director, Connection
 from polytanks.ogf4py3.gui import Node, VisibleLabel, TextEntry, Button
 
 class Main(Scene):
@@ -35,6 +35,7 @@ class Main(Scene):
         super().__init__(2)
         self.current_color = 0
         self._current_menu = None
+        self._connection = None
         self.title = pyglet.text.Label("POLYTANKS", font_size=24,
         batch=self.batch, group=self.group[0], anchor_x="center",
         anchor_y="center", align="center", x=constant.VWIDTH/2.,
@@ -81,8 +82,8 @@ class Main(Scene):
     
     def listen(self, data, socket):
         command = protocol.mono.unpack(data)[0]
-        if command == protocol.DONE:
-            print("El servidor ha terminado")
+        if command == protocol.JOINED:
+            print("Te has unido!")
 
     def join_game(self, button, x, y, buttons, modifiers):
         hostname = socket.gethostname()
@@ -94,6 +95,7 @@ class Main(Scene):
         self._current_menu = self.join_game_menu
        
     def _join_game(self, button, x, y, buttons, modifiers):
+        print("Hola!!!")
         ip = self._ip_entry.value
         if re.fullmatch("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", ip) is None:
             self._join_error_message.text = "Dirección IP malformada."
@@ -103,6 +105,13 @@ class Main(Scene):
         except ValueError:
             self._join_error_message.text = "Puerto tiene que ser un número entero."
             return
+        print(ip, port, self._connection)
+        if not self._connection is None:
+            print("close previus connection")
+            self._connection.close()
+        self._connection = Connection((ip, port), self.listen)
+        sent = self._connection.socket.send(protocol.mono.pack(protocol.JOIN))
+        print("join sent", sent)
         print("Join game!", ip, port)
     
     def app_exit(self, button, x, y, buttons, modifiers):
@@ -113,6 +122,9 @@ class Main(Scene):
         self._current_menu.visible = False
         self.main_menu.visible = True
         self._current_menu = None
+        if not self._connection is None:
+            self._connection.close()
+            self._connection = None
     
     def to_main_menu(self, button, x, y, buttons, modifiers):
         self._to_main_menu()
@@ -126,8 +138,12 @@ class Main(Scene):
         #self.director.push_handlers(self.edit.caret)
         
     def update(self, dt):
-        pass
-    
+        if not self._connection is None:
+            try:
+                self._connection.tick()
+            except ConnectionResetError:
+                self._join_error_message.text = "La partida no existe."
+                
 if __name__ == "__main__":
     director = Director(
         caption="Polytanks", fullscreen=False,
