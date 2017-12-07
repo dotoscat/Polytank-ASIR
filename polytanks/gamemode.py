@@ -16,6 +16,10 @@
 TIME = 10
 
 class GameModeConf:
+    """Esta estructura evita pasar muchos argumentos a :class:`GameMode`.
+    
+    Ya tiene valores por defecto.
+    """
     def __init__(self):
         self.ready_time = 3
         self.running_time = TIME
