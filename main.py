@@ -19,6 +19,7 @@ import socket
 import pyglet
 import polytanks
 from polytanks import constant, protocol
+from polytanks.client import Client
 from polytanks.ogf4py3 import Scene, Director, Connection
 from polytanks.ogf4py3.gui import Node, VisibleLabel, TextEntry, Button
 
@@ -151,6 +152,7 @@ if __name__ == "__main__":
         vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
     director.set_background_color(0., 0., 0.)
     director.add_scene("main", Main())
+    director.add_scene("client", Client())
     director.set_scene("main")
     pyglet.app.run()
     
