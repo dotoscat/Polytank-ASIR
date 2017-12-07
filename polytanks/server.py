@@ -109,9 +109,6 @@ class Server(asyncio.DatagramProtocol):
             player = self.clients[addr]
             player.ack()
             #print("ping de ", addr, player.ping)
-        elif command == protocol.TERMINATE:
-            self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
-            print("End server from remote")
 
     def client_input(self, data, addr):
         player = self.clients.get(addr)
