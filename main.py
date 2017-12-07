@@ -134,6 +134,7 @@ if __name__ == "__main__":
         width=constant.WIDTH, height=constant.HEIGHT,
         vwidth=constant.VWIDTH, vheight=constant.VHEIGHT)
     director.set_background_color(0., 0., 0.)
-    director.scene = Main()
+    director.add_scene("main", Main())
+    director.set_scene("main")
     pyglet.app.run()
     
