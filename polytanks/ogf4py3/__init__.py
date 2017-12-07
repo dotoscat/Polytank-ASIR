@@ -49,6 +49,7 @@ class Connection:
     """Async UDP connection to a server.
     
     If you want to receive data from server say first a "hello" to the server.
+    Once you have done call close
     
     Parameters:
         address ((host, port)):
@@ -71,6 +72,9 @@ class Connection:
         self._selector.register(self._socket, selectors.EVENT_READ,
             listener)
         self._selector_select = self._selector.select
+        self._closed = False
+    
+        self.send = self._socket.send
     
     @property
     def socket(self):
@@ -89,7 +93,12 @@ class Connection:
             data = socket.recv(1024)
             key.data(data, socket)
     
-    def __del__(self):
-        print("Delete connection")
+    def close(self):
+        if self._closed: return
+        self._selector.unregister(self._socket)
         self._socket.close()
+        self._closed = True
+
+    def __del__(self):
+        self.close()
         self._selector.close()
