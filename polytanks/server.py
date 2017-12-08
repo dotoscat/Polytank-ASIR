@@ -187,22 +187,24 @@ class Server(asyncio.DatagramProtocol):
                 if not callable(player): continue
                 player(None)
             standard_tick(dt)
-            #self._send_snapshot()
+            self._send_snapshot()
             #self.engine.update(dt)
             for message in self.engine.messages: pass
             self.tick += 1
             yield from asyncio.sleep(TIME)
         
     def _send_snapshot(self):
-        snapshot = Snapshot(self.engine, self.tick)
+        snapshot = Snapshot(self.engine, self.standard_game, self.tick)
         snapshots = self.snapshots
         snapshots.appendleft(snapshot)
         data = b''
         if len(snapshots) > 1:
             diff = snapshots[0].diff(snapshots[1])
+            #print(diff.gamemode)
             data = Snapshot.to_network(diff)
-            #print("diff data", len(data))
+            print("diff data", len(data))
         #print("send snapshot", len(data))
+        return
         clients = self.clients
         for client in clients:
             player = clients[client]

@@ -30,7 +30,7 @@ explosion_struct = struct.Struct("!ifff")
 gamemode = namedtuple("gamemode", "state total_time current_time")
 gamemode_struct = struct.Struct("!bhh")
 
-SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets explosions")
+SnapshotDiff = namedtuple("SnapshotDiff", "tick gamemode tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
 
 POS_X = 1
@@ -104,6 +104,14 @@ class Snapshot:
     
     def diff(self, other_snapshot):
         """Generates a SnapshotDiff with respect another snapshot."""
+        
+        self_game = self.snapshot["gamemode"]
+        
+        if self_game.state != other_snapshot.snapshot["gamemode"].state:
+            gamemode_diff = gamemode(*self_game)
+        else:
+            gamemode_diff = gamemode(0, self_game.total_time, self_game.current_time)
+        
         other_tanks = other_snapshot.snapshot["tanks"]
         self_tanks = self.snapshot["tanks"]
         tanks_diff = Snapshot._generate_diff_section(self_tanks,
@@ -116,8 +124,8 @@ class Snapshot:
         self_explosions = self.snapshot["explosions"]
         explosions_diff = Snapshot._generate_diff_section(self_explosions,
             other_explosions)
-        return SnapshotDiff(self.tick, tanks_diff, bullets_diff,
-            explosions_diff)
+        return SnapshotDiff(self.tick, gamemode_diff, tanks_diff,
+            bullets_diff, explosions_diff)
     
     @staticmethod
     def _generate_diff_section(self_entities, other_entities):
