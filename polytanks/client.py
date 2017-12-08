@@ -22,11 +22,8 @@ import pyglet
 
 from pyglet.sprite import Sprite
 from pyglet.window import key
-from .ogf4py3 import gui
+from .ogf4py3 import gui, system, toyblock3, Scene, Director
 from .ogf4py3 import magnitude_to_vector, get_angle_from, Connection
-from .ogf4py3 import toyblock3
-from .ogf4py3 import Scene, Director
-from .ogf4py3 import system
 from .system import update_user_input
 from .constant import G
 from . import engine, protocol, builder, level, constant, assets
@@ -265,12 +262,6 @@ class Client(Scene):
         
         if command == protocol.DONE:
             self._done()
-        elif command == protocol.JOINED:
-            command, id_, v1, v2 = protocol.tetra.unpack(data)
-            self.joined(id_, v1, v2)
-        elif command == protocol.START_GAME:
-            self.start_game(data)
-            command = protocol.mono.unpack_from(data)[0]
         elif command == protocol.SNAPSHOT:
             command, tick = protocol.di_i.unpack_from(data)
             if tick <= self.last_server_tick:

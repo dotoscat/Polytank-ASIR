@@ -117,6 +117,8 @@ class Server(asyncio.DatagramProtocol):
         #print("command", command)
         if command == protocol.JOIN:
             self._join(addr)
+        elif command == protocol.REQUEST_SNAPSHOT:
+            print(addr, "requests a snapshot")
         elif command == protocol.LOGOUT:
             self._logout(addr)
         elif command == protocol.CLIENT_INPUT:
@@ -201,7 +203,7 @@ class Server(asyncio.DatagramProtocol):
         if len(snapshots) > 1:
             diff = snapshots[0].diff(snapshots[1])
             data = Snapshot.to_network(diff)
-        print("send snapshot", data)
+        #print("send snapshot", data)
         clients = self.clients
         for client in clients:
             player = clients[client]

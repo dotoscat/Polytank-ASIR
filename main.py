@@ -87,6 +87,7 @@ class Main(Scene):
         if command == protocol.JOINED:
             Director.get_scene("client").set_connection(self._connection)
             Director.set_scene("client")
+            self._connection.send(protocol.mono.pack(protocol.REQUEST_SNAPSHOT))
 
     def join_game(self, button, x, y, buttons, modifiers):
         hostname = socket.gethostname()
