@@ -202,7 +202,7 @@ class Server(asyncio.DatagramProtocol):
             diff = snapshots[0].diff(snapshots[1])
             #print(diff.gamemode)
             data = Snapshot.to_network(diff)
-            print("diff data", len(data))
+            print("diff data", data)
         #print("send snapshot", len(data))
         return
         clients = self.clients

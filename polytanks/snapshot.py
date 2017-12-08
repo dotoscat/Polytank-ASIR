@@ -33,6 +33,8 @@ gamemode_struct = struct.Struct("!bhh")
 SnapshotDiff = namedtuple("SnapshotDiff", "tick gamemode tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
 
+diff_header = struct.Struct("!bibhf")
+
 POS_X = 1
 POS_Y = 2
 VEL_X = 3
@@ -185,7 +187,8 @@ class Snapshot:
     @staticmethod
     def to_network(diff):
         data = bytearray()
-        data += protocol.di_i.pack(protocol.SNAPSHOT, diff.tick)
+        data += diff_header.pack(protocol.SNAPSHOT, diff.tick,
+            *diff.gamemode)
         data += Snapshot._diff_to_data(diff.tanks, tank_struct)
         data += Snapshot._diff_to_data(diff.bullets, bullet_struct)
         data += Snapshot._diff_to_data(diff.explosions, explosion_struct)
