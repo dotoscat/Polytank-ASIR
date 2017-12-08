@@ -20,7 +20,7 @@ import math
 from math import degrees
 import asyncio
 from . import engine, level, protocol, gamemode
-from .snapshot import Snapshot
+from .snapshot import Snapshot, DUMMY_SNAPSHOT
 
 class Player:
     def __init__(self, tank):
@@ -197,13 +197,12 @@ class Server(asyncio.DatagramProtocol):
         snapshot = Snapshot(self.engine, self.standard_game, self.tick)
         snapshots = self.snapshots
         snapshots.appendleft(snapshot)
-        data = b''
         if len(snapshots) > 1:
             diff = snapshots[0].diff(snapshots[1])
-            #print(diff.gamemode)
-            data = Snapshot.to_network(diff)
-            print("diff data", len(data))
-        #print("send snapshot", len(data))
+        else:
+            diff = snapshots[0].diff(DUMMY_SNAPSHOT)
+        data = Snapshot.to_network(diff)
+        print("send snapshot", data)
         clients = self.clients
         for client in clients:
             player = clients[client]
