@@ -41,7 +41,7 @@ class DUMMY_SNAPSHOT:
         "explosions": {}
     }
 
-diff_header = struct.Struct("!bibhf")
+diff_header = struct.Struct("!iibhf")
 
 POS_X = 1
 POS_Y = 2
@@ -262,15 +262,17 @@ class Snapshot:
                 SnapshotDiff
             
         """
-        command, tick = protocol.di_i.unpack_from(data)
-        offset = protocol.di_i.size
+        command, tick, state, total_time, current_time = diff_header.unpack_from(data)
+        game = gamemode(state, total_time, current_time)
+        print("from_network", state, total_time, current_time)
+        offset = diff_header.size
         tanks_section, offset = Snapshot._data_to_diff(data, offset,
             tank, tank_struct)
         bullets_section, offset = Snapshot._data_to_diff(data, offset,
             bullet, bullet_struct)
         explosions_section, offset = Snapshot._data_to_diff(data, offset,
             explosion, explosion_struct)
-        snapshot_diff = SnapshotDiff(tick, tanks_section, bullets_section,
+        snapshot_diff = SnapshotDiff(tick, game, tanks_section, bullets_section,
             explosions_section)
         return snapshot_diff
         

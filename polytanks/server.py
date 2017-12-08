@@ -118,7 +118,10 @@ class Server(asyncio.DatagramProtocol):
         if command == protocol.JOIN:
             self._join(addr)
         elif command == protocol.REQUEST_SNAPSHOT:
-            print(addr, "requests a snapshot")
+            diff = self.snapshots[0].diff(DUMMY_SNAPSHOT)
+            data = Snapshot.to_network(diff)
+            print(addr, "requests a snapshot", data)
+            self.transport.sendto(data, addr)
         elif command == protocol.LOGOUT:
             self._logout(addr)
         elif command == protocol.CLIENT_INPUT:

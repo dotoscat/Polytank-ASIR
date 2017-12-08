@@ -168,6 +168,7 @@ class Client(Scene):
         #        powerup = self.engine._spawn_powerup(128., 128., "heal")
         #        powerup.sprite.image = assets.images["heal"]
         #self.send_input(dt)
+        print(self.connection)
         if not self.connection is None:
             self.connection.tick()
         #self.engine.update(dt)
@@ -259,7 +260,7 @@ class Client(Scene):
 
     def listen(self, data, socket):
         command = protocol.mono.unpack_from(data)[0]
-        
+        print("listen", command, len(data))
         if command == protocol.DONE:
             self._done()
         elif command == protocol.SNAPSHOT:
@@ -270,7 +271,7 @@ class Client(Scene):
             self.last_server_tick = tick
             snapshot_diff = Snapshot.from_network(data)
             self.snapshots.appendleft(snapshot_diff)
-            self.conn.socket.send(protocol.mono.pack(protocol.CLIENT_ACK))
+            self.connection.send(protocol.mono.pack(protocol.CLIENT_ACK))
             Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self.tank)
             
     def start_game(self, data):
