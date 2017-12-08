@@ -33,6 +33,13 @@ gamemode_struct = struct.Struct("!bhh")
 SnapshotDiff = namedtuple("SnapshotDiff", "tick gamemode tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
 
+DUMMY_SNAPSHOT = {
+    "gamemode": gamemode(0, 0, 0.),
+    "tanks": {},
+    "bullets": {},
+    "explosions": {}
+}
+
 diff_header = struct.Struct("!bibhf")
 
 POS_X = 1
