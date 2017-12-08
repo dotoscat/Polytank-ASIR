@@ -14,14 +14,12 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import deque
-from functools import partial
 import time
 from time import perf_counter
 import math
 from math import degrees
-from pprint import pprint
 import asyncio
-from . import engine, level, protocol
+from . import engine, level, protocol, gamemode
 from .snapshot import Snapshot
 
 class Player:
@@ -73,12 +71,32 @@ class Server(asyncio.DatagramProtocol):
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
         self.snapshots = deque([], 32)
         
+        game_conf = gamemode.GameModeConf()
+        game_conf.on_ready = self.on_ready
+        game_conf.on_running = self.on_running
+        game_conf.on_end = self.on_end
+        game_conf.on_tick = self.on_tick
+        self.standard_game = gamemode.GameMode(game_conf)
+        self.standard_game.get_ready()
+        
         listen = self._loop.create_datagram_endpoint(lambda: self,
             local_addr=address)
 
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick(self._loop.time))
-            
+    
+    def on_ready(self, time):
+        print("on ready", time)
+        
+    def on_running(self, time):
+        print("on running", time)
+        
+    def on_end(self, time):
+        print("on end", time)
+    
+    def on_tick(self, seconds):
+        pass
+    
     def add_player(self, tank):
         for i, player in enumerate(self.players):
             if player is not None: continue
@@ -161,11 +179,13 @@ class Server(asyncio.DatagramProtocol):
     def _tick(self, time):
         TIME = 1./Server.TICKRATE
         dt = TIME
+        standard_tick = self.standard_game.tick
         print("sleep for", TIME)
         while True:
             for player in self.players:
                 if not callable(player): continue
                 player(None)
+            standard_tick(dt)
             #self._send_snapshot()
             #self.engine.update(dt)
             for message in self.engine.messages: pass

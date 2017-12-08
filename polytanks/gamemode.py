@@ -72,5 +72,5 @@ class GameMode:
                     self._on_end(self._limit)
             elif self._state == GameMode.END:
                 self.get_ready()
-        if self._state == GameMode.RUNNING and callable(self._on_tick):
-            self._on_tick(dt)
+        if callable(self._on_tick):
+            self._on_tick(self._seconds)
