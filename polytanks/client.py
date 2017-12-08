@@ -27,6 +27,7 @@ from .ogf4py3 import magnitude_to_vector, get_angle_from, Connection
 from .system import update_user_input
 from .constant import G
 from . import engine, protocol, builder, level, constant, assets
+from .gamemode import GameMode
 from .snapshot import Snapshot
 from .engine import Engine
 
@@ -85,6 +86,8 @@ class Client(Scene):
         self._joined = False
         self.tank = None
         self._send_cannon_rotation = False
+        self._state = 0
+        self._time = 0
         
         builder.tank.add("tank_graphic", TankGraphic, self.batch, self.group)
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
@@ -123,6 +126,12 @@ class Client(Scene):
         self.last_server_tick = -1
         self.tick = 0
         self.snapshots = deque([], 32)
+        
+        self.message = gui.VisibleLabel("WOLA!", batch=self.batch,
+            group=self.group[3], anchor_x="center", anchor_y="center",
+            align="center")
+        self.message.x = constant.VWIDTH/2.
+        self.message.y = constant.VHEIGHT/2.
     
     def set_connection(self, connection):
         self.connection = connection
@@ -168,7 +177,6 @@ class Client(Scene):
         #        powerup = self.engine._spawn_powerup(128., 128., "heal")
         #        powerup.sprite.image = assets.images["heal"]
         #self.send_input(dt)
-        print(self.connection)
         if not self.connection is None:
             self.connection.tick()
         #self.engine.update(dt)
@@ -180,6 +188,11 @@ class Client(Scene):
         update_tank_graphic()
         self._upgrade_pointer()
         system.sprite()
+        self._time -= dt
+        if self._time < 0.:
+            self._time = 0.
+        if self._state == GameMode.READY:
+            self.message.text = "READY! {}".format(int(self._time))
         player_play = self.player.play
         for message, entity in self.engine.messages:
             player_play(message)
@@ -260,7 +273,6 @@ class Client(Scene):
 
     def listen(self, data, socket):
         command = protocol.mono.unpack_from(data)[0]
-        print("listen", command, len(data))
         if command == protocol.DONE:
             self._done()
         elif command == protocol.SNAPSHOT:
@@ -273,6 +285,18 @@ class Client(Scene):
             self.snapshots.appendleft(snapshot_diff)
             self.connection.send(protocol.mono.pack(protocol.CLIENT_ACK))
             Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self.tank)
+            if snapshot_diff.gamemode.state == GameMode.READY:
+                self._state = GameMode.READY
+                self.message.text = "READY! {}".format(snapshot_diff.gamemode.total_time)
+                self._time = snapshot_diff.gamemode.total_time
+            elif snapshot_diff.gamemode.state == GameMode.RUNNING:
+                self._state = GameMode.RUNNING
+                self.message.text = "running!"
+                print("RUNNING!", snapshot_diff.gamemode.total_time)
+            elif snapshot_diff.gamemode.state == GameMode.END:
+                self._state = GameMode.END
+                self.message.text = "END!"
+                print("END!", snapshot_diff.gamemode.total_time)
             
     def start_game(self, data):
         offset = protocol.mono.size

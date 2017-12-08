@@ -130,7 +130,7 @@ class Server(asyncio.DatagramProtocol):
             #print("client input", addr, len(data))
         elif command == protocol.CLIENT_ACK:
             player = self.clients[addr]
-            player.ack()
+            #player.ack()
             #print("ping de ", addr, player.ping)
 
     def client_input(self, data, addr):

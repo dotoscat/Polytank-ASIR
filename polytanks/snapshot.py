@@ -264,7 +264,6 @@ class Snapshot:
         """
         command, tick, state, total_time, current_time = diff_header.unpack_from(data)
         game = gamemode(state, total_time, current_time)
-        print("from_network", state, total_time, current_time)
         offset = diff_header.size
         tanks_section, offset = Snapshot._data_to_diff(data, offset,
             tank, tank_struct)
