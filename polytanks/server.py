@@ -145,10 +145,10 @@ class Server(asyncio.DatagramProtocol):
         player = self.clients[addr]
         #player.tank.free()
         #del self.engine.entities[player.tank.id]
-        #del self.clients[addr]
+        del self.clients[addr]
         #self.players = [None if player == p else p for p in self.players]
         #print(self.players)
-        self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
+        #self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
         print("Client {} removed", addr)
         print(self.clients)
 

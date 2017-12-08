@@ -213,6 +213,7 @@ class Spinner(Node):
 class VisibleLabel(pyglet.text.Label):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         
     @property
     def visible(self):
@@ -227,14 +228,17 @@ class VisibleLabel(pyglet.text.Label):
 
 class Button(VisibleLabel):
     def __init__(self, *args, hover_color=(255, 200, 200, 255),
-    idle_color=(255, 255, 255, 255), action=None, **kwargs):
-        super().__init__(*args, **kwargs)
+    idle_color=(255, 255, 255, 255), background_color=None,
+    action=None, **kwargs):
+        super().__init__(*args, **dict(group=pyglet.graphics.OrderedGroup(1), **kwargs))
         self.__width = self.content_width
         self.__height = self.content_height
         self.action = action
         self.hover_color = hover_color
         self.idle_color = idle_color
         self._visible = True
+        self._background = None
+
     
     def on_mouse_motion(self, x, y, dx, dy):
         if not self._visible: return

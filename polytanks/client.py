@@ -25,7 +25,7 @@ from pyglet.window import key
 from .ogf4py3 import gui
 from .ogf4py3 import magnitude_to_vector, get_angle_from, Connection
 from .ogf4py3 import toyblock3
-from .ogf4py3 import Scene
+from .ogf4py3 import Scene, Director
 from .ogf4py3 import system
 from .system import update_user_input
 from .constant import G
@@ -171,7 +171,8 @@ class Client(Scene):
         #        powerup = self.engine._spawn_powerup(128., 128., "heal")
         #        powerup.sprite.image = assets.images["heal"]
         #self.send_input(dt)
-        self.connection.tick()
+        if not self.connection is None:
+            self.connection.tick()
         #self.engine.update(dt)
         if self._joined:
             for damage in self.damage:
@@ -197,6 +198,10 @@ class Client(Scene):
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
+        if symbol == key.ESCAPE:
+            print("Mostrar botón para logout")
+            self.logout()
+            return
         if self._joined and symbol == key.L:
             print("logout pressed")
             self.logout()
@@ -307,9 +312,9 @@ class Client(Scene):
         self.conn.socket.send(protocol.mono.pack(protocol.JOINED))
     
     def logout(self):
-        print("logout", self._joined)
-        if not self._joined: return
-        self.conn.socket.send(protocol.mono.pack(protocol.LOGOUT))
+        self.connection.send(protocol.mono.pack(protocol.LOGOUT))
+        self.connection.close()
+        Director.set_scene("main")
 
     def _done(self):
         self.tank.free()

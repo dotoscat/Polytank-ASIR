@@ -93,6 +93,7 @@ class Connection:
         Raises:
             ConnectionResetError: If the remote server doesn't respond
         """
+        if self._closed: return
         events = self._selector_select(0)
         for key, mask in events:
             socket = key.fileobj

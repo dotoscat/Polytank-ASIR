@@ -80,7 +80,7 @@ class Main(Scene):
         join_game_menu.add_child(self._join_error_message)
         join_game_menu.visible = False
         self.children.append(join_game_menu)
-    
+        
     def listen(self, data, socket):
         command = protocol.mono.unpack_from(data)[0]
         print("listen", data, len(data), command)
@@ -136,6 +136,7 @@ class Main(Scene):
         self.title.color = Main.COLORS[self.current_color % len(Main.COLORS)]
         
     def init(self):
+        self._connection = None
         self._to_main_menu()
         pyglet.clock.schedule_interval(self.change_color, 0.25)
     
