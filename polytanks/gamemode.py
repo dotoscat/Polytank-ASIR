@@ -49,7 +49,15 @@ class GameMode:
     @property
     def state(self):
         return self._state
+    
+    @property
+    def total_time(self):
+        return self._limit
         
+    @property
+    def current_time(self):
+        return self._seconds
+    
     def get_ready(self):
         self._state = GameMode.READY
         self._limit = self._ready_time

@@ -96,6 +96,7 @@ class Server(asyncio.DatagramProtocol):
     
     def on_tick(self, seconds):
         pass
+        #print("seconds", seconds)
     
     def add_player(self, tank):
         for i, player in enumerate(self.players):

@@ -27,6 +27,9 @@ bullet_struct = struct.Struct("!iffffif")
 explosion = namedtuple("explosion", "id x y max_time")
 explosion_struct = struct.Struct("!ifff")
 
+gamemode = namedtuple("gamemode", "state total_time current_time")
+gamemode_struct = struct.Struct("!bhh")
+
 SnapshotDiff = namedtuple("SnapshotDiff", "tick tanks bullets explosions")
 DiffSection = namedtuple("DiffSection", "created destroyed modified")
 
@@ -64,12 +67,12 @@ input_set = frozenset(("do_jump",))
 timer_set = frozenset(("max_time",))
 
 class Snapshot:
-    def __init__(self, engine, tick=0):
+    def __init__(self, engine, game, tick=0):
         self.ack = False
         self.tick = tick
-        self.snapshot = self._make_from_engine(engine)
+        self.snapshot = self._make_from_engine(engine, game)
         
-    def _make_from_engine(self, engine):
+    def _make_from_engine(self, engine, game):
         snapshot = {}
         tanks = {}
         bullets = {}
@@ -96,6 +99,7 @@ class Snapshot:
                 body.y, anexplosion.timer.max_time)
             explosions[anexplosion.id] = explosion_snapshot
         snapshot["explosions"] = explosions
+        snapshot["gamemode"] = gamemode(game.state, game.total_time, game.current_time)
         return snapshot
     
     def diff(self, other_snapshot):
