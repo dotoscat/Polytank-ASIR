@@ -201,15 +201,13 @@ class Client(Scene):
         self.director.set_exclusive_mouse(False)
 
     def clean_entity(self, entity):
-        if (isinstance(entity, self.engine.bullet_pool)
-            or isinstance(entity, self.engine.explosion_pool)
-            or isinstance(entity, self.engine.powerup_pool)):
+        if isinstance(entity, (self.engine.bullet_pool
+            , self.engine.explosion_pool, self.engine.powerup_pool)):
             entity.sprite.visible = False
 
     def init_entity(self, entity):
-        if (isinstance(entity, self.engine.bullet_pool)
-            or isinstance(entity, self.engine.explosion_pool)
-            or isinstance(entity, self.engine.powerup_pool)):
+        if (isinstance(entity, (self.engine.bullet_pool
+            , self.engine.explosion_pool, self.engine.powerup_pool)):
             entity.sprite.visible = True
         logging.info("init", entity)
 
