@@ -127,8 +127,8 @@ class Client(Scene):
         self.tick = 0
         self.snapshots = deque([], 32)
         self._timer = gui.Timer(0, batch=self.batch, group=self.group[3])
-        self._timer.x = constant.VWIDTH/2.
-        self._timer.y = constant.VHEIGHT/2
+        self._timer.x = constant.VWIDTH - self._timer.content_width - 16
+        self._timer.y = constant.VHEIGHT - self._timer.content_height - 16
         
         self.message = gui.VisibleLabel("WOLA!", batch=self.batch,
             group=self.group[3], anchor_x="center", anchor_y="center",
