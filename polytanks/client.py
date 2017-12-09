@@ -126,6 +126,9 @@ class Client(Scene):
         self.last_server_tick = -1
         self.tick = 0
         self.snapshots = deque([], 32)
+        self._timer = gui.Timer(0, batch=self.batch, group=self.group[3])
+        self._timer.x = constant.VWIDTH/2.
+        self._timer.y = constant.VHEIGHT/2
         
         self.message = gui.VisibleLabel("WOLA!", batch=self.batch,
             group=self.group[3], anchor_x="center", anchor_y="center",
@@ -188,11 +191,13 @@ class Client(Scene):
         update_tank_graphic()
         self._upgrade_pointer()
         system.sprite()
-        self._time -= dt
-        if self._time < 0.:
-            self._time = 0.
         if self._state == GameMode.READY:
+            self._time -= dt
+            if self._time < 0.:
+                self._time = 0.
             self.message.text = "READY! {}".format(int(self._time))
+        elif self._state == GameMode.RUNNING:
+            self._timer.tick(dt)
         player_play = self.player.play
         for message, entity in self.engine.messages:
             player_play(message)
@@ -288,14 +293,20 @@ class Client(Scene):
             if snapshot_diff.gamemode.state == GameMode.READY:
                 self._state = GameMode.READY
                 self.message.text = "READY! {}".format(snapshot_diff.gamemode.total_time)
+                self.message.visible = True
                 self._time = snapshot_diff.gamemode.total_time
             elif snapshot_diff.gamemode.state == GameMode.RUNNING:
                 self._state = GameMode.RUNNING
-                self.message.text = "running!"
+                self.message.visible = False
                 print("RUNNING!", snapshot_diff.gamemode.total_time)
+                self._timer.seconds = snapshot_diff.gamemode.total_time
+                self._timer.visible = True
+                print(self._timer.x, self._timer.y, self._timer.text)
             elif snapshot_diff.gamemode.state == GameMode.END:
                 self._state = GameMode.END
+                self._timer.visible = False
                 self.message.text = "END!"
+                self.message.visible = True
                 print("END!", snapshot_diff.gamemode.total_time)
             
     def start_game(self, data):

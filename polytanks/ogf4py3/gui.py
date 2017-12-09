@@ -214,7 +214,6 @@ class VisibleLabel(pyglet.text.Label):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        
     @property
     def visible(self):
         return self._visible
@@ -225,6 +224,36 @@ class VisibleLabel(pyglet.text.Label):
             raise TypeError("visible uses a bool. Got {} instead".format(type(visible)))
         self._visible = visible
         self.color = self.color[0:3] + (255,) if visible else self.color[0:3] + (0,)
+
+class Timer(VisibleLabel):
+    def __init__(self, seconds, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.seconds = seconds
+    
+    @property
+    def seconds(self):
+        return self._seconds
+        
+    @seconds.setter
+    def seconds(self, value):
+        if not isinstance(value, (int, float)):
+            raise TypeError("Seconds is not a number")
+        if value < 0:
+            raise ValueError("Seconds must be greather or equal than zero")
+        self._seconds = value
+        self._format()
+    
+    def tick(self, dt):
+        self._seconds -= dt
+        if self._seconds < 0.:
+            self._seconds = 0.
+        self._format()
+
+    def _format(self):
+        seconds = int(self._seconds)
+        minutes = seconds // 60
+        remainder = seconds % 60
+        self.text = "{}:{:0>2}".format(minutes, remainder)
 
 class Button(VisibleLabel):
     def __init__(self, *args, hover_color=(255, 200, 200, 255),
