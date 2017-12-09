@@ -36,6 +36,15 @@ class TankGraphic:
         self.base = Sprite(assets.images["tank-base"], batch=batch, group=group[2])
         self.cannon = Sprite(assets.images["tank-cannon"], batch=batch, group=group[1])
         
+    @property
+    def color(self):
+        return self.base.color
+        
+    @color.setter
+    def color(self, value):
+        self.base.color = value
+        self.cannon.color = value
+        
 @toyblock3.system("body", "tank_graphic")
 def update_tank_graphic(self, entity):
     body = entity.body
@@ -88,6 +97,8 @@ class Client(Scene):
         self._send_cannon_rotation = False
         self._state = 0
         self._time = 0
+        self._color = None
+        self._id = None
         
         builder.tank.add("tank_graphic", TankGraphic, self.batch, self.group)
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
@@ -338,14 +349,17 @@ class Client(Scene):
             tank = self.engine.create_tank(id_)
             tank.set("body", x=x, y=y)
 
-    def joined(self, id_, x, y):
-        print("Joined with id", id_, x, y)
+    def joined(self, nplayers, id_, r, g, b):
+        print("Joined with id", id_)
+        self._id = id_
+        self._color = (r, g, b)
         self.tank = self.engine.create_tank(id_)
-        self.tank.set("body", x=x, y=x)
+        print(self.tank, self.tank.body.x, self.tank.body.y)
+        self.tank.set("body", x=120, y=120)
+        self.tank.set("tank_graphic", color=(r, g, b))
         self.player_input = self.tank.input
         self.player_input.client = True
         self._joined = True
-        self.conn.socket.send(protocol.mono.pack(protocol.JOINED))
     
     def logout(self):
         self.connection.send(protocol.mono.pack(protocol.LOGOUT))

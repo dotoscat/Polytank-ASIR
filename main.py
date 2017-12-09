@@ -93,7 +93,9 @@ class Main(Scene):
         if command == protocol.JOINED:
             command, nplayers, id_, r, g, b = protocol.joined.unpack(data)
             print("joined", nplayers, id_, r, g, b)
-            Director.get_scene("client").set_connection(self._connection)
+            client = Director.get_scene("client")
+            client.set_connection(self._connection)
+            client.joined(nplayers, id_, r, g, b)
             Director.set_scene("client")
             self._connection.send(protocol.mono.pack(protocol.REQUEST_SNAPSHOT))
 
