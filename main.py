@@ -29,7 +29,8 @@ class Main(Scene):
         polytanks.WHITE,
         polytanks.RED,
         polytanks.GREEN,
-        polytanks.BLUE
+        polytanks.BLUE,
+        polytanks.YELLOW
     ]
     
     def __init__(self):
