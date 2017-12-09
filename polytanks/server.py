@@ -116,7 +116,7 @@ class Server(asyncio.DatagramProtocol):
         command = protocol.mono.unpack_from(data)[0]
         #print("command", command)
         if command == protocol.JOIN:
-            self._join(addr)
+            self._join(addr, data)
         elif command == protocol.REQUEST_SNAPSHOT:
             diff = self.snapshots[0].diff(DUMMY_SNAPSHOT)
             data = Snapshot.to_network(diff)
@@ -152,13 +152,15 @@ class Server(asyncio.DatagramProtocol):
         #print("input", addr, tick, move, cannon_angle, shoots,
         #    jumps)
 
-    def _join(self, addr):
+    def _join(self, addr, data):
         #tank = self.engine.create_tank()
         #player = self.add_player(tank)
         #self.clients[addr] = player
         self.clients[addr] = addr
         #tank.set("body", x=128., y=128.)
-        #print("Client {} {} added".format(addr, tank.id))
+        command, nickname = protocol.join.unpack(data)
+        nickname = nickname.decode()
+        print("Player {} from {} added".format(nickname, addr))
         print(self.players)
         message = protocol.mono.pack(protocol.JOINED)
         print("message", message)

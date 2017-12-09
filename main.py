@@ -106,6 +106,7 @@ class Main(Scene):
         self._current_menu = self.join_game_menu
        
     def _join_game(self, button, x, y, buttons, modifiers):
+        nickname = self._nick_entry.value
         ip = self._ip_entry.value
         if re.fullmatch("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", ip) is None:
             self._join_error_message.text = "Dirección IP malformada."
@@ -120,9 +121,8 @@ class Main(Scene):
             print("close previus connection")
             self._connection.close()
         self._connection = Connection((ip, port), self.listen)
-        sent = self._connection.send(protocol.mono.pack(protocol.JOIN))
-        print("join sent", sent)
-        print("Join game!", ip, port)
+        sent = self._connection.send(protocol.join.pack(protocol.JOIN, nickname.encode()))
+        print("Join game!", ip, port, nickname)
     
     def app_exit(self, button, x, y, buttons, modifiers):
         pyglet.app.exit()
