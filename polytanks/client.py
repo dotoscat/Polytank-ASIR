@@ -193,7 +193,7 @@ class Client(Scene):
         #self.send_input(dt)
         if not self.connection is None:
             self.connection.tick()
-        #self.engine.update(dt)
+        self.engine.update(dt)
         if self._joined:
             for damage in self.damage:
                 id_ = self.damage[damage]
