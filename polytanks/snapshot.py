@@ -19,7 +19,7 @@ from . import protocol
 from .engine import Engine
 
 tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage nickname r g b")
-tank_struct = struct.Struct("!i?ffffi16pBBB")
+tank_struct = struct.Struct("!i?ffffi9pBBB")
 
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")

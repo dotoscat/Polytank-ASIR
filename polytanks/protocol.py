@@ -40,6 +40,6 @@ tetra = struct.Struct("!iiff")
 #command, tick, movement, cannon_angle, accumulate_power, jump
 input = struct.Struct("!iiff??")
 #command, nickname
-join = struct.Struct("!i16p")
+join = struct.Struct("!i9p")
 #command, nplayers, id
 joined = struct.Struct("!ibh")
