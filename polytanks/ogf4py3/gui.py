@@ -414,7 +414,7 @@ class Menu(object):
         if self._cursor is None: return
         self._entry[self._cursor](self)
 
-class NumberLabel(pyglet.text.Label):
+class NumberLabel(VisibleLabel):
     def __init__(self, suffix, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._value = 0

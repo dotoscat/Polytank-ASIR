@@ -61,6 +61,35 @@ systems.remove(engine.system_alive_zone)
 #systems.remove(system.lifespan)
 systems.remove(engine.system_client_collision)
 
+class DamageMeter(gui.Node):
+    def __init__(self, *args, **kwargs):
+        super().__init__(orientation=gui.Node.VERTICAL)
+        self._tank = None
+        self._nickname = gui.VisibleLabel("HEY!", *args, **kwargs)
+        self.add_child(self._nickname)
+        self._number = gui.NumberLabel('%', *args, **kwargs)
+        self.add_child(self._number)
+        self.quit_player()
+    
+    @property
+    def is_free(self):
+        return self._tank is None
+    
+    def set_player(self, tank, nickname):
+        self._tank = tank
+        self._nickname.value = nickname
+        self._number.visible = True
+    
+    def quit_player(self):
+        self._tank = None
+        self._nickname.value = 'HEY!'
+        self._number.visible = False
+            
+    def update(self):
+        print(self._number.x, self._number.y)
+        if self._tank is None: return
+        self._number.value = self._tank.tank.damage
+
 class Client(Scene):
     
     class Point:
@@ -132,7 +161,7 @@ class Client(Scene):
         self.cursor_point = Client.Point()
         self.cursor = Sprite(assets.images["eyehole"], batch=self.batch, group=self.group[3])
         
-        self.damage = []
+        self.damage_meters = []
         self.dt = 0.
         self.last_server_tick = -1
         self.tick = 0
@@ -195,10 +224,8 @@ class Client(Scene):
             self.connection.tick()
         self.engine.update(dt)
         if self._joined:
-            for damage in self.damage:
-                id_ = self.damage[damage]
-                tank = self.engine.entities[id_]
-                damage.value = tank.tank.damage
+            for damage_meter in self.damage_meters:
+                damage_meter.update()
         update_tank_graphic()
         self._upgrade_pointer()
         system.sprite()
@@ -359,7 +386,22 @@ class Client(Scene):
         self.tank.set("tank_graphic", color=(r, g, b))
         self.player_input = self.tank.input
         self.player_input.client = True
+        margin = constant.VWIDTH/8
+        hud_area = constant.VWIDTH-margin*2.
+        distance = hud_area/nplayers
+        for i in range(nplayers):
+            meter = DamageMeter(batch=self.batch, group=self.group[4])
+            meter.y = 32
+            meter.x = margin + distance*i
+            self.damage_meters.append(meter)
         self._joined = True
+        self._assign_player_to_damage_meter(self.tank, "España!")
+    
+    def _assign_player_to_damage_meter(self, tank, nickname):
+        for meter in self.damage_meters:
+            if not meter.is_free: continue
+            meter.set_player(tank, nickname)
+            break
     
     def logout(self):
         self.tank.free()
