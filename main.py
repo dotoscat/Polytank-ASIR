@@ -62,6 +62,12 @@ class Main(Scene):
         self.join_game_menu = Node(x=menu_x, y=menu_y)
         join_game_menu = self.join_game_menu
         
+        nickname_horizontal = Node(orientation=Node.HORIZONTAL)
+        nickname_horizontal.add_child(VisibleLabel("Nick", **common_layout_options))
+        self._nick_entry = TextEntry(120, 16, text="Participante", **common_layout_options)
+        nickname_horizontal.add_child(self._nick_entry)
+        join_game_menu.add_child(nickname_horizontal)
+        
         ip_horizontal = Node(orientation=Node.HORIZONTAL)
         ip_horizontal.add_child(VisibleLabel("Ip", **common_layout_options))
         self._ip_entry = TextEntry(120, 16, **common_layout_options)
