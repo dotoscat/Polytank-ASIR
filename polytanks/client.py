@@ -356,26 +356,6 @@ class Client(Scene):
             self.message.visible = True
             print("END!", gamemode.total_time)
     
-    def start_game(self, data):
-        offset = protocol.mono.size
-        players = 0
-        tanks = data[protocol.mono.size:]
-        self.damage = {}
-        for id_, x, y in protocol.tri.iter_unpack(tanks):
-            if id_ == 0: continue
-            players += 1
-            print("player", self.tank.id, id_)
-            label = gui.NumberLabel("%", batch=self.batch, group=self.group[4])
-            self.damage[label] = id_
-            label.value = 0
-            label.y = 8.
-            label.x = x
-            if id_ == self.tank.id:
-                continue
-            print(id_, x, y)
-            tank = self.engine.create_tank(id_)
-            tank.set("body", x=x, y=y)
-
     def joined(self, nplayers, id_, r, g, b):
         print("Joined with id", id_)
         self._id = id_
