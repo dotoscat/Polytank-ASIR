@@ -18,8 +18,8 @@ from collections import deque, namedtuple
 from . import protocol
 from .engine import Engine
 
-tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage")
-tank_struct = struct.Struct("!i?ffffi")
+tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage nickname")
+tank_struct = struct.Struct("!i?ffffi16p")
 
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
@@ -72,7 +72,7 @@ field_int = struct.Struct("!bi")
 id_nfields = struct.Struct("!ib")
 
 body_set = frozenset(("x", "y", "vel_x", "vel_y"))
-tank_set = frozenset(("damage",))
+tank_set = frozenset(("damage", "nickname"))
 input_set = frozenset(("do_jump",))
 timer_set = frozenset(("max_time",))
 
@@ -91,7 +91,7 @@ class Snapshot:
         for atank in used_tanks:
             body = atank.body
             tank_snapshot = tank(atank.id, atank.input.do_jump, body.x, body.y,
-                body.vel_x, body.vel_y, atank.tank.damage)
+                body.vel_x, body.vel_y, atank.tank.damage, atank.tank.nickname.encode())
             tanks[atank.id] = tank_snapshot
         snapshot["tanks"] = tanks
         used_bullets = engine.bullet_pool._used
@@ -189,7 +189,7 @@ class Snapshot:
                     diff_data += to_bytes(INT, 1, "big")
                     diff_data += field_int.pack(field, value)
                 else:
-                    print("Missing!")
+                    print("Missing!")   #Consider str in a future
         return diff_data
     
     @staticmethod
@@ -276,8 +276,19 @@ class Snapshot:
         return snapshot_diff
         
     @staticmethod
-    def set_engine_from_diff(diff, engine, player_tank):
+    def set_engine_from_diff(diff, engine, client):
         """Set engine from the diff."""
+        tanks_created = diff.tanks.created
+        for tank_created in tanks_created:
+            tank = engine.create_tank(tank_created.id)
+            tank.set("body", x=tank_created.x, y=tank_created.y)
+            tank.set("tank_graphic", color=client.color)
+            client.assign_player_to_damage_meter(tank)
+            if client.id == tank.id:
+                client.player_input = tank.input
+                client.player_input.client = True
+            print("tank created", tank.body.x, tank.body.y)
+        
         tanks_modified = diff.tanks.modified
         
         for id_, fields in tanks_modified:
@@ -288,7 +299,7 @@ class Snapshot:
                 elif name in tank_set:
                     setattr(tank.tank, name, value)
                 elif name in input_set:
-                    if tank is player_tank: continue
+                    if id_ == client.id: continue    #  Se usa la entrada del cliente
                     setattr(tank.input, name, value)
                     print(id_, tank.input.do_jump)
                     

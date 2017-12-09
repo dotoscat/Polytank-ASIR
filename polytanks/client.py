@@ -75,14 +75,14 @@ class DamageMeter(gui.Node):
     def is_free(self):
         return self._tank is None
     
-    def set_player(self, tank, nickname):
+    def set_player(self, tank):
         self._tank = tank
-        self._nickname.text = nickname
+        self._nickname.text = tank.tank.nickname
         self._number.visible = True
     
     def quit_player(self):
         self._tank = None
-        self._nickname.value = 'HEY!'
+        self._nickname.value = "(Disconnected)"
         self._number.visible = False
             
     def update(self):
@@ -126,8 +126,8 @@ class Client(Scene):
         self._send_cannon_rotation = False
         self._state = 0
         self._time = 0
-        self._color = None
-        self._id = None
+        self.color = None
+        self.id = None
         
         builder.tank.add("tank_graphic", TankGraphic, self.batch, self.group)
         builder.bullet.add("sprite", Sprite, assets.images["bullet"],
@@ -242,7 +242,7 @@ class Client(Scene):
         self.tick += 1
         
     def _upgrade_pointer(self):
-        if not self._joined: return
+        if not self._joined or self.tank is None: return
         aim_pointer = self.player_input.aim_pointer
         cannon_position = self.tank.tank_graphic.cannon.position
         angle = get_angle_from(*cannon_position, *aim_pointer)
@@ -284,6 +284,7 @@ class Client(Scene):
         self._update_mouse(dx, dy)
 
     def _update_mouse(self, dx, dy):
+        if self.tank is None: return
         vdx, vdy = self.director.get_virtual_xy(dx, dy)
         self.cursor_point.x += vdx
         self.cursor_point.y += vdy
@@ -358,14 +359,14 @@ class Client(Scene):
     
     def joined(self, nplayers, id_, r, g, b):
         print("Joined with id", id_)
-        self._id = id_
-        self._color = (r, g, b)
-        self.tank = self.engine.create_tank(id_)
-        print(self.tank, self.tank.body.x, self.tank.body.y)
-        self.tank.set("body", x=120, y=120)
-        self.tank.set("tank_graphic", color=(r, g, b))
-        self.player_input = self.tank.input
-        self.player_input.client = True
+        self.id = id_
+        self.color = (r, g, b)
+        #self.tank = self.engine.create_tank(id_)
+        #print(self.tank, self.tank.body.x, self.tank.body.y)
+        #self.tank.set("body", x=120, y=120)
+        #self.tank.set("tank_graphic", color=(r, g, b))
+        #self.player_input = self.tank.input
+        #self.player_input.client = True
         margin = constant.VWIDTH/8
         hud_area = constant.VWIDTH-margin*2.
         distance = hud_area/nplayers
@@ -375,9 +376,9 @@ class Client(Scene):
             meter.x = margin + distance*i
             self.damage_meters.append(meter)
         self._joined = True
-        self._assign_player_to_damage_meter(self.tank, "España!")
+        #self._assign_player_to_damage_meter(self.tank, "España!")
     
-    def _assign_player_to_damage_meter(self, tank, nickname):
+    def assign_player_to_damage_meter(self, tank):
         for meter in self.damage_meters:
             if not meter.is_free: continue
             meter.set_player(tank, nickname)

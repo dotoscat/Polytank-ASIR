@@ -23,11 +23,10 @@ from . import engine, level, protocol, gamemode, COLORS
 from .snapshot import Snapshot, DUMMY_SNAPSHOT
 
 class Player:
-    def __init__(self, tank, nickname):
+    def __init__(self, tank):
         self.tank = tank
         self.last_time = time.monotonic()
         self.ping = 0.
-        self.nickname = nickname
         self._ack = True
         
     def send(self):
@@ -99,11 +98,11 @@ class Server(asyncio.DatagramProtocol):
         pass
         #print("seconds", seconds)
     
-    def add_player(self, tank, nickname):
+    def add_player(self, tank):
         self.players.append
         for i, player in enumerate(self.players):
             if player is not None: continue
-            player = Player(tank, nickname)
+            player = Player(tank)
             self.players[i] = player
             return (i, player)
     
@@ -158,9 +157,10 @@ class Server(asyncio.DatagramProtocol):
         command, nickname = protocol.join.unpack(data)
         nickname = nickname.decode()
         tank = self.engine.create_tank()
-        i, player = self.add_player(tank, nickname)
+        i, player = self.add_player(tank)
         self.clients[addr] = player
         tank.set("body", x=128., y=128.)
+        tank.set("tank", nickname=nickname)
         print("Player {} from {} added".format(nickname, addr))
         print(self.players)
         r, g, b = COLORS[i][:3]

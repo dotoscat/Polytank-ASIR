@@ -66,6 +66,7 @@ class PlayerInput:
 
 class Tank:
     def __init__(self, cannon_anchor):
+        self.nickname = ""
         self.damage = 0
         self.hitstun = 0.
         self.control = True
