@@ -19,7 +19,7 @@ from time import perf_counter
 import math
 from math import degrees
 import asyncio
-from . import engine, level, protocol, gamemode
+from . import engine, level, protocol, gamemode, COLORS
 from .snapshot import Snapshot, DUMMY_SNAPSHOT
 
 class Player:
@@ -40,7 +40,6 @@ class Player:
         self.last_time = now
 
 class Server(asyncio.DatagramProtocol):
-    
     TICKRATE = 60
     SNAPSHOT_RATE = 30
     
@@ -67,6 +66,7 @@ class Server(asyncio.DatagramProtocol):
         self.transport = None
         self.tick = 0
         self.clients = {}
+        self.NPLAYERS = nplayers
         self.players = [None]*nplayers
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
         self.snapshots = deque([], 32)
@@ -99,11 +99,12 @@ class Server(asyncio.DatagramProtocol):
         #print("seconds", seconds)
     
     def add_player(self, tank):
+        self.players.append
         for i, player in enumerate(self.players):
             if player is not None: continue
             player = Player(tank)
             self.players[i] = player
-            return player
+            return (i, player)
     
     def connection_made(self, transport):
         self.transport = transport
@@ -153,17 +154,17 @@ class Server(asyncio.DatagramProtocol):
         #    jumps)
 
     def _join(self, addr, data):
-        #tank = self.engine.create_tank()
-        #player = self.add_player(tank)
-        #self.clients[addr] = player
-        self.clients[addr] = addr
-        #tank.set("body", x=128., y=128.)
+        tank = self.engine.create_tank()
+        i, player = self.add_player(tank)
+        self.clients[addr] = player
+        tank.set("body", x=128., y=128.)
         command, nickname = protocol.join.unpack(data)
         nickname = nickname.decode()
         print("Player {} from {} added".format(nickname, addr))
         print(self.players)
-        message = protocol.mono.pack(protocol.JOINED)
-        print("message", message)
+        r, g, b = COLORS[i][:3]
+        message = protocol.joined.pack(protocol.JOINED, self.NPLAYERS,
+            tank.id, r, g, b)
         self.transport.sendto(message, addr)
 
     def _logout(self, addr):

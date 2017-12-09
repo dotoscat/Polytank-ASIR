@@ -20,3 +20,12 @@ BLUE = (200, 200, 255, 255)
 YELLOW = (255, 255, 200, 255)
 MAGENTA = (255, 200, 255, 255)
 CYAN = (200, 255, 255, 200)
+
+COLORS = [
+    RED,
+    GREEN,
+    BLUE,
+    YELLOW,
+    MAGENTA,
+    CYAN
+]
