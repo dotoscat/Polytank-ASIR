@@ -77,7 +77,7 @@ class DamageMeter(gui.Node):
     
     def set_player(self, tank, nickname):
         self._tank = tank
-        self._nickname.value = nickname
+        self._nickname.text = nickname
         self._number.visible = True
     
     def quit_player(self):
