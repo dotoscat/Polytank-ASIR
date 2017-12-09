@@ -290,31 +290,34 @@ class Client(Scene):
             self.snapshots.appendleft(snapshot_diff)
             self.connection.send(protocol.mono.pack(protocol.CLIENT_ACK))
             Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self.tank)
-            if snapshot_diff.gamemode.state == GameMode.READY:
-                self._state = GameMode.READY
-                self.message.text = "READY! {}".format(snapshot_diff.gamemode.total_time)
-                self.message.visible = True
-                self._time = snapshot_diff.gamemode.total_time
-            elif snapshot_diff.gamemode.state == GameMode.RUNNING:
-                self._state = GameMode.RUNNING
-                self.message.visible = False
-                total_time = snapshot_diff.gamemode.total_time
-                current_time = total_time - snapshot_diff.gamemode.current_time
-                print("run", total_time, int(current_time))
-                if total_time == int(current_time):
-                    seconds = total_time
-                else:
-                    seconds = current_time
-                self._timer.seconds = seconds
-                self._timer.visible = True
-                print(self._timer.x, self._timer.y, self._timer.text)
-            elif snapshot_diff.gamemode.state == GameMode.END:
-                self._state = GameMode.END
-                self._timer.visible = False
-                self.message.text = "END!"
-                self.message.visible = True
-                print("END!", snapshot_diff.gamemode.total_time)
-            
+            self._set_game_state(snapshot_diff.gamemode)
+    
+    def _set_game_state(self, gamemode):
+        if gamemode.state == GameMode.READY:
+            self._state = GameMode.READY
+            self.message.text = "READY! {}".format(gamemode.total_time)
+            self.message.visible = True
+            self._time = gamemode.total_time
+        elif gamemode.state == GameMode.RUNNING:
+            self._state = GameMode.RUNNING
+            self.message.visible = False
+            total_time = gamemode.total_time
+            current_time = total_time - gamemode.current_time
+            print("run", total_time, int(current_time))
+            if total_time == int(current_time):
+                seconds = total_time
+            else:
+                seconds = current_time
+            self._timer.seconds = seconds
+            self._timer.visible = True
+            print(self._timer.x, self._timer.y, self._timer.text)
+        elif gamemode.state == GameMode.END:
+            self._state = GameMode.END
+            self._timer.visible = False
+            self.message.text = "END!"
+            self.message.visible = True
+            print("END!", gamemode.total_time)
+    
     def start_game(self, data):
         offset = protocol.mono.size
         players = 0

@@ -39,3 +39,4 @@ tetra = struct.Struct("!iiff")
 
 #command, tick, movement, cannon_angle, accumulate_power, jump
 input = struct.Struct("!iiff??")
+joined = struct.Struct("!bhbbb")
