@@ -256,7 +256,7 @@ class Timer(VisibleLabel):
         self.text = "{}:{:0>2}".format(minutes, remainder)
 
 class Button(VisibleLabel):
-    def __init__(self, *args, hover_color=(255, 200, 200, 255),
+    def __init__(self, *args, hover_color=(255, 128, 128, 255),
     idle_color=(255, 255, 255, 255), background_color=None,
     action=None, **kwargs):
         super().__init__(*args, **dict(group=pyglet.graphics.OrderedGroup(1), **kwargs))

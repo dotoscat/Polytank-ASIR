@@ -76,7 +76,7 @@ class Main(Scene):
         join_game_menu.add_child(Button("Unirse", **common_layout_options, action=self._join_game))
         join_game_menu.add_child(Button("Cancelar", **common_layout_options, action=self.to_main_menu))
         self._join_error_message = VisibleLabel("",
-            **dict(color=(255, 128, 128, 255), **common_layout_options))
+            **dict(color=(255, 0, 0, 255), **common_layout_options))
         join_game_menu.add_child(self._join_error_message)
         join_game_menu.visible = False
         self.children.append(join_game_menu)
