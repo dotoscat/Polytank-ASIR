@@ -298,8 +298,14 @@ class Client(Scene):
             elif snapshot_diff.gamemode.state == GameMode.RUNNING:
                 self._state = GameMode.RUNNING
                 self.message.visible = False
-                print("RUNNING!", snapshot_diff.gamemode.total_time)
-                self._timer.seconds = snapshot_diff.gamemode.total_time
+                total_time = snapshot_diff.gamemode.total_time
+                current_time = total_time - snapshot_diff.gamemode.current_time
+                print("run", total_time, int(current_time))
+                if total_time == int(current_time):
+                    seconds = total_time
+                else:
+                    seconds = current_time
+                self._timer.seconds = seconds
                 self._timer.visible = True
                 print(self._timer.x, self._timer.y, self._timer.text)
             elif snapshot_diff.gamemode.state == GameMode.END:
