@@ -18,8 +18,8 @@ from collections import deque, namedtuple
 from . import protocol
 from .engine import Engine
 
-tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage nickname")
-tank_struct = struct.Struct("!i?ffffi16p")
+tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage nickname r g b")
+tank_struct = struct.Struct("!i?ffffi16pBBB")
 
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
@@ -72,7 +72,7 @@ field_int = struct.Struct("!bi")
 id_nfields = struct.Struct("!ib")
 
 body_set = frozenset(("x", "y", "vel_x", "vel_y"))
-tank_set = frozenset(("damage", "nickname"))
+tank_set = frozenset(("damage", "nickname", "color"))
 input_set = frozenset(("do_jump",))
 timer_set = frozenset(("max_time",))
 
@@ -90,8 +90,9 @@ class Snapshot:
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
-            tank_snapshot = tank(atank.id, atank.input.do_jump, body.x, body.y,
-                body.vel_x, body.vel_y, atank.tank.damage, atank.tank.nickname.encode())
+            tank_snapshot = tank(atank.id, atank.input.do_jump, body.x, body.y
+                , body.vel_x, body.vel_y, atank.tank.damage, atank.tank.nickname.encode()
+                , *atank.tank.color)
             tanks[atank.id] = tank_snapshot
         snapshot["tanks"] = tanks
         used_bullets = engine.bullet_pool._used
@@ -280,11 +281,16 @@ class Snapshot:
         """Set engine from the diff."""
         tanks_created = diff.tanks.created
         for tank_created in tanks_created:
+            print(tank_created)
             tank = engine.create_tank(tank_created.id)
+            color = (tank_created.r, tank_created.g, tank_created.b)
+            nickname = tank_created.nickname.decode()
             tank.set("body", x=tank_created.x, y=tank_created.y)
-            tank.set("tank_graphic", color=client.color)
+            tank.set("tank", color=color, nickname=nickname)
+            tank.set("tank_graphic", color=color)
             client.assign_player_to_damage_meter(tank)
             if client.id == tank.id:
+                client.tank = tank
                 client.player_input = tank.input
                 client.player_input.client = True
             print("tank created", tank.body.x, tank.body.y)

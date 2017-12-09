@@ -91,11 +91,11 @@ class Main(Scene):
     def listen(self, data, socket):
         command = protocol.mono.unpack_from(data)[0]
         if command == protocol.JOINED:
-            command, nplayers, id_, r, g, b = protocol.joined.unpack(data)
-            print("joined", nplayers, id_, r, g, b)
+            command, nplayers, id_= protocol.joined.unpack(data)
+            print("joined", nplayers, id_)
             client = Director.get_scene("client")
             client.set_connection(self._connection)
-            client.joined(nplayers, id_, r, g, b)
+            client.joined(nplayers, id_)
             Director.set_scene("client")
             self._connection.send(protocol.mono.pack(protocol.REQUEST_SNAPSHOT))
 

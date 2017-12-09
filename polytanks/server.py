@@ -158,14 +158,14 @@ class Server(asyncio.DatagramProtocol):
         nickname = nickname.decode()
         tank = self.engine.create_tank()
         i, player = self.add_player(tank)
+        color = COLORS[i][:3]
         self.clients[addr] = player
         tank.set("body", x=128., y=128.)
-        tank.set("tank", nickname=nickname)
+        tank.set("tank", nickname=nickname, color=color)
         print("Player {} from {} added".format(nickname, addr))
         print(self.players)
-        r, g, b = COLORS[i][:3]
         message = protocol.joined.pack(protocol.JOINED, self.NPLAYERS,
-            tank.id, r, g, b)
+            tank.id)
         self.transport.sendto(message, addr)
 
     def _logout(self, addr):

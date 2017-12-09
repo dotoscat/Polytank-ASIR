@@ -126,7 +126,6 @@ class Client(Scene):
         self._send_cannon_rotation = False
         self._state = 0
         self._time = 0
-        self.color = None
         self.id = None
         
         builder.tank.add("tank_graphic", TankGraphic, self.batch, self.group)
@@ -328,7 +327,7 @@ class Client(Scene):
             snapshot_diff = Snapshot.from_network(data)
             self.snapshots.appendleft(snapshot_diff)
             self.connection.send(protocol.mono.pack(protocol.CLIENT_ACK))
-            Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self.tank)
+            Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self)
             self._set_game_state(snapshot_diff.gamemode)
     
     def _set_game_state(self, gamemode):
@@ -357,16 +356,9 @@ class Client(Scene):
             self.message.visible = True
             print("END!", gamemode.total_time)
     
-    def joined(self, nplayers, id_, r, g, b):
+    def joined(self, nplayers, id_):
         print("Joined with id", id_)
         self.id = id_
-        self.color = (r, g, b)
-        #self.tank = self.engine.create_tank(id_)
-        #print(self.tank, self.tank.body.x, self.tank.body.y)
-        #self.tank.set("body", x=120, y=120)
-        #self.tank.set("tank_graphic", color=(r, g, b))
-        #self.player_input = self.tank.input
-        #self.player_input.client = True
         margin = constant.VWIDTH/8
         hud_area = constant.VWIDTH-margin*2.
         distance = hud_area/nplayers
@@ -376,12 +368,11 @@ class Client(Scene):
             meter.x = margin + distance*i
             self.damage_meters.append(meter)
         self._joined = True
-        #self._assign_player_to_damage_meter(self.tank, "España!")
     
     def assign_player_to_damage_meter(self, tank):
         for meter in self.damage_meters:
             if not meter.is_free: continue
-            meter.set_player(tank, nickname)
+            meter.set_player(tank)
             break
     
     def logout(self):

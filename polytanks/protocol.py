@@ -41,5 +41,5 @@ tetra = struct.Struct("!iiff")
 input = struct.Struct("!iiff??")
 #command, nickname
 join = struct.Struct("!i16p")
-#command, nplayers, id, r, g, b
-joined = struct.Struct("!ibhBBB")
+#command, nplayers, id
+joined = struct.Struct("!ibh")
