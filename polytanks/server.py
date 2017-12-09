@@ -23,10 +23,11 @@ from . import engine, level, protocol, gamemode, COLORS
 from .snapshot import Snapshot, DUMMY_SNAPSHOT
 
 class Player:
-    def __init__(self, tank):
+    def __init__(self, tank, nickname):
         self.tank = tank
         self.last_time = time.monotonic()
         self.ping = 0.
+        self.nickname = nickname
         self._ack = True
         
     def send(self):
@@ -98,11 +99,11 @@ class Server(asyncio.DatagramProtocol):
         pass
         #print("seconds", seconds)
     
-    def add_player(self, tank):
+    def add_player(self, tank, nickname):
         self.players.append
         for i, player in enumerate(self.players):
             if player is not None: continue
-            player = Player(tank)
+            player = Player(tank, nickname)
             self.players[i] = player
             return (i, player)
     
@@ -154,12 +155,12 @@ class Server(asyncio.DatagramProtocol):
         #    jumps)
 
     def _join(self, addr, data):
-        tank = self.engine.create_tank()
-        i, player = self.add_player(tank)
-        self.clients[addr] = player
-        tank.set("body", x=128., y=128.)
         command, nickname = protocol.join.unpack(data)
         nickname = nickname.decode()
+        tank = self.engine.create_tank()
+        i, player = self.add_player(tank, nickname)
+        self.clients[addr] = player
+        tank.set("body", x=128., y=128.)
         print("Player {} from {} added".format(nickname, addr))
         print(self.players)
         r, g, b = COLORS[i][:3]
@@ -170,11 +171,11 @@ class Server(asyncio.DatagramProtocol):
     def _logout(self, addr):
         print("logout", self.clients)
         player = self.clients[addr]
-        #player.tank.free()
-        #del self.engine.entities[player.tank.id]
+        player.tank.free()
+        del self.engine.entities[player.tank.id]
         del self.clients[addr]
-        #self.players = [None if player == p else p for p in self.players]
-        #print(self.players)
+        self.players = [None if player == p else p for p in self.players]
+        print(self.players)
         #self.transport.sendto(protocol.mono.pack(protocol.DONE), addr)
         print("Client {} removed", addr)
         print(self.clients)

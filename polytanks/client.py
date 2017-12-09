@@ -141,7 +141,7 @@ class Client(Scene):
         self._timer.x = constant.VWIDTH - self._timer.content_width - 16
         self._timer.y = constant.VHEIGHT - self._timer.content_height - 16
         
-        self.message = gui.VisibleLabel("WOLA!", batch=self.batch,
+        self.message = gui.VisibleLabel("", batch=self.batch,
             group=self.group[3], anchor_x="center", anchor_y="center",
             align="center")
         self.message.x = constant.VWIDTH/2.
@@ -362,6 +362,7 @@ class Client(Scene):
         self._joined = True
     
     def logout(self):
+        self.tank.free()
         self.connection.send(protocol.mono.pack(protocol.LOGOUT))
         self.connection.close()
         Director.set_scene("main")
