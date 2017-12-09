@@ -86,10 +86,13 @@ class DamageMeter(gui.Node):
         self._number.visible = False
             
     def update(self):
-        print(self._number.x, self._number.y)
         if self._tank is None: return
         self._number.value = self._tank.tank.damage
 
+    def delete(self):
+        self._nickname.delete()
+        self._number.delete()
+        
 class Client(Scene):
     
     class Point:
@@ -251,6 +254,7 @@ class Client(Scene):
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
+        print("press", symbol)
         if symbol == key.ESCAPE:
             print("Mostrar botón para logout")
             self.logout()
@@ -376,6 +380,10 @@ class Client(Scene):
             break
     
     def logout(self):
+        for i, dc in enumerate(list(self.damage_meters)):
+            if dc._tank == self.tank:
+                self.damage_meters.pop(i).delete()
+                break
         self.tank.free()
         self.connection.send(protocol.mono.pack(protocol.LOGOUT))
         self.connection.close()
