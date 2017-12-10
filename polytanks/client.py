@@ -389,9 +389,3 @@ class Client(Scene):
         self.connection.send(protocol.mono.pack(protocol.LOGOUT))
         self.connection.close()
         Director.set_scene("main")
-
-    def _done(self):
-        self.tank.free()
-        self.tank = None
-        self.player_input = None
-        self._joined = False
