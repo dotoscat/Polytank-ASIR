@@ -16,6 +16,9 @@
 import socket
 import asyncio
 import argparse
+import signal
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class Bot(asyncio.DatagramProtocol):
     def __init__(self, address, nickname):
@@ -24,7 +27,7 @@ class Bot(asyncio.DatagramProtocol):
         self._loop = asyncio.get_event_loop()
         self._transport = None
         listen = self._loop.create_datagram_endpoint(lambda: self,
-            local_addr=address)
+            remote_addr=address)
 
         asyncio.ensure_future(listen)
 
@@ -37,6 +40,10 @@ class Bot(asyncio.DatagramProtocol):
     
     def datagram_received(self, data, addr):
         print(len(data), addr)
+
+    def run(self):
+        self._loop.run_forever()
+        return 0
 
     def __del__(self):
         if self._transport is not None:
@@ -57,3 +64,6 @@ if __name__ == "__main__":
     nickname = arguments.nickname
     
     print("Crear un bot \"{}\" que se conectará a {}".format(nickname, address))
+    bot = Bot(address, nickname)
+    bot.run()
+
