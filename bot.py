@@ -18,8 +18,30 @@ import asyncio
 import argparse
 
 class Bot(asyncio.DatagramProtocol):
-    def __init__(self, address):
-        print(address)
+    def __init__(self, address, nickname):
+        self._address = address
+        self._nickname = nickname
+        self._loop = asyncio.get_event_loop()
+        self._transport = None
+        listen = self._loop.create_datagram_endpoint(lambda: self,
+            local_addr=address)
+
+        asyncio.ensure_future(listen)
+
+    def connection_made(self, transport):
+        self.transport = transport
+        print("bot connection", transport)
+    
+    def connection_lost(self, cls):
+        print("bot lost", cls)
+    
+    def datagram_received(self, data, addr):
+        print(len(data), addr)
+
+    def __del__(self):
+        if self._transport is not None:
+            self._transport.close()
+        self._loop.close()
 
 hostname = socket.gethostname()
 ip = socket.gethostbyname_ex(hostname)[2].pop()
