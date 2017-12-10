@@ -130,8 +130,7 @@ class Server(asyncio.DatagramProtocol):
         elif command == protocol.LOGOUT:
             self._logout(addr)
         elif command == protocol.CLIENT_INPUT:
-            pass
-            #self.client_input(data, addr)
+            self.client_input(data, addr)
             #print("client input", addr, len(data))
         elif command == protocol.CLIENT_ACK:
             player = self.clients[addr]
@@ -207,7 +206,7 @@ class Server(asyncio.DatagramProtocol):
                 yield from asyncio.sleep(TIME)
                 #print("Esperar entrada")
                 continue
-                
+            #print("continue with input")
             self._send_snapshot()
             self.engine.update(dt)
             for message in self.engine.messages: pass
