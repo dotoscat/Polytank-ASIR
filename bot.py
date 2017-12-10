@@ -17,6 +17,7 @@ import socket
 import asyncio
 import argparse
 import signal
+from polytanks import protocol
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -31,15 +32,25 @@ class Bot(asyncio.DatagramProtocol):
 
         asyncio.ensure_future(listen)
 
+    def join(self):
+        self._transport.sendto(protocol.join.pack(protocol.JOIN, self._nickname.encode()))
+
     def connection_made(self, transport):
-        self.transport = transport
+        self._transport = transport
         print("bot connection", transport)
+        self.join()
     
     def connection_lost(self, cls):
         print("bot lost", cls)
     
     def datagram_received(self, data, addr):
-        print(len(data), addr)
+        command = protocol.command.unpack_from(data)[0]
+        print("command", command)
+        if command == protocol.JOINED:
+            print("JOINED!")
+        elif command == protocol.REJECTED:
+            print("Rejected by {}".format(addr))
+            self._loop.stop()
 
     def run(self):
         self._loop.run_forever()

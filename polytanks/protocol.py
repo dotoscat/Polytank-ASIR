@@ -37,6 +37,8 @@ di_b = struct.Struct("!i?")
 tri = struct.Struct("!iff")
 tetra = struct.Struct("!iiff")
 
+#command
+command = mono
 #command, tick, movement, cannon_angle, accumulate_power, jump
 input = struct.Struct("!iiff??")
 #command, nickname
