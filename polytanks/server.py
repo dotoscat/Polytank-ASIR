@@ -121,6 +121,7 @@ class Server(asyncio.DatagramProtocol):
             self._join(addr, data)
         elif command == protocol.REQUEST_SNAPSHOT:
             snapshot = Snapshot(self.engine, self.standard_game, -1)
+            self.snapshots.appendleft(snapshot)
             diff = snapshot.diff(DUMMY_SNAPSHOT)
             data = Snapshot.to_network(diff)
             print("snapshots", len(self.snapshots))

@@ -328,7 +328,7 @@ class Client(Scene):
                 return
             self.last_server_tick = tick
             snapshot_diff = Snapshot.from_network(data)
-            print("snapshot_diff", snapshot_diff.tanks.modified)
+            #print("snapshot_diff", snapshot_diff.tanks.modified)
             self.snapshots.appendleft(snapshot_diff)
             self.connection.send(protocol.mono.pack(protocol.CLIENT_ACK))
             Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self)
@@ -381,7 +381,9 @@ class Client(Scene):
     
     def logout(self):
         for i, dc in enumerate(list(self.damage_meters)):
+            print("logout", i, dc, dc._tank, self.tank)
             if dc._tank == self.tank:
+                print("Eliminar contador daño")
                 self.damage_meters.pop(i).delete()
                 break
         self._joined = False
