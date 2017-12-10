@@ -126,6 +126,7 @@ class Client(Scene):
         self.connection = None
         self._joined = False
         self.tank = None
+        self.player_input = None
         self._send_cannon_rotation = False
         self._state = 0
         self._time = 0
@@ -190,7 +191,7 @@ class Client(Scene):
         data = protocol.input.pack(protocol.CLIENT_INPUT, self.tick,
             tank_input.move, tank_input.cannon_angle,
             tank_input.accumulate_power, tank_input.do_jump)
-        self.conn.socket.send(data)
+        self.connection.send(data)
 
     def init(self):
         self.director.set_exclusive_mouse(True)
@@ -219,7 +220,7 @@ class Client(Scene):
         #    if choice((True, False)):
         #        powerup = self.engine._spawn_powerup(128., 128., "heal")
         #        powerup.sprite.image = assets.images["heal"]
-        #self.send_input(dt)
+        self.send_input(dt)
         if not self.connection is None:
             self.connection.tick()
         self.engine.update(dt)
@@ -252,7 +253,7 @@ class Client(Scene):
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
-        print("press", symbol)
+        print("press", self.player_input, self._joined)
         if symbol == key.ESCAPE:
             print("Mostrar botón para logout")
             self.logout()
@@ -322,11 +323,12 @@ class Client(Scene):
             self._done()
         elif command == protocol.SNAPSHOT:
             command, tick = protocol.di_i.unpack_from(data)
-            if tick <= self.last_server_tick:
+            if tick != -1 and tick <= self.last_server_tick:
                 print(tick, "rejected!")
                 return
             self.last_server_tick = tick
             snapshot_diff = Snapshot.from_network(data)
+            print("snapshot_diff", snapshot_diff)
             self.snapshots.appendleft(snapshot_diff)
             self.connection.send(protocol.mono.pack(protocol.CLIENT_ACK))
             Snapshot.set_engine_from_diff(snapshot_diff, self.engine, self)
@@ -382,6 +384,7 @@ class Client(Scene):
             if dc._tank == self.tank:
                 self.damage_meters.pop(i).delete()
                 break
+        self._joined = False
         self.tank.free()
         self.connection.send(protocol.mono.pack(protocol.LOGOUT))
         self.connection.close()

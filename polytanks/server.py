@@ -27,6 +27,7 @@ class Player:
         self.tank = tank
         self.last_time = time.monotonic()
         self.ping = 0.
+        self.input = False
         self._ack = True
         
     def send(self):
@@ -119,9 +120,12 @@ class Server(asyncio.DatagramProtocol):
         if command == protocol.JOIN:
             self._join(addr, data)
         elif command == protocol.REQUEST_SNAPSHOT:
-            diff = self.snapshots[0].diff(DUMMY_SNAPSHOT)
+            snapshot = Snapshot(self.engine, self.standard_game, -1)
+            diff = snapshot.diff(DUMMY_SNAPSHOT)
             data = Snapshot.to_network(diff)
-            print(addr, "requests a snapshot", data)
+            print("snapshots", len(self.snapshots))
+            print("first snapshot", self.snapshots[0])
+            print(addr, "requests a snapshot", diff)
             self.transport.sendto(data, addr)
         elif command == protocol.LOGOUT:
             self._logout(addr)
@@ -150,6 +154,7 @@ class Server(asyncio.DatagramProtocol):
             tank.input.shooted = False
         tank.input.accumulate_power = accumulate_power
         tank.input.do_jump = do_jump
+        player.input = True
         #print("input", addr, tick, move, cannon_angle, shoots,
         #    jumps)
 
@@ -192,14 +197,24 @@ class Server(asyncio.DatagramProtocol):
         standard_tick = self.standard_game.tick
         print("sleep for", TIME)
         while True:
-            for player in self.players:
-                if not callable(player): continue
-                player(None)
             standard_tick(dt)
+            player_input = True
+            for player in self.players:
+                if player is None: continue
+                player_input = player_input and player.input
+
+            if not player_input:
+                yield from asyncio.sleep(TIME)
+                #print("Esperar entrada")
+                continue
+                
             self._send_snapshot()
-            #self.engine.update(dt)
+            self.engine.update(dt)
             for message in self.engine.messages: pass
             self.tick += 1
+            for player in self.players:
+                if player is None: continue
+                player.input = False
             yield from asyncio.sleep(TIME)
         
     def _send_snapshot(self):

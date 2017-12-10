@@ -293,7 +293,7 @@ class Snapshot:
                 client.tank = tank
                 client.player_input = tank.input
                 client.player_input.client = True
-            print("tank created", tank.body.x, tank.body.y)
+                print("set from diff", client.player_input, tank.input)
         
         tanks_modified = diff.tanks.modified
         
