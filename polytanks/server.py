@@ -107,7 +107,7 @@ class Server(asyncio.DatagramProtocol):
             local_addr=address)
 
         asyncio.ensure_future(listen)
-        asyncio.ensure_future(self._tick(self._loop.time))
+        asyncio.ensure_future(self._tick())
     
     def on_ready(self, time):
         print("on ready", time)
@@ -214,7 +214,7 @@ class Server(asyncio.DatagramProtocol):
         return 0
 
     @asyncio.coroutine
-    def _tick(self, time):
+    def _tick(self):
         TIME = 1./Server.TICKRATE
         dt = TIME
         standard_tick = self.standard_game.tick
