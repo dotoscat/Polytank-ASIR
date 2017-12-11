@@ -41,11 +41,34 @@ class Player:
         self.last_time = now
 
 class Server(asyncio.DatagramProtocol):
-    TICKRATE = 60
-    SNAPSHOT_RATE = 30
+    """El servidor se basa en el protocolo UDP."""
+    TICKRATE = 60   #:  Cuántos ticks por segundos corre el servidor
+    SNAPSHOT_RATE = 30  #:  Cuántos snapshots por segundo son enviados a los jugadores
     
     class Repeater:
-        """Basic repeater. Only calls the function each *secs*."""
+        """Un repetidor básico que llama una funcion *f* cada *secs* segundos.
+        
+        La instancia devuelta se puede ejecutar para que sea llamada la función
+        si ha pasado el tiempo indicado.
+        
+        Se creó esta clase porque asyncio sólo repite las tareas una sola vez
+        y el control del tiempo entre varias corutinas no es exacto.
+        
+        Args:
+            f (function): La función a llamar.
+            secs (float): Los segundos entre cada llamada.
+            
+        Example:
+            .. code-block:: python
+            
+                    def hola_mundo():
+                        print("Hola mundo")
+                    
+                    repetir_saludo = Repeater(hola_mundo, 1.)  #  Hola mundo cada segundo
+                    while True:
+                        repetir_saludo()
+            
+        """
         def __init__(self, f, secs):
             self._f = f
             self.last = perf_counter()

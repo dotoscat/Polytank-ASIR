@@ -9,8 +9,6 @@ los eventos del juego.
 Se planeaba el registro a través de una web pero se ha descartado por 
 restricciones de tiempo.
 
-El servidor corre a 60 marcos por segundo. 
-
 Requisitos
 ----------
 
@@ -19,3 +17,5 @@ Requisitos
 
 .. automodule:: polytanks.server
 .. autoclass:: polytanks.server.Server
+    :members:
+
