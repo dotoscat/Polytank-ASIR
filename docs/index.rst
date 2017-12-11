@@ -10,6 +10,9 @@ Documentación de Polytanks-ASIR!
     :maxdepth: 2
     :caption: Contents:
 
+    servidor
+
+
 Objetivo
 --------
 
@@ -37,12 +40,6 @@ Herramientas usadas
 Requisitos
 ----------
 
-Servidor
-++++++++
-
-- Python >= 3.4
-- Tarjeta de red
-
 Cliente
 +++++++
 
@@ -54,14 +51,6 @@ Estructura del proyecto
 -----------------------
 
 El proyecto consta del servidor y el cliente.
-
-Servidor
-++++++++
-
-El servidor es autoritativo. Para poder jugar en un servidor se deberá registrar
-primero a través de la web del servidor para poder acceder a jugar a través del
-cliente. Hace uso del módulo **asyncio** para atender a las conexiones de red y gestionar
-los eventos del juego.
 
 Cliente
 +++++++
