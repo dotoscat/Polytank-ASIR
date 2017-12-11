@@ -215,6 +215,16 @@ class Server(asyncio.DatagramProtocol):
 
     @asyncio.coroutine
     def _tick(self):
+        """Un tick del juego. Cada marco por segundo es un tick.
+        
+        Esta es una corutina usada internamente por asyncio.
+        
+        graphvid
+        
+        Yields:
+            coroutine: desde asyncio.sleep(1./:obj:`TICKRATE`)
+        
+        """
         TIME = 1./Server.TICKRATE
         dt = TIME
         standard_tick = self.standard_game.tick
