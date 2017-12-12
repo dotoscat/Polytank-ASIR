@@ -41,7 +41,12 @@ class Player:
         self.last_time = now
 
 class Server(asyncio.DatagramProtocol):
-    """El servidor se basa en el protocolo UDP."""
+    """El servidor se basa en el protocolo UDP
+    
+    Parameters:
+        address ((ip, puerto)): Dirección el cual el servidor va a atender.
+        nplayers (integer): Número máximo de jugadores soportado.
+    """
     TICKRATE = 60   #:  Cuántos ticks por segundos corre el servidor
     SNAPSHOT_RATE = 30  #:  Cuántos snapshots por segundo son enviados a los jugadores
     
@@ -138,6 +143,19 @@ class Server(asyncio.DatagramProtocol):
         print("lost", cls)
     
     def datagram_received(self, data, addr):
+        """Aquí se reciben los datos y se procesan según el comando
+        identificado mediante el protocolo.
+        
+        Parameters:
+            data (bytes): Datos recibidos desde la red.
+            addr ((ip, puerto)): Dirección de donde se ha recibido esos datos.
+            
+        .. graphviz::
+            
+            digraph datagram {
+                "data" -> {"JOIN", "REQUEST_SNAPSHOT", "LOGOUT", "CLIENT_INPUT", "CLIENT_ACK"};
+            }
+        """
         command = protocol.mono.unpack_from(data)[0]
         #print("command", command)
         if command == protocol.JOIN:
@@ -225,8 +243,8 @@ class Server(asyncio.DatagramProtocol):
                 "EMPEZAR" [shape=box];
                 "EMPEZAR" -> "tick modo juego";
                 "tick modo juego" -> "entrada clientes";
-                "entrada jugadores" -> "YIELD sleep(1./TICKRATE)" [shape=box,label="No ha recibido todas las entradas de los clientes."];
-                "entrada jugadores" -> "enviar snapshot" [label="Ha recibido todas las entradas de los clientes."];
+                "entrada clientes" -> "YIELD sleep(1./TICKRATE)" [shape=box,label="No ha recibido todas las entradas de los clientes."];
+                "entrada clientes" -> "enviar snapshot" [label="Ha recibido todas las entradas de los clientes."];
                 "enviar snapshot" -> "actualizar motor";
                 "YIELD sleep(1./TICKRATE)" [shape=box];
                 "actualizar motor" -> "YIELD sleep(1./TICKRATE)";

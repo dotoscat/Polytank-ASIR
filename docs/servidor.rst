@@ -18,4 +18,4 @@ Requisitos
 .. automodule:: polytanks.server
 .. autoclass:: polytanks.server.Server
     :members:
-.. automethod:: polytanks.server.Server._tick
+    :private-members:
