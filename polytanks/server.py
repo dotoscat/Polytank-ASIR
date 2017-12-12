@@ -224,12 +224,13 @@ class Server(asyncio.DatagramProtocol):
            digraph tick {
                 "EMPEZAR" [shape=box];
                 "EMPEZAR" -> "tick modo juego";
-                "tick modo juego" -> "entrada jugadores";
-                "entrada jugadores" -> "YIELD sleep(1./TICKRATE)" [shape=box];
-                "entrada jugadores" -> "enviar snapshot";
+                "tick modo juego" -> "entrada clientes";
+                "entrada jugadores" -> "YIELD sleep(1./TICKRATE)" [shape=box,label="No ha recibido todas las entradas de los clientes."];
+                "entrada jugadores" -> "enviar snapshot" [label="Ha recibido todas las entradas de los clientes."];
                 "enviar snapshot" -> "actualizar motor";
                 "YIELD sleep(1./TICKRATE)" [shape=box];
                 "actualizar motor" -> "YIELD sleep(1./TICKRATE)";
+                "YIELD sleep(1./TICKRATE)" -> "EMPEZAR" [label="Esperar entradas de los clientes."];
            }
        
         Yields:
