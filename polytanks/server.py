@@ -222,11 +222,14 @@ class Server(asyncio.DatagramProtocol):
         .. graphviz::
     
            digraph tick {
+                "EMPEZAR" [shape=box];
+                "EMPEZAR" -> "tick modo juego";
                 "tick modo juego" -> "entrada jugadores";
-                "entrada jugadores" -> "sleep(1./TICKRATE)";
+                "entrada jugadores" -> "YIELD sleep(1./TICKRATE)" [shape=box];
                 "entrada jugadores" -> "enviar snapshot";
                 "enviar snapshot" -> "actualizar motor";
-                "actualizar motor" -> "sleep(1./TICKRATE)";
+                "YIELD sleep(1./TICKRATE)" [shape=box];
+                "actualizar motor" -> "YIELD sleep(1./TICKRATE)";
            }
        
         Yields:
