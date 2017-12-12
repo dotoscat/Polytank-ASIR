@@ -219,8 +219,16 @@ class Server(asyncio.DatagramProtocol):
         
         Esta es una corutina usada internamente por asyncio.
         
-        graphvid
-        
+        .. graphviz::
+    
+           digraph tick {
+                "tick modo juego" -> "entrada jugadores";
+                "entrada jugadores" -> "sleep(1./TICKRATE)";
+                "entrada jugadores" -> "enviar snapshot";
+                "enviar snapshot" -> "actualizar motor";
+                "actualizar motor" -> "sleep(1./TICKRATE)";
+           }
+       
         Yields:
             coroutine: desde asyncio.sleep(1./:obj:`TICKRATE`)
         

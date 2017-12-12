@@ -39,6 +39,8 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.graphviz',
     'sphinx.ext.githubpages']
 
+#graphviz_dot = os.path.normpath("D:\graphviz-2.38\release\bin\dot.exe")
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
