@@ -21,6 +21,12 @@ Los jugadores se registrarán en un servidor a través de un cliente web de escr
 Durante la partida los jugadores manejarán un tanque que dispara balas.
 Los jugadores tratarán de echar a los demás jugadores del resto del escenario.
 
+Entorno de desarollo:
+---------------------
+
+* Geany 1.31
+* Python 3.6.3
+
 Bibliotecas usadas
 ------------------
 
@@ -32,6 +38,7 @@ Bibliotecas usadas
 Herramientas usadas
 -------------------
 
+* Graphviz: Crear diagramas programáticamente.
 * Sphinx: Para crear la documentación a partir del proyecto.
 * sfxr: Para generar sonidos.
 * GIMP: Para crear los gráficos del juego.
