@@ -236,21 +236,7 @@ class Server(asyncio.DatagramProtocol):
         """Un tick del juego. Cada marco por segundo es un tick.
         
         Esta es una corutina usada internamente por asyncio.
-        
-        .. graphviz::
-    
-           digraph tick {
-                "EMPEZAR" [shape=box];
-                "EMPEZAR" -> "tick modo juego";
-                "tick modo juego" -> "entrada clientes";
-                "entrada clientes" -> "YIELD sleep(1./TICKRATE)" [shape=box,label="No ha recibido todas las entradas de los clientes."];
-                "entrada clientes" -> "enviar snapshot" [label="Ha recibido todas las entradas de los clientes."];
-                "enviar snapshot" -> "actualizar motor";
-                "YIELD sleep(1./TICKRATE)" [shape=box];
-                "actualizar motor" -> "YIELD sleep(1./TICKRATE)";
-                "YIELD sleep(1./TICKRATE)" -> "EMPEZAR" [label="Esperar entradas de los clientes."];
-           }
-       
+               
         Yields:
             coroutine: desde asyncio.sleep(1./:obj:`TICKRATE`)
         

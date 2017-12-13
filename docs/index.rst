@@ -47,12 +47,18 @@ Herramientas usadas
 Requisitos
 ----------
 
-Cliente
-+++++++
+Para el desarrollo del proyecto se ha elegido Python por ser un lenguaje
+de programación sencillo de aprender y usar, y que personalmente domino más.
+Python permite el desarrollo rápido de aplicaciones. No es rápido como un
+lenguaje compilado como C++, así que hacer uso de la biblioteca estándard
+de Python como *itertools* para mayor rendimiento siempre que sea posible.
 
-- Python >= 3.4
-- Tarjeta de red
-- Tarjeta gráfica con soporte OpenGL
+*asyncio* es recomendable para el desarrollo de aplicaciones asíncronas
+desde la versión 3.4 de Python dejando obsoleto otros módulos orientados
+a la programación asíncrona que estaban en la biblioteca estándard de Python.
+
+Para el **cliente** usa *selectors* con el que tienes mayor control sobre los sockets
+que asyncio.
 
 Estructura del proyecto
 -----------------------
@@ -62,8 +68,7 @@ El proyecto consta del servidor y el cliente.
 Cliente
 +++++++
 
-El cliente es dónde el usuario se conectará a un servidor con su usuario y contraseña
-para poder jugar contra otros jugadores registrados. Hace uso del módulo **selectors**
+Hace uso del módulo **selectors**
 por tener un mayor control sobre los sockets que **asyncio** y con posibilidad
 de integrarse mejor con el bucle de eventos de **pyglet**.
 
