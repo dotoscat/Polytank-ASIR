@@ -97,3 +97,15 @@ Según el modo de juego se irá alterando el estado del juego y el estado del mo
             "RUNNING" -> "END" [label="b segundos"];
             "END" -> "READY" [label="c segundos"];
         }
+
+Enviar snapshot
+---------------
+
+Para enviar snapshots del servidor a los clientes tiene que ser en un tiempo
+no superior a :obj:`TICKRATE`. Lo que se envía en verdad es la diferencia
+entre dos snapshots a los clientes, y ya luego los clientes interpreta esas diferencias.
+A mayor :obj:`TICKRATE` mayor garantías de corregir la simulación en el cliente
+a costa de mayor tiempo de procesamiento. El tiempo que transcurre que se envía entre
+cada snapshot queda determinado por SNAPSHOT_RATE. Un valor de TICKRATE/2 para
+SNAPSHOT_RATE es buen valor para empezar.
+
