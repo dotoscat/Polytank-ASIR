@@ -78,7 +78,7 @@ de la entrada del cliente. Tiene el siguiente formato:
         }
 
 * tick del servidor (entero): El tick actual del servidor
-* movimiento tanque (flotante): Indica el movimiento del tanque [-1., 0., 1.]
+* movimiento tanque (flotante): Indica el movimiento del tanque [-1.| 0.| 1.]
 * ángulo del cañón (flotante): Indica la dirección del tanque en radianes.
 * acumular poder (booleano): El jugador presiona el botón de acumular poder.
 * salto (booleano): Botón de salto presionado o no.
@@ -101,11 +101,15 @@ Según el modo de juego se irá alterando el estado del juego y el estado del mo
 Enviar snapshot
 ---------------
 
+Un snapshot, es como una captura o una captura, del estado actual del juego, 
+incluyendo el motor y el modo de juego.
+Es bastante recomendable almacenar la información relevante para ser procesada
+y enviada a los clientes para que estos los interprete.
 Para enviar snapshots del servidor a los clientes tiene que ser en un tiempo
 no superior a :obj:`TICKRATE`. Lo que se envía en verdad es la diferencia
 entre dos snapshots a los clientes, y ya luego los clientes interpreta esas diferencias.
 A mayor :obj:`TICKRATE` mayor garantías de corregir la simulación en el cliente
 a costa de mayor tiempo de procesamiento. El tiempo que transcurre que se envía entre
-cada snapshot queda determinado por SNAPSHOT_RATE. Un valor de TICKRATE/2 para
+cada snapshot queda determinado por :obj:`SNAPSHOT_RATE`. Un valor de :obj:`TICKRATE`/2 para
 SNAPSHOT_RATE es buen valor para empezar.
 
