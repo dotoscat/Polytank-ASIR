@@ -51,6 +51,8 @@ módulo :obj:`struct`.
     .. graphviz::
 
         digraph datagrama {
+            node [shape=circle,fontname=verdana];
+            edge [fontname=verdana];
             "data" [shape=record,label="comando|resto bytes"];
             "data" -> "extraer comando";
             "fin" [shape=box];
@@ -80,3 +82,18 @@ de la entrada del cliente. Tiene el siguiente formato:
 * ángulo del cañón (flotante): Indica la dirección del tanque en radianes.
 * acumular poder (booleano): El jugador presiona el botón de acumular poder.
 * salto (booleano): Botón de salto presionado o no.
+
+Tick del modo de juego
+----------------------
+
+Este paso aparte es para separar el proceso del servidor del proceso de juego.
+Según el modo de juego se irá alterando el estado del juego y el estado del motor.
+
+    .. graphviz::
+    
+        digraph modo_juego {
+            node [shape=circle,fontname=verdana];
+            "READY" -> "RUNNING" [label="a segundos"];
+            "RUNNING" -> "END" [label="b segundos"];
+            "END" -> "READY" [label="c segundos"];
+        }
