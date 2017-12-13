@@ -51,7 +51,7 @@ módulo :obj:`struct`.
     .. graphviz::
 
         digraph datagrama {
-            node [shape=circle,fontname=verdana];
+            node [shape=ellipse,fontname=verdana];
             edge [fontname=verdana];
             "data" [shape=record,label="comando|resto bytes"];
             "data" -> "extraer comando";
@@ -86,7 +86,7 @@ de la entrada del cliente. Tiene el siguiente formato:
 Tick del modo de juego
 ----------------------
 
-Este paso aparte es para separar el proceso del servidor del proceso de juego.
+Este paso aparte es para separar el proceso del servidor, tick del servidor, del proceso de juego.
 Según el modo de juego se irá alterando el estado del juego y el estado del motor.
 
     .. graphviz::
@@ -105,6 +105,7 @@ Un snapshot, es como una captura o una captura, del estado actual del juego,
 incluyendo el motor y el modo de juego.
 Es bastante recomendable almacenar la información relevante para ser procesada
 y enviada a los clientes para que estos los interprete.
+
 Para enviar snapshots del servidor a los clientes tiene que ser en un tiempo
 no superior a :obj:`TICKRATE`. Lo que se envía en verdad es la diferencia
 entre dos snapshots a los clientes, y ya luego los clientes interpreta esas diferencias.
@@ -112,4 +113,3 @@ A mayor :obj:`TICKRATE` mayor garantías de corregir la simulación en el client
 a costa de mayor tiempo de procesamiento. El tiempo que transcurre que se envía entre
 cada snapshot queda determinado por :obj:`SNAPSHOT_RATE`. Un valor de :obj:`TICKRATE`/2 para
 SNAPSHOT_RATE es buen valor para empezar.
-
