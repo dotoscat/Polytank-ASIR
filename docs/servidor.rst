@@ -54,14 +54,15 @@ módulo :obj:`struct`.
             "data" [shape=record,label="comando|resto bytes"];
             "data" -> "extraer comando";
             "fin" [shape=box];
-            "extraer comando" -> {"JOIN", "REQUEST_SNAPSHOT", "LOGOUT", "CLIENT_INPUT", "CLIENT_ACK", "fin"};
+            "extraer comando" -> "fin" [label="Ningún comando reconocible"];
+            "extraer comando" -> {"JOIN", "REQUEST_SNAPSHOT", "LOGOUT", "CLIENT_INPUT", "CLIENT_ACK"};
             {"JOIN", "REQUEST_SNAPSHOT", "LOGOUT", "CLIENT_INPUT", "CLIENT_ACK"} -> "fin";
         }
 
 Según el comando se procesa según el resto de los bytes, si tiene.
 
-Entrada de los clientes
------------------------
+Entrada del cliente
+-------------------
 
 Cuando el comando es CLIENT_INPUT entoces el resto de los bytes son el estado
 de la entrada del cliente. Tiene el siguiente formato:
@@ -70,6 +71,12 @@ de la entrada del cliente. Tiene el siguiente formato:
         
         graph entrada_cliente {
             "entrada cliente" [shape=record,
-            label="(CLIENT_INPUT)|tick del servidor|movimiento|cannon_angle|accumulate_power|jump"
+            label="(CLIENT_INPUT)|tick del servidor|movimiento tanque|ángulo cañón|acumular poder|salto"
             ];
         }
+
+* tick del servidor (entero): El tick actual del servidor
+* movimiento tanque (flotante): Indica el movimiento del tanque [-1., 0., 1.]
+* ángulo del cañón (flotante): Indica la dirección del tanque en radianes.
+* acumular poder (booleano): El jugador presiona el botón de acumular poder.
+* salto (booleano): Botón de salto presionado o no.
