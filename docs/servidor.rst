@@ -40,7 +40,7 @@ módulo :obj:`struct`.
     
     .. code-block:: python
     
-        # '!' es para indicar que el formato de los bytes es de red, que es *big endian*.
+        # '!' es para indicar que es el formato de los datos es de red, que es *big endian*.
         import struct
         
         comando_struct = struct.Struct("!i")
@@ -48,4 +48,28 @@ módulo :obj:`struct`.
         #y lo trasforma a un valor manejable transformado al formato del sistema.
         comando = comand_struct.unpack_from(data)[0]
 
+    .. graphviz::
 
+        digraph datagrama {
+            "data" [shape=record,label="comando|resto bytes"];
+            "data" -> "extraer comando";
+            "fin" [shape=box];
+            "extraer comando" -> {"JOIN", "REQUEST_SNAPSHOT", "LOGOUT", "CLIENT_INPUT", "CLIENT_ACK", "fin"};
+            {"JOIN", "REQUEST_SNAPSHOT", "LOGOUT", "CLIENT_INPUT", "CLIENT_ACK"} -> "fin";
+        }
+
+Según el comando se procesa según el resto de los bytes, si tiene.
+
+Entrada de los clientes
+-----------------------
+
+Cuando el comando es CLIENT_INPUT entoces el resto de los bytes son el estado
+de la entrada del cliente. Tiene el siguiente formato:
+
+    .. graphviz::
+        
+        graph entrada_cliente {
+            "entrada cliente" [shape=record,
+            label="(CLIENT_INPUT)|tick del servidor|movimiento|cannon_angle|accumulate_power|jump"
+            ];
+        }
