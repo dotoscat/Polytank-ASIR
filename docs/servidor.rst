@@ -4,27 +4,48 @@ Servidor
 El servidor es autoritativo. Hace uso del módulo **asyncio** para atender a las conexiones de red y gestionar
 los eventos del juego. Estas conexiones de red son asíncronas.
 
-El servidor tiene que correr a una velocidad en concreto, esto es mide en marcos
+El servidor tiene que correr a una velocidad en concreto, esto se mide en marcos
 por segundos (TICKRATE). A mayor marcos por segundos mejor precisión de la simulación a costa
 de mayor tiempo de procesamiento. Un buen valor para empezar son de 60 marcos por
-segundos (1./60.), que se un buen valor para juegos de acción. Este valor tiene que ser el mismo
+segundos (1./60.), que es un buen valor para juegos de acción. Este valor tiene que ser el mismo
 que el cliente para mayor consistencia en la simulación por parte del cliente.
 
 Cada ciclo del juego tiene que hacer un *tick*. Un *tick* será un procedimiento
 donde se procesará el motor, con sus entidades, y las respuesta, sólo si ha
 recibido todas las entradas de los jugadores para ese tick. Una vez procesado
-se duerme el servidor 1/TICKRATE para luego procesar el siguiente *tick*.
+se duerme el servidor 1/TICKRATE para luego procesar el siguiente *tick*. Si
+no ha recivido todas las entradas de los clientes se hace dormir igualmente.
 
     .. graphviz::
 
-    digraph tick {
-        "EMPEZAR" [shape=box];
-        "EMPEZAR" -> "tick modo juego";
-        "tick modo juego" -> "entrada clientes";
-        "entrada clientes" -> "sleep(1./TICKRATE)" [shape=box,label="No ha recibido todas las entradas de los clientes."];
-        "entrada clientes" -> "enviar snapshot" [label="Ha recibido todas las entradas de los clientes."];
-        "enviar snapshot" -> "actualizar motor";
-        "sleep(1./TICKRATE)" [shape=box];
-        "actualizar motor" -> "sleep(1./TICKRATE)";
-        "sleep(1./TICKRATE)" -> "EMPEZAR" [label="Esperar entradas de los clientes."];
-    }
+        digraph tick {
+            "EMPEZAR" [shape=box];
+            "EMPEZAR" -> "tick modo juego";
+            "tick modo juego" -> "entrada clientes";
+            "entrada clientes" -> "sleep(1./TICKRATE)" [shape=box,label="No ha recibido todas las entradas de los clientes."];
+            "entrada clientes" -> "enviar snapshot" [label="Ha recibido todas las entradas de los clientes."];
+            "enviar snapshot" -> "actualizar motor";
+            "sleep(1./TICKRATE)" [shape=box];
+            "actualizar motor" -> "sleep(1./TICKRATE)";
+            "sleep(1./TICKRATE)" -> "EMPEZAR" [label="Esperar entradas de los clientes."];
+        }
+
+Atender conexiones de los clientes
+----------------------------------
+
+El servidor tiene que recibir datagramas de los cliente, por estar basado en UDP.
+Cada datagrama tiene un campo al comienzo de 4 bytes que indica el comando que son enviados desde
+un cliente. La información se puede extraer fácilmente con la clase :class:`Struct` del
+módulo :obj:`struct`.
+    
+    .. code-block:: python
+    
+        # '!' es para indicar que el formato de los bytes es de red, que es *big endian*.
+        import struct
+        
+        comando_struct = struct.Struct("!i")
+        
+        #y lo trasforma a un valor manejable transformado al formato del sistema.
+        comando = comand_struct.unpack_from(data)[0]
+
+
