@@ -109,7 +109,7 @@ y enviada a los clientes para que estos los interprete.
 Para enviar snapshots del servidor a los clientes tiene que ser en un tiempo
 no superior a :obj:`TICKRATE`. Lo que se envía en verdad es la diferencia
 entre dos snapshots a los clientes, y ya luego los clientes interpreta esas diferencias.
-A mayor :obj:`TICKRATE` mayor garantías de corregir la simulación en el cliente
+A mayor :obj:`SNAPSHOT_RATE` mayor garantías de corregir la simulación en el cliente
 a costa de mayor tiempo de procesamiento. El tiempo que transcurre que se envía entre
 cada snapshot queda determinado por :obj:`SNAPSHOT_RATE`. Un valor de :obj:`TICKRATE`/2 para
 SNAPSHOT_RATE es buen valor para empezar.
@@ -143,3 +143,16 @@ El siguiente paso es buscar del resto de la cola un snapshot válido en el que s
 recibido el ACK por parte del cliente, y se compara entre los dos *diff* para ser enviado
 finalmente a los clientes como SNAPSHOT. Cada cliente debe devolver un ACK si ha recibido el
 SNAPSHOT y se marca el snapshot.
+
+Actualizar motor
+----------------
+
+Toca actualizar el snapshot. El paso de actualizar el motor después de enviar
+snapshot es porque altera las entradas de los jugadores y forman parte del
+estado del juego.
+
+Dormir
+------
+
+El último paso es dormir el tick del servidor sin dejar de atender las peticiones
+de los clientes.
