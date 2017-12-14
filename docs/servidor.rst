@@ -113,3 +113,33 @@ A mayor :obj:`TICKRATE` mayor garantías de corregir la simulación en el client
 a costa de mayor tiempo de procesamiento. El tiempo que transcurre que se envía entre
 cada snapshot queda determinado por :obj:`SNAPSHOT_RATE`. Un valor de :obj:`TICKRATE`/2 para
 SNAPSHOT_RATE es buen valor para empezar.
+
+    .. graphviz::
+
+        digraph snapshots {
+            subgraph cluster0 {
+                "snapshot1" [shape=record,label="tick 1|datos|Ack"];
+                "snapshot2" [shape=record,label="tick 2|datos|Ack"];
+                "snapshotn" [shape=record,label="tick n|datos|Ack"];
+                "snapshot1" -> "snapshot2";
+                "snapshot2" -> "snapshotn" [style=dotted];
+                label = "snapshots";
+                color=black;
+            }
+            
+            "estado del juego" -> "crear snapshot";
+            "crear snapshot" -> "snapshot1" [label="Insertar en cola"];
+            {"snapshot1", "snapshotn"} -> "diff";
+            "diff" -> "cliente" [label="SNAPSHOT"];
+            "cliente" -> "snapshot1" [label="ACK"];
+        }
+
+Cuando es momento de enviar un snapshot, primero se crea un snapshot
+del estado actual del juego (estado del motor y del modo de juego) y se
+inserta en la cola de snapshots. Esta cola tiene un tamaño máximo de 32
+snapshots. Cada snapshot tiene 3 campos (tick, datos del snapshot y ack).
+El *tick* es un entero que indica el tick transcurrido desde el inicio del servidor.
+El siguiente paso es buscar del resto de la cola un snapshot válido en el que se haya
+recibido el ACK por parte del cliente, y se compara entre los dos *diff* para ser enviado
+finalmente a los clientes como SNAPSHOT. Cada cliente debe devolver un ACK si ha recibido el
+SNAPSHOT y se marca el snapshot.
