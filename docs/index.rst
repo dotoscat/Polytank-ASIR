@@ -12,7 +12,6 @@ Documentación de Polytanks-ASIR!
 
     servidor
 
-
 Objetivo
 --------
 
@@ -35,6 +34,7 @@ Bibliotecas usadas
 * ogf4py3: Un framework basado en toyblock3 y pyglet que asiste en la 
     creación de juegos.
     
+
 Herramientas usadas
 -------------------
 
@@ -43,6 +43,12 @@ Herramientas usadas
 * sfxr: Para generar sonidos.
 * GIMP: Para crear los gráficos del juego.
 * git: Un sistema de control de versiones.
+
+Preparación del entorno
+-----------------------
+
+Desde *pip*, de Python3, es necesario instalar el paquete pyglet para
+el desarrollo del cliente.
 
 Requisitos
 ----------
