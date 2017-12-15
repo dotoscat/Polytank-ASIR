@@ -113,3 +113,11 @@ Cliente
             "fin" [shape=box];
             "empezar" -> "entrada" -> "físicas" -> "colisiones (sólo tanque y suelo)" -> "gráficos" -> "fin";
         }
+
+Mensajes
+--------
+
+El motor tiene un sistema de mensajes, una cola, que se puede llenar según los eventos
+transcurridos durante la ejecución del motor. Por ejemplo meter un mensaje que un
+tanque ha tocado suelo o que hubo una explosión. La cola de mensajes después tiene
+que se consumida para poder interpretar los mensajes.
