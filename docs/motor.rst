@@ -4,6 +4,9 @@ Motor
 Un motor ayuda a abstraer al servidor y al cliente de crear y gestionar
 las entidades y gestionar los sistemas del juego como las físicas.
 
+Este motor tiene un procedimiento que ejecuta todos los sistemas asignados
+al motor.
+
 Entidades
 ---------
 
@@ -41,3 +44,35 @@ Es una entidad especial porque no es necesaria transmitir información entre el 
 y el servidor. Tienen un área de colisión estática. En el que colisionan
 los tanques y las balas. Tanto el servidor como el cliente deben tener la misma
 distribución de suelos para que la simulación sea acorde.
+
+Sistemas
+--------
+
+Los sistemas se encargan de procesar las entidades activas en el juego. Tanto
+el cliente como el servidor requerirán unos sistemas u otros. En el cliente
+los sistemas a procesar son menores que los del servidor puesto que el cliente
+se encarga de interpretar siendo lo más fiel posible a lo que pasa en el servidor.
+
+Físicas
++++++++
+
+Un sistemas esencial para juegos de acción basados en físicas. Además procesa
+la gravedad.
+
+Colisiones
+++++++++++
+
+Este sistema se encarga de procesar las colisiones entre las distintas colisiones
+que ocurren en el motor, y si ocurren o no. Es un sistema del servidor.
+
+Gráfico
+++++++++
+
+Este es un sistema exclusivo del cliente puesto que se encarga de actualizar
+los gráficos del juego según el estado de las entidades.
+
+Limite
+++++++
+
+Este sistema se encarga de saber si una entidad está fuera de la zona del juego, dónde
+se procesará según la entidad. Es un sistema exclusivo del servidor.
