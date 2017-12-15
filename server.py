@@ -22,16 +22,18 @@ import polytanks.server
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
+hostname = socket.gethostname()
+default_ip = socket.gethostbyname_ex(hostname)[2].pop()
+
 parse = argparse.ArgumentParser(description="Polytanks server")
 parse.add_argument("-p", "--port", default=7777, type=int)
 parse.add_argument("-np", "--nplayers", default=1, type=int, choices=range(1, 5))
+parse.add_argument("-i", "--ip", default=default_ip)
 arguments = parse.parse_args()
-
-hostname = socket.gethostname()
-ip = socket.gethostbyname_ex(hostname)[2].pop()
 
 port = arguments.port
 nplayers = arguments.nplayers
+ip = arguments.ip
 
 ADDRESS = (ip, port)
 
