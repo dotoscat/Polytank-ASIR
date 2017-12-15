@@ -71,7 +71,7 @@ Gráfico
 Este es un sistema exclusivo del cliente puesto que se encarga de actualizar
 los gráficos del juego según el estado de las entidades.
 
-Limite
+Límite
 ++++++
 
 Este sistema se encarga de saber si una entidad está fuera de la zona del juego, dónde
