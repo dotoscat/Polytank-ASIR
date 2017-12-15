@@ -168,6 +168,19 @@ Inconvenientes
 
 * Más complicado de ponerlo en marcha para el público.
 
+Problemas encontrados durante el desarrollo
+-------------------------------------------
+
+El motor se ha tenido que rediseñar porque estaba pensado para juego offline.
+Es complicado trabajar con el motor para añadir y quitar sistemas.
+
+No se ha conseguido implementar los potenciadores y la web para registrarse, por
+falta de tiempo. Tampoco se ha implementado del todo los bots rebido a restricciones
+de tiempo.
+
+Fué complicado tratar de conseguir la conexión asíncrona con pyglet, pero un control
+a más bajo nivel lo ha logrado.
+
 Referencias
 -----------
 
