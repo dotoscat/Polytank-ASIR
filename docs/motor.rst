@@ -76,3 +76,40 @@ Limite
 
 Este sistema se encarga de saber si una entidad está fuera de la zona del juego, dónde
 se procesará según la entidad. Es un sistema exclusivo del servidor.
+
+Entrada
++++++++
+
+Se encarga de gestionar las entradas asignadas a los tanques y aplicarla
+a la velocidad de los tanques. Por ejemplo, si hay un salto y toca suelo el
+tanque aplicar un velocidad sobre la velocidad y del tanque.
+
+Orden de ejecución de los sistemas
+----------------------------------
+
+Según si es servidor o cliente el motor ejecutará diferentes sistemas
+o tendrá una configuración ligeramente diferente de un sistema.
+
+Servidor
+++++++++
+
+    .. graphviz::
+    
+        digraph servidor {
+            label = "servidor";
+            "empezar" [shape=box];
+            "fin" [shape=box];
+            "empezar" -> "entrada" -> "físcas" -> "colisiones" -> "límite" -> "fin";
+        }
+
+Cliente
++++++++
+
+    .. graphviz::
+    
+        digraph servidor {
+            label = "cliente";
+            "empezar" [shape=box];
+            "fin" [shape=box];
+            "empezar" -> "entrada" -> "físicas" -> "colisiones (sólo tanque y suelo)" -> "gráficos" -> "fin";
+        }

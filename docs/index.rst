@@ -11,6 +11,7 @@ Documentación de Polytanks-ASIR!
     :caption: Contenidos:
 
     servidor
+    cliente
     motor
     protocolo
 
