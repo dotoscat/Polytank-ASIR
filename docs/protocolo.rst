@@ -113,10 +113,19 @@ Formatos de los mensajes
 Todos los mensajes empiezan por 4 bytes que indica qué comando es. Hay
 mensajes que llevan mas información según el comando.
 
+JOIN
+++++
+
+    .. graphviz::
+    
+        graph join_struct {
+            "join" [shape=record,label="comando|nick(9 caracteres)"];
+        }
+
 JOINED
 ++++++
 
-    ..graphviz::
+    .. graphviz::
     
         graph joined_struct {
             "joined" [shape=record,label="comando|n_jugadores|id"];
@@ -147,3 +156,12 @@ servidor al que está conectado.
 
 SNAPSHOT
 ++++++++
+
+El snapshot lleva un estado del modo de juego con el estado actual,
+el tiempo estimado en segundos y el tiempo restante en segundos.
+
+El snapshot tiene 3 listas para TANQUES, BALAS y EXPLOSIONES.
+
+* Objetos creados
+* Objetos modificados
+* Objetos destruidos

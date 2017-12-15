@@ -77,4 +77,3 @@ Interpretar mensajes
 Durante el transcurso del juego la cola de mensajes del motor se va llenando
 y tiene que ser consumida por cliente. Esto permite la reproducción de sonidos sin
 romper con el diseño modular del motor.
-
