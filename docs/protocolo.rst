@@ -106,3 +106,44 @@ Logout del cliente
             }
             "LOGOUT" -> "DONE" -> "end";
         }
+
+Formatos de los mensajes
+------------------------
+
+Todos los mensajes empiezan por 4 bytes que indica qué comando es. Hay
+mensajes que llevan mas información según el comando.
+
+JOINED
+++++++
+
+    ..graphviz::
+    
+        graph joined_struct {
+            "joined" [shape=record,label="comando|n_jugadores|id"];
+        }
+
+* n_jugadores (entero): Número de jugadores actuales del servidor.
+* id (entero): Número asignado por el servidor para el cliente.
+
+CLIENT_INPUT
+++++++++++++
+
+En cada tick por parte del cliente tiene que enviar un CLIENT_INPUT al
+servidor al que está conectado.
+
+    .. graphviz::
+        
+        graph entrada_cliente {
+            "entrada cliente" [shape=record,
+            label="(CLIENT_INPUT)|tick del servidor|movimiento tanque|ángulo cañón|acumular poder|salto"
+            ];
+        }
+
+* tick del servidor (entero): El tick actual del servidor
+* movimiento tanque (flotante): Indica el movimiento del tanque [-1.| 0.| 1.]
+* ángulo del cañón (flotante): Indica la dirección del tanque en radianes.
+* acumular poder (booleano): El jugador presiona el botón de acumular poder.
+* salto (booleano): Botón de salto presionado o no.
+
+SNAPSHOT
+++++++++
