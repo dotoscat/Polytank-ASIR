@@ -208,6 +208,10 @@ class Engine:
             entity.body.y = constant.VHEIGHT-constant.VHEIGHT/4.
             entity.body.vel_y = 0.
 
+    def clean(self):
+        for id_ in self.entities:
+            self.entities[id_].free()
+
     @staticmethod
     def _heal_tank(tank):
         tank.tank.damage -= 30

@@ -211,6 +211,10 @@ class Client(Scene):
 
     def quit(self):
         self.director.set_mouse_visible(True)
+        self.engine.clean()
+        while(self.damage_meters):
+            meter = self.damage_meters.pop()
+            meter.delete()
 
     def clean_entity(self, entity):
         if (isinstance(entity, (self.engine.bullet_pool
