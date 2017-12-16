@@ -278,7 +278,7 @@ class Client(Scene):
             self.player_input.not_jump()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        print("mouse motion", x, y, dx, dy)
+        # print("mouse motion", x, y, dx, dy)
         self._update_mouse(x, y)
         
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):

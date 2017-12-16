@@ -128,7 +128,6 @@ class Server(asyncio.DatagramProtocol):
         #print("seconds", seconds)
     
     def add_player(self, tank):
-        self.players.append
         for i, player in enumerate(self.players):
             if player is not None: continue
             player = Player(tank)

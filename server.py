@@ -39,7 +39,7 @@ ADDRESS = (ip, port)
 
 if __name__ == "__main__":
     print("Run polytanks at {}:{} with {} players".format(ip, port, nplayers))
-    server = polytanks.server.Server(ADDRESS, debug=True)
+    server = polytanks.server.Server(ADDRESS, nplayers=nplayers, debug=True)
     try:
         server.run()
     except KeyboardInterrupt:
