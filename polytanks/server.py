@@ -250,7 +250,8 @@ class Server(asyncio.DatagramProtocol):
         
     def _send_snapshot(self):
         snapshot = Snapshot(self.engine, self.standard_game, self.tick)
-        for client in self.clients:
+        clients = self.clients
+        for client in clients:
             player = clients[client]
             player.insert_snapshot(snapshot)
             diff = player.get_diff()

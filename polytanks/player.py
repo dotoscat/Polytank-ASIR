@@ -48,7 +48,7 @@ class Player:
         for snapshot in islice(self.snapshots, 1, None):
             if not snapshot.ack: continue
             self.last_time = monotonic()
-            return first_snapshot.diff(snapshot)
+            return first_snapshot.diff(snapshot.snapshot)
         self.last_time = monotonic()
         return first_snapshot.diff(DUMMY_SNAPSHOT)
         
