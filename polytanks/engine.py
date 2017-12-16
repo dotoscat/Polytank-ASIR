@@ -211,6 +211,7 @@ class Engine:
     def clean(self):
         for id_ in self.entities:
             self.entities[id_].free()
+        self.entities.clear()
 
     @staticmethod
     def _heal_tank(tank):
