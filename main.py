@@ -17,6 +17,7 @@
 import re
 import socket
 import pyglet
+import argparse
 import polytanks
 from polytanks import constant, protocol
 from polytanks.client import Client
@@ -162,9 +163,16 @@ class Main(Scene):
                 self._join_error_message.text = "La partida no existe."
                 
 if __name__ == "__main__":
+    parse = argparse.ArgumentParser(description="Polytanks client")
+    parse.add_argument("-s", "--scale", default=2, help="Escala de la pantalla", type=int, choices=range(1, 3))
+    
+    arguments = parse.parse_args()
+    
+    scale = arguments.scale
+    
     director = Director(
         caption="Polytanks", fullscreen=False,
-        width=constant.WIDTH, height=constant.HEIGHT,
+        width=constant.VWIDTH*scale, height=constant.VHEIGHT*scale,
         vwidth=constant.VWIDTH, vheight=constant.VHEIGHT,
         exit_with_ESC=False)
     director.set_background_color(0., 0., 0.)
