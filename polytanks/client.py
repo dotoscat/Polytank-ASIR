@@ -194,12 +194,12 @@ class Client(Scene):
         self.connection.send(data)
 
     def init(self):
-        self.director.set_exclusive_mouse(True)
+        self.director.set_mouse_visible(False)
         self.cursor_point.x = constant.VWIDTH/2.
         self.cursor_point.y = constant.VHEIGHT/2.
 
     def quit(self):
-        self.director.set_exclusive_mouse(False)
+        self.director.set_mouse_visible(True)
 
     def clean_entity(self, entity):
         if (isinstance(entity, (self.engine.bullet_pool
@@ -278,18 +278,18 @@ class Client(Scene):
             self.player_input.not_jump()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        #  print("mouse motion", x, y, dx, dy)
-        self._update_mouse(dx, dy)
+        print("mouse motion", x, y, dx, dy)
+        self._update_mouse(x, y)
         
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         #  print("mouse drag", x, y, dx, dy)
-        self._update_mouse(dx, dy)
+        self._update_mouse(x, y)
 
-    def _update_mouse(self, dx, dy):
+    def _update_mouse(self, x, y):
         if self.tank is None: return
-        vdx, vdy = self.director.get_virtual_xy(dx, dy)
-        self.cursor_point.x += vdx
-        self.cursor_point.y += vdy
+        vx, vy = self.director.get_virtual_xy(x, y)
+        self.cursor_point.x = vx
+        self.cursor_point.y = vy
         if self.cursor_point.x < 0.:
             self.cursor_point.x = 0.
         elif self.cursor_point.x > constant.VWIDTH:
