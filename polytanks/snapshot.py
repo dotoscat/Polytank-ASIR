@@ -18,8 +18,8 @@ from collections import deque, namedtuple
 from . import protocol
 from .engine import Engine
 
-tank = namedtuple("tank", "id do_jump x y vel_x vel_y damage nickname r g b")
-tank_struct = struct.Struct("!i?ffffi9pBBB")
+tank = namedtuple("tank", "id do_jump cannon_angle x y vel_x vel_y damage nickname r g b")
+tank_struct = struct.Struct("!i?fffffi9pBBB")
 
 bullet = namedtuple("bullet", "id x y vel_x vel_y owner power")
 bullet_struct = struct.Struct("!iffffif")
@@ -49,6 +49,7 @@ VEL_X = 3
 VEL_Y = 4
 DAMAGE = 5
 DO_JUMP = 6
+CANNON_ANGLE = 7
 
 FLOAT = 1
 BOOL = 2
@@ -60,7 +61,8 @@ DIFF_TABLE = {
     "vel_x": VEL_X,
     "vel_y": VEL_Y,
     "damage": DAMAGE,
-    "do_jump": DO_JUMP
+    "do_jump": DO_JUMP,
+    "cannon_angle": CANNON_ANGLE
 }
 
 INV_DIFF_TABLE = {v: k for k, v in DIFF_TABLE.items()}
@@ -73,7 +75,7 @@ id_nfields = struct.Struct("!ib")
 
 body_set = frozenset(("x", "y", "vel_x", "vel_y"))
 tank_set = frozenset(("damage", "nickname", "color"))
-input_set = frozenset(("do_jump",))
+input_set = frozenset(("do_jump", "cannon_angle"))
 timer_set = frozenset(("max_time",))
 
 class Snapshot:
@@ -89,9 +91,9 @@ class Snapshot:
         used_tanks = engine.tank_pool._used
         for atank in used_tanks:
             body = atank.body
-            tank_snapshot = tank(atank.id, atank.input.do_jump, body.x, body.y
-                , body.vel_x, body.vel_y, atank.tank.damage, atank.tank.nickname.encode()
-                , *atank.tank.color)
+            tank_snapshot = tank(atank.id, atank.input.do_jump, atank.input.cannon_angle,
+                body.x, body.y , body.vel_x, body.vel_y, atank.tank.damage,
+                atank.tank.nickname.encode(), *atank.tank.color)
             tanks[atank.id] = tank_snapshot
         snapshot["tanks"] = tanks
         used_bullets = engine.bullet_pool._used

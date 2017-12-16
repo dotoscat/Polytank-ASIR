@@ -61,6 +61,8 @@ def update_tank_graphic(self, entity):
     tank.update(body.x, body.y)
     entity.tank_graphic.base.set_position(body.x, body.y)
     entity.tank_graphic.cannon.set_position(tank.cannon_x, tank.cannon_y)
+    angle = entity.input.cannon_angle
+    entity.tank_graphic.cannon.rotation = -degrees(angle)
 
 systems = engine.systems
 systems.append(system.sprite)
@@ -267,7 +269,6 @@ class Client(Scene):
         cannon_position = self.tank.tank_graphic.cannon.position
         angle = get_angle_from(*cannon_position, *aim_pointer)
         self.player_input.cannon_angle = angle
-        self.tank.tank_graphic.cannon.rotation = -degrees(angle)
         if self._send_cannon_rotation:
             self._send_cannon_rotation = False
 
