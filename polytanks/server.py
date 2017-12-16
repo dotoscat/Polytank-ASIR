@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import deque
+from collections import deque, namedtuple
 import time
 from time import perf_counter
 import math
@@ -21,24 +21,7 @@ from math import degrees
 import asyncio
 from . import engine, level, protocol, gamemode, COLORS
 from .snapshot import Snapshot, DUMMY_SNAPSHOT
-
-class Player:
-    def __init__(self, tank):
-        self.tank = tank
-        self.last_time = time.monotonic()
-        self.ping = 0.
-        self.input = False
-        self._ack = True
-        
-    def send(self):
-        self.last_time = time.monotonic()
-        self._ack = False
-        
-    def ack(self):
-        self._ack = True
-        now = time.monotonic()
-        self.ping = (now - self.last_time)/2.
-        self.last_time = now
+from .player import Player
 
 class Server(asyncio.DatagramProtocol):
     """El servidor se basa en el protocolo UDP
@@ -98,7 +81,6 @@ class Server(asyncio.DatagramProtocol):
         self.NPLAYERS = nplayers
         self.players = [None]*nplayers
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
-        self.snapshots = deque([], 32)
         
         game_conf = gamemode.GameModeConf()
         game_conf.on_ready = self.on_ready
@@ -160,23 +142,24 @@ class Server(asyncio.DatagramProtocol):
         if command == protocol.JOIN:
             self._join(addr, data)
         elif command == protocol.REQUEST_SNAPSHOT:
-            snapshot = Snapshot(self.engine, self.standard_game, -1)
-            self.snapshots.appendleft(snapshot)
-            diff = snapshot.diff(DUMMY_SNAPSHOT)
-            data = Snapshot.to_network(diff)
-            print("snapshots", len(self.snapshots))
-            print("first snapshot", self.snapshots[0])
-            print(addr, "requests a snapshot", diff)
-            self.transport.sendto(data, addr)
+            self.request_snapshot(addr)
         elif command == protocol.LOGOUT:
             self._logout(addr)
         elif command == protocol.CLIENT_INPUT:
             self.client_input(data, addr)
             #print("client input", addr, len(data))
         elif command == protocol.CLIENT_ACK:
-            player = self.clients[addr]
-            #player.ack()
+            self.clients[addr].ack()
             #print("ping de ", addr, player.ping)
+
+    def request_snapshot(self, addr):
+        snapshot = Snapshot(self.engine, self.standard_game, -1)
+        player = self.clients[addr]
+        player.insert_snapshot(snapshot)
+        diff = player.get_diff()
+        data = Snapshot.to_network(diff)
+        print(addr, "requests a snapshot", diff)
+        self.transport.sendto(data, addr)
 
     def client_input(self, data, addr):
         player = self.clients.get(addr)
@@ -267,17 +250,11 @@ class Server(asyncio.DatagramProtocol):
         
     def _send_snapshot(self):
         snapshot = Snapshot(self.engine, self.standard_game, self.tick)
-        snapshots = self.snapshots
-        snapshots.appendleft(snapshot)
-        data = b''
-        if len(snapshots) > 1:
-            diff = snapshots[0].diff(snapshots[1])
-            data = Snapshot.to_network(diff)
-        #print("send snapshot", data)
-        clients = self.clients
-        for client in clients:
+        for client in self.clients:
             player = clients[client]
-            #player.send()
+            player.insert_snapshot(snapshot)
+            diff = player.get_diff()
+            data = Snapshot.to_network(diff)
             self.transport.sendto(data, client)
 
     def __del__(self):

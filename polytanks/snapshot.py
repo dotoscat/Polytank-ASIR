@@ -78,7 +78,6 @@ timer_set = frozenset(("max_time",))
 
 class Snapshot:
     def __init__(self, engine, game, tick=0):
-        self.ack = False
         self.tick = tick
         self.snapshot = self._make_from_engine(engine, game)
         
