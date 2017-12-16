@@ -307,7 +307,13 @@ class Snapshot:
                     if id_ == client.id: continue    #  Se usa la entrada del cliente
                     setattr(tank.input, name, value)
                     print(id_, tank.input.do_jump)
-                    
+        
+        tanks_destroyed = diff.tanks.destroyed
+        for tank_id in tanks_destroyed:
+            tank = engine.entities[tank_id]
+            client.quit_player_from_damage_meter(tank)
+            tank.free()
+        
         bullets_created = diff.bullets.created
         bullets_destroyed = diff.bullets.destroyed
         

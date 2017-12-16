@@ -45,6 +45,15 @@ class TankGraphic:
         self.base.color = value
         self.cannon.color = value
         
+    @property
+    def visible(self):
+        return self.base.visible
+        
+    @visible.setter
+    def visible(self, value):
+        self.base.visible = value
+        self.cannon.visible = value
+        
 @toyblock3.system("body", "tank_graphic")
 def update_tank_graphic(self, entity):
     body = entity.body
@@ -65,7 +74,7 @@ class DamageMeter(gui.Node):
     def __init__(self, *args, **kwargs):
         super().__init__(orientation=gui.Node.VERTICAL)
         self._tank = None
-        self._nickname = gui.VisibleLabel("HEY!", *args, **kwargs)
+        self._nickname = gui.VisibleLabel("[-]", *args, **kwargs)
         self.add_child(self._nickname)
         self._number = gui.NumberLabel('%', *args, **kwargs)
         self.add_child(self._number)
@@ -82,7 +91,7 @@ class DamageMeter(gui.Node):
     
     def quit_player(self):
         self._tank = None
-        self._nickname.value = "(Disconnected)"
+        self._nickname.text = "[-]"
         self._number.visible = False
             
     def update(self):
@@ -154,6 +163,8 @@ class Client(Scene):
         self.engine = engine.Engine()
         level.load_level(level.basic, self.engine.platform_pool)
 
+        self.engine.tank_pool.init(self.init_entity)
+        self.engine.tank_pool.clean(self.clean_entity)
         self.engine.bullet_pool.init(self.init_entity)
         self.engine.bullet_pool.clean(self.clean_entity)
         self.engine.explosion_pool.init(self.init_entity)
@@ -205,11 +216,15 @@ class Client(Scene):
         if (isinstance(entity, (self.engine.bullet_pool
             , self.engine.explosion_pool, self.engine.powerup_pool))):
             entity.sprite.visible = False
+        elif isinstance(entity, self.engine.tank_pool):
+            entity.tank_graphic.visible = False
 
     def init_entity(self, entity):
         if (isinstance(entity, (self.engine.bullet_pool
             , self.engine.explosion_pool, self.engine.powerup_pool))):
             entity.sprite.visible = True
+        elif isinstance(entity, self.engine.tank_pool):
+            entity.tank_graphic.visible = True
         logging.info("init", entity)
 
     def update(self, dt):
@@ -379,12 +394,17 @@ class Client(Scene):
             meter.set_player(tank)
             break
     
+    def quit_player_from_damage_meter(self, tank):
+        for meter in self.damage_meters:
+            if meter._tank == tank:
+                meter.quit_player()
+                break
+    
     def logout(self):
         for i, dc in enumerate(list(self.damage_meters)):
             print("logout", i, dc, dc._tank, self.tank)
             if dc._tank == self.tank:
-                print("Eliminar contador daño")
-                self.damage_meters.pop(i).delete()
+                
                 break
         self._joined = False
         self.tank.free()
