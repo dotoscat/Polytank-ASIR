@@ -280,9 +280,12 @@ class Snapshot:
     @staticmethod
     def set_engine_from_diff(diff, engine, client):
         """Set engine from the diff."""
+        print("Set engine from diff. Tick:", diff.tick)
         tanks_created = diff.tanks.created
         for tank_created in tanks_created:
-            print(tank_created)
+            if tank_created.id in engine.entities:
+                continue
+            print("crear tanque de diff", tank_created.id)
             tank = engine.create_tank(tank_created.id)
             color = (tank_created.r, tank_created.g, tank_created.b)
             nickname = tank_created.nickname.decode()
@@ -294,7 +297,6 @@ class Snapshot:
                 client.tank = tank
                 client.player_input = tank.input
                 client.player_input.client = True
-                print("set from diff", client.player_input, tank.input)
         
         tanks_modified = diff.tanks.modified
         
@@ -308,12 +310,12 @@ class Snapshot:
                 elif name in input_set:
                     if id_ == client.id: continue    #  Se usa la entrada del cliente
                     setattr(tank.input, name, value)
-                    print(id_, tank.input.do_jump)
         
         tanks_destroyed = diff.tanks.destroyed
         for tank_id in tanks_destroyed:
             tank = engine.entities[tank_id]
             client.quit_player_from_damage_meter(tank)
+            del engine.entities[tank_id]
             tank.free()
         
         bullets_created = diff.bullets.created

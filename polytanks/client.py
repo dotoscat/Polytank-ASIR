@@ -217,6 +217,7 @@ class Client(Scene):
         while(self.damage_meters):
             meter = self.damage_meters.pop()
             meter.delete()
+        print("quitar cliente. tanques en pool", len(self.engine.tank_pool._entities))
 
     def clean_entity(self, entity):
         if (isinstance(entity, (self.engine.bullet_pool
@@ -273,14 +274,9 @@ class Client(Scene):
             self._send_cannon_rotation = False
 
     def on_key_press(self, symbol, modifier):
-        print("press", self.player_input, self._joined)
-        if symbol == key.ESCAPE:
-            print("Mostrar botón para logout")
+        if symbol in (key.ESCAPE, key.L):
             self.logout()
             return
-        if self._joined and symbol == key.L:
-            print("logout pressed")
-            self.logout()
         if not self._joined:
             return
         if symbol in (key.A, key.LEFT):
@@ -365,7 +361,7 @@ class Client(Scene):
             self.message.visible = False
             total_time = gamemode.total_time
             current_time = total_time - gamemode.current_time
-            print("run", total_time, int(current_time))
+            # print("run", total_time, int(current_time))
             if total_time == int(current_time):
                 seconds = total_time
             else:
@@ -378,7 +374,7 @@ class Client(Scene):
             self._timer.visible = False
             self.message.text = "END!"
             self.message.visible = True
-            print("END!", gamemode.total_time)
+            # print("END!", gamemode.total_time)
     
     def joined(self, nplayers, id_):
         print("Joined with id", id_)
@@ -406,12 +402,9 @@ class Client(Scene):
                 break
     
     def logout(self):
-        for i, dc in enumerate(list(self.damage_meters)):
-            print("logout", i, dc, dc._tank, self.tank)
-            if dc._tank == self.tank:
-                
-                break
         self._joined = False
+        tank = self.tank
+        del self.engine.entities[tank.id]
         self.tank.free()
         self.connection.send(protocol.mono.pack(protocol.LOGOUT))
         self.connection.close()
