@@ -325,8 +325,10 @@ class Snapshot:
             bullet_created = engine.spawn_bullet(bullet.id)
             bullet_created.set("body", x=bullet.x, y=bullet.y,
                 vel_x=bullet.vel_x, vel_y=bullet.vel_y)
+            owner = engine.entities[bullet.owner]
             bullet_created.set("bullet", power=bullet.power,
-                owner=engine.entities[bullet.owner])
+                owner=owner)
+            bullet_created.sprite.color = owner.tank.color
             engine.add_message((Engine.SHOOT, bullet.owner))
     
         for id_ in bullets_destroyed:
