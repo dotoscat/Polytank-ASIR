@@ -91,6 +91,9 @@ class Tank:
         self.damage = 0
         self.hitstun = 0.
         self.control = True
+        self._ko.clear()
+        self._fall.clear()
+        self.hit_by = None
 
     def update(self, x, y):
         self.cannon_x = self.cannon_anchor[0] + x

@@ -19,7 +19,7 @@ from time import perf_counter
 import math
 from math import degrees
 import asyncio
-from . import engine, level, protocol, gamemode, COLORS
+from . import engine, level, protocol, gamemode, COLORS, constant
 from .snapshot import Snapshot, DUMMY_SNAPSHOT
 from .player import Player
 
@@ -80,6 +80,15 @@ class Server(asyncio.DatagramProtocol):
         self.clients = {}
         self.NPLAYERS = nplayers
         self.players = [None]*nplayers
+        self.players_pos = [None]*nplayers
+        
+        margin = constant.VWIDTH/8
+        hud_area = constant.VWIDTH-margin*2.
+        distance = hud_area/nplayers
+        for i in range(nplayers):
+            pos = (margin + distance*i, 64.)
+            self.players_pos[i] = pos
+            
         self._send_snapshot = Server.Repeater(self._send_snapshot, 1./Server.SNAPSHOT_RATE)
         
         game_conf = gamemode.GameModeConf()
@@ -96,11 +105,19 @@ class Server(asyncio.DatagramProtocol):
         asyncio.ensure_future(listen)
         asyncio.ensure_future(self._tick())
     
+    def set_player(self, i):
+        if self.players[i] is None: return
+        x, y = self.players_pos[i]
+        self.players[i].tank.set("body", x=x, y=y, vel_x=0., vel_y=0.)
+        self.players[i].tank.tank.reset()
+    
     def on_ready(self, time):
         print("on ready", time)
         
     def on_running(self, time):
         print("on running", time)
+        for i in range(self.NPLAYERS):
+            self.set_player(i)
         
     def on_end(self, time):
         print("on end", time)
@@ -189,9 +206,9 @@ class Server(asyncio.DatagramProtocol):
         nickname = nickname.decode()
         tank = self.engine.create_tank()
         i, player = self.add_player(tank)
+        self.set_player(i)
         color = COLORS[i][:3]
         self.clients[addr] = player
-        tank.set("body", x=128., y=128.)
         tank.set("tank", nickname=nickname, color=color)
         print("Player {} from {} added".format(nickname, addr))
         print(self.players)
