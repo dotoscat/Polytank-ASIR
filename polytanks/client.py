@@ -273,6 +273,9 @@ class Client(Scene):
         if self._send_cannon_rotation:
             self._send_cannon_rotation = False
 
+    def on_close(self):
+        self.logout()
+
     def on_key_press(self, symbol, modifier):
         if symbol in (key.ESCAPE, key.L):
             self.logout()

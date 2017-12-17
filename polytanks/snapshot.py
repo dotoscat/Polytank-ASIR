@@ -280,7 +280,7 @@ class Snapshot:
     @staticmethod
     def set_engine_from_diff(diff, engine, client):
         """Set engine from the diff."""
-        print("Set engine from diff. Tick:", diff.tick)
+        #print("Set engine from diff. Tick:", diff.tick)
         tanks_created = diff.tanks.created
         for tank_created in tanks_created:
             if tank_created.id in engine.entities:
