@@ -182,6 +182,9 @@ class Server(asyncio.DatagramProtocol):
         #    jumps)
 
     def _join(self, addr, data):
+        if len(self.clients) == self.NPLAYERS:
+            self.transport.sendto(protocol.command.pack(protocol.REJECTED), addr)
+            return
         command, nickname = protocol.join.unpack(data)
         nickname = nickname.decode()
         tank = self.engine.create_tank()

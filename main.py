@@ -99,6 +99,8 @@ class Main(Scene):
             client.joined(nplayers, id_)
             Director.set_scene("client")
             self._connection.send(protocol.mono.pack(protocol.REQUEST_SNAPSHOT))
+        elif command == protocol.REJECTED:
+            self._join_error_message.text = "El servidor ya está lleno."
 
     def join_game(self, button, x, y, buttons, modifiers):
         hostname = socket.gethostname()
